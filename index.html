@@ -23,6 +23,42 @@ button,input{font:inherit}button{border:0;color:inherit}
 .notes{height:100%;display:flex;flex-direction:column}.notes textarea{flex:1;border:0;resize:none;padding:15px;color:#222;font-size:15px;outline:0}.notesbar{padding:6px;background:#eee;color:#333;font-size:12px}
 .calc{height:100%;background:#202020;padding:12px;display:flex;flex-direction:column}.calcdisplay{height:65px;background:#202020;color:#fff;text-align:right;font-size:34px;padding:12px;overflow:hidden}.calckeys{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;flex:1}.calckeys button{background:#333;color:#fff;font-size:18px;cursor:pointer}.calckeys button:hover{background:#444}.calckeys .op{background:#555}
 .toast{position:absolute;right:15px;bottom:62px;background:#222;color:#fff;padding:13px 17px;box-shadow:0 3px 15px #0008;display:none;z-index:10000}
+
+/* Windows 10 motion + polish */
+html,body{scroll-behavior:smooth}
+button,.tbbtn,.taskapp,.tile,.file,.side div,.setnav button,.setting-card,.deskicon,.ctx,.window,.titlebar,.toggle,.search{transition:background-color .16s ease,color .16s ease,opacity .16s ease,transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+#desktop{transition:background .35s ease,filter .25s ease}
+#desktopIcons{transition:opacity .2s ease}
+.deskicon:hover{transform:translateY(-1px) scale(1.02);box-shadow:0 2px 8px #0003}
+.window{transform-origin:center top;animation:winIn .18s cubic-bezier(.2,.8,.2,1);will-change:transform,opacity}
+.window.maxed{animation:none}
+@keyframes winIn{from{opacity:0;transform:scale(.97) translateY(7px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.titlebar{cursor:grab}.titlebar:active{cursor:grabbing}
+#taskbar{backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 -2px 14px #0004;transition:transform .22s cubic-bezier(.2,.8,.2,1),height .22s ease,width .22s ease,background .2s ease}
+#taskbar:hover{box-shadow:0 -3px 20px #0005}
+#taskbar .tbbtn:hover,.taskapp:hover{transform:translateY(-1px)}
+#taskbar .startlogo{transition:transform .2s ease}.tbbtn:hover .startlogo{transform:scale(1.12) rotate(-2deg)}
+#startMenu{transform-origin:left bottom;animation:startIn .18s cubic-bezier(.2,.8,.2,1);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+@keyframes startIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+.start-inner,.tiles{animation:startContent .22s ease both}@keyframes startContent{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.tile:hover{transform:translateY(-2px);box-shadow:0 5px 12px #0004}
+.tile:active,.taskapp:active,.tbbtn:active{transform:scale(.94)}
+#settings .content{background:#f5f5f5}
+.settings{background:#f5f5f5}
+.setnav{background:#eeeeee;padding:12px 8px}
+.setnav button{border-left:3px solid transparent;border-radius:2px;font-size:13px}
+.setnav button.active{background:#fff;border-left-color:#0078d7;box-shadow:0 1px 4px #0002}
+.setnav button:hover{background:#e4e4e4}
+.setpage{padding:28px 32px;background:#fff;animation:setPageIn .18s ease}
+@keyframes setPageIn{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}
+.setting-card{background:#fff;border:1px solid #e1e1e1;box-shadow:0 1px 2px #0001;border-radius:2px}
+.setting-card:hover{border-color:#c9c9c9;box-shadow:0 3px 10px #0002;transform:translateY(-1px)}
+.toggle{transition:background .18s ease,transform .18s ease}.toggle:after{transition:margin-left .18s cubic-bezier(.2,.8,.2,1),transform .18s ease}
+#toast{animation:toastIn .18s ease}@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+#actionCenter,#searchPanel,#virtualView,#trayoverflow,#taskbarContext{animation:panelIn .16s ease}@keyframes panelIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+/* respect the user's animation setting */
+body.no-motion *,body.no-motion *::before,body.no-motion *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+
 @media(max-width:700px){.search{width:130px}.window{width:94vw;height:72vh}.side{width:125px}.setnav{width:125px}.tilegrid{grid-template-columns:repeat(3,1fr)}}
 
 #actionCenter{position:absolute;right:0;bottom:48px;width:min(360px,100vw);height:430px;background:#202020f5;z-index:15000;display:none;box-shadow:0 0 22px #0009;padding:14px}
@@ -274,7 +310,7 @@ else if(key==='accounts')h+=settingRow('Your account','Local Windows Web account
 $('setpage').innerHTML=h}
 function displaySettings(){let scale=prompt('Display scale (80-150):',localStorage.displayScale||'100');let n=parseInt(scale);if(n>=80&&n<=150){localStorage.displayScale=n;document.documentElement.style.fontSize=(n/100)+'em';showToast('Display scale: '+n+'%')}else showToast('Enter a number from 80 to 150')}
 function cycleAccent(){let a=['#0078d7','#107c10','#8764b8','#d83b01','#e81123'];let i=(+(localStorage.accentIndex||0)+1)%a.length;localStorage.accentIndex=i;document.documentElement.style.setProperty('--accent',a[i]);document.querySelectorAll('.toggle.on').forEach(x=>x.style.background=a[i]);showToast('Accent color changed')}
-function taskbarSettings(){let pos=prompt('Taskbar position: bottom, top, left, right',localStorage.taskbarPos||'bottom');if(['bottom','top','left','right'].includes((pos||'').toLowerCase())){localStorage.taskbarPos=pos.toLowerCase();let t=document.querySelector('.taskbar');if(t){t.style.top=pos==='top'?'0':'';t.style.bottom=pos==='bottom'?'0':'';t.style.left=pos==='left'?'0':'';t.style.right=pos==='right'?'0':'';t.style.width=(pos==='left'||pos==='right')?'54px':'';t.style.height=(pos==='top'||pos==='bottom')?'54px':''}showToast('Taskbar moved to '+pos)}}
+function taskbarSettings(){let pos=prompt('Taskbar position: bottom, top, left, right',localStorage.taskbarPos||'bottom');if(['bottom','top','left','right'].includes((pos||'').toLowerCase())){localStorage.taskbarPos=pos.toLowerCase();let t=document.getElementById('taskbar');if(t){t.style.top=pos==='top'?'0':'';t.style.bottom=pos==='bottom'?'0':'';t.style.left=pos==='left'?'0':'';t.style.right=pos==='right'?'0':'';t.style.width=(pos==='left'||pos==='right')?'54px':'';t.style.height=(pos==='top'||pos==='bottom')?'54px':''}showToast('Taskbar moved to '+pos)}}
 function privacyAudit(){showToast('Privacy permissions reviewed');setTimeout(()=>alert('Permissions\n\nLocation: '+(localStorage.setting_location==='on'?'Allowed':'Blocked')+'\nCamera: '+(localStorage.setting_camera==='on'?'Allowed':'Blocked')+'\nMicrophone: '+(localStorage.setting_microphone==='on'?'Allowed':'Blocked')),50)}
 function networkUsage(){let n=(JSON.stringify(localStorage).length/1024).toFixed(1);showToast('Simulated network usage: '+n+' KB')}
 function appManager(){let custom=typeof getCustomApps==='function'?getCustomApps():[];alert('Installed apps: '+(apps.length+custom.length)+'\nBuilt-in: '+apps.length+'\nCustom: '+custom.length);}
@@ -287,6 +323,7 @@ function cycleWallpaper(){let b=['linear-gradient(135deg,#0078d7,#001f4d)','line
 function storageInfo(){let n=JSON.stringify(localStorage).length;showToast('Local data: '+n+' bytes')}
 function clearTempData(){['setting_temp','browserHistory'].forEach(k=>localStorage.removeItem(k));showToast('Temporary data cleaned')}
 function checkUpdates(){showToast('You are up to date')}
+function applyMotionSetting(){const on=localStorage.getItem('setting_animations')!=='off';document.body.classList.toggle('no-motion',!on)}
 function resetSettings(){if(confirm('Reset Windows Web settings?')){Object.keys(localStorage).filter(k=>k.startsWith('setting_')).forEach(k=>localStorage.removeItem(k));showToast('Settings reset');setPage(document.querySelector('.setnav button.active'),'system')}}
 function changePassword(){let p=prompt('Set a new password:');if(p){localStorage.webpw=p;showToast('Password changed')}}
 function calcAdd(x){calcExpr+=x;$('calcdisplay').textContent=calcExpr}
@@ -541,8 +578,91 @@ function enableAppDragging(){
  const rb=$('desktopRecycle');if(rb){rb.ondragover=e=>{e.preventDefault();e.dataTransfer.dropEffect='move';rb.style.background='#ffffff44'};rb.ondragleave=()=>rb.style.background='';rb.ondrop=e=>{e.preventDefault();e.stopPropagation();rb.style.background='';const id=e.dataTransfer.getData('text/plain');if(!id)return;if(id.startsWith('custom_'))moveToTrash(id);else {pins=pins.filter(x=>appId(x)!==appId(id));savePins();rebuildPins();const el=[...box.querySelectorAll('.deskicon')].find(x=>(x.getAttribute('ondblclick')||'').includes("'"+id+"'"));if(el)el.style.display='none';showToast((taskAppNames[appId(id)]||id)+' moved to Recycle Bin')}}}
  document.querySelectorAll('.taskapp[data-pin]').forEach(b=>{b.ondragover=e=>e.preventDefault();b.ondrop=e=>{e.preventDefault();const id=e.dataTransfer.getData('text/plain');if(id==='__desktop__')return;if(id.startsWith('custom_'))moveToTrash(id);else {pins=pins.filter(x=>x!==id);savePins();rebuildPins();showToast((taskAppNames[appId(id)]||id)+' moved to Recycle Bin')}}});
 }
+applyMotionSetting();
 function shellInit(){const custom=getCustomApps().map(x=>x.id);pins=pins.map(appId).filter(id=>apps.includes(id)||custom.includes(id));if(!pins.length)pins=['explorer','browser','settings','notes','calc','taskmgr','calendar','paint','media','terminal','spotify','geforcenow'];savePins();addSnapZones();rebuildPins();addBadges();startMenuApps();buildCustomApps();enableAppDragging()}
 setTimeout(shellInit,300);
+</script>
+
+<style id="ultimate-polish">
+:root{--accent:#0078d4;--ease:cubic-bezier(.2,.8,.2,1)}
+*{box-sizing:border-box}button,input,select,textarea{font:inherit}
+body{overflow:hidden;font-family:"Segoe UI",Arial,sans-serif}
+body:not(.no-motion) .window{animation:winIn .18s var(--ease);transition:transform .16s var(--ease),opacity .16s var(--ease),box-shadow .16s var(--ease)}
+@keyframes winIn{from{opacity:0;transform:scale(.985) translateY(5px)}to{opacity:1;transform:none}}
+body:not(.no-motion) #startMenu{animation:startIn .18s var(--ease)}
+@keyframes startIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+body:not(.no-motion) .tile,.taskapp,.tbbtn,.deskicon,.quick,.setting-card{transition:transform .14s var(--ease),filter .14s,background .14s,box-shadow .14s}
+.tile:hover{transform:translateY(-2px);filter:brightness(1.1)}.taskapp:hover,.tbbtn:hover{transform:translateY(-2px)}
+.deskicon{user-select:none;touch-action:none}.deskicon.dragging{opacity:.45;transform:scale(1.06);z-index:1000}.deskicon.drop-ok{outline:2px solid #4fc3ff;border-radius:5px}
+#desktopIcons{position:absolute;inset:0;pointer-events:none}.deskicon{pointer-events:auto;position:absolute;width:82px;text-align:center;cursor:default}
+#desktopRecycle{z-index:5}.window{resize:both;min-width:320px;min-height:180px}.titlebar{cursor:default;user-select:none}.titlebar .titletext{cursor:grab}.titlebar .titletext:active{cursor:grabbing}
+.window.focused{box-shadow:0 18px 55px #0009,0 0 0 1px #ffffff22}.window:not(.focused){filter:saturate(.94)}
+#taskbar{backdrop-filter:blur(18px) saturate(1.25);-webkit-backdrop-filter:blur(18px) saturate(1.25);box-shadow:0 -1px 0 #ffffff18,0 -8px 30px #0002}
+#startMenu,#searchPanel,#actionCenter,#clockPanel,#virtualView{backdrop-filter:blur(20px) saturate(1.15);-webkit-backdrop-filter:blur(20px) saturate(1.15)}
+.startlogo{display:inline-block;transition:transform .2s}.tbbtn:first-child:hover .startlogo{transform:rotate(-8deg) scale(1.12)}
+#toast{transition:opacity .18s,transform .18s}.toast-show{opacity:1!important;transform:translateY(0)!important}
+.snap-preview{position:fixed;z-index:24000;background:#1984ff2b;border:2px solid #4eb3ff;border-radius:6px;pointer-events:none;display:none}
+#desktopSelection{position:fixed;border:1px solid #58b6ff;background:#1683ff22;display:none;z-index:3;pointer-events:none}
+@media(max-width:800px){.search{width:140px}.window{max-width:calc(100vw - 8px);max-height:calc(100vh - 60px)}#startMenu{max-width:95vw}.deskicon{width:72px}}
+</style>
+<script>
+/* ===== ULTIMATE POLISH + WINDOWS-LIKE DESKTOP ENGINE ===== */
+(()=>{
+ const D=$('desktop'), I=$('desktopIcons'), BIN=$('desktopRecycle');
+ const POSKEY='win10.desktopPositions.v2';
+ const defaultPos={explorer:[12,18],browser:[12,108],settings:[12,198],notes:[12,288],calc:[12,378],taskmgr:[12,468],runbox:[105,18],recycle:[105,108],calendar:[105,198],paint:[105,288],media:[105,378],photos:[105,468],terminal:[198,18],weather:[198,108],spotify:[198,198],geforcenow:[198,288]};
+ function keyFor(el){return el.dataset.app||el.getAttribute('data-app')||''}
+ const savePos=()=>{let o={};I.querySelectorAll('.deskicon').forEach(e=>{let k=keyFor(e);if(k)o[k]=[parseInt(e.style.left)||0,parseInt(e.style.top)||0]});localStorage.setItem(POSKEY,JSON.stringify(o))};
+ const loadPos=()=>{let o={};try{o=JSON.parse(localStorage.getItem(POSKEY)||'{}')}catch(e){} I.querySelectorAll('.deskicon').forEach((e,n)=>{let k=keyFor(e);let p=o[k]||defaultPos[k]||[12+(n%8)*92,18+Math.floor(n/8)*90];e.style.left=p[0]+'px';e.style.top=p[1]+'px'})};
+ const appNames={explorer:'File Explorer',browser:'Browser',settings:'Settings',notes:'Notes',calc:'Calculator',taskmgr:'Task Manager',runbox:'Run',recycle:'Recycle Bin',calendar:'Calendar',paint:'Paint',media:'Media Player',photos:'Photos',terminal:'Terminal',weather:'Weather',spotify:'Spotify',geforcenow:'GeForce NOW'};
+ I.querySelectorAll('.deskicon').forEach((e,n)=>{
+   let txt=(e.textContent||'').trim().toLowerCase();let k=Object.keys(appNames).find(x=>txt.includes(appNames[x].toLowerCase()));
+   if(k)e.dataset.app=k;
+ });
+ loadPos();
+ let drag=null;
+ I.addEventListener('pointerdown',e=>{let el=e.target.closest('.deskicon');if(!el||e.button!==0)return;let r=el.getBoundingClientRect();drag={el,x:e.clientX,y:e.clientY,ox:e.clientX-r.left,oy:e.clientY-r.top,moved:false};el.setPointerCapture?.(e.pointerId);});
+ I.addEventListener('pointermove',e=>{if(!drag)return;let x=Math.max(4,Math.min(innerWidth-88,e.clientX-drag.ox)),y=Math.max(4,Math.min(innerHeight-65,e.clientY-drag.oy));if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>4)drag.moved=true;drag.el.style.left=x+'px';drag.el.style.top=y+'px';if(BIN&&drag.el!==BIN){let a=drag.el.getBoundingClientRect(),b=BIN.getBoundingClientRect(),hit=a.right>b.left&&a.left<b.right&&a.bottom>b.top&&a.top<b.bottom;BIN.classList.toggle('drop-ok',hit)}});
+ I.addEventListener('pointerup',e=>{if(!drag)return;let el=drag.el,moved=drag.moved;BIN?.classList.remove('drop-ok');if(moved){let a=el.getBoundingClientRect(),b=BIN?.getBoundingClientRect();if(BIN&&el!==BIN&&b&&a.right>b.left&&a.left<b.right&&a.bottom>b.top&&a.top<b.bottom){let id=keyFor(el);if(id!=='recycle'){if(typeof addToTrash==='function')addToTrash(id,appNames[id]||id,'desktop');el.style.display='none';savePos();showToast((appNames[id]||'App')+' moved to Recycle Bin');}}savePos();}drag=null;});
+ // Prevent accidental double-click after a drag.
+ let suppress=false;I.addEventListener('pointerup',e=>{});I.addEventListener('dblclick',e=>{let el=e.target.closest('.deskicon');if(!el)return;openApp(keyFor(el))});
+ // Make windows draggable from titlebar and focus them naturally.
+ document.querySelectorAll('.window').forEach(w=>{
+   w.addEventListener('pointerdown',()=>{document.querySelectorAll('.window').forEach(x=>x.classList.remove('focused'));w.classList.add('focused');w.style.zIndex=++z;updateTaskStates?.()},{capture:true});
+   let bar=w.querySelector('.titlebar');if(!bar)return;
+   let md=null;
+   bar.addEventListener('dblclick',e=>{if(e.target.closest('button'))return;if(typeof maximize==='function')maximize(w.id)});
+   bar.addEventListener('pointerdown',e=>{if(e.target.closest('button')||w.classList.contains('maxed'))return;let r=w.getBoundingClientRect();md={x:e.clientX,y:e.clientY,l:r.left,t:r.top};bar.setPointerCapture?.(e.pointerId);});
+   bar.addEventListener('pointermove',e=>{if(!md)return;w.style.left=Math.max(0,Math.min(innerWidth-w.offsetWidth,e.clientX-md.x+md.l))+'px';w.style.top=Math.max(0,Math.min(innerHeight-48,w.offsetHeight?e.clientY-md.y+md.t:0))+'px'});
+   bar.addEventListener('pointerup',()=>{if(md){md=null;try{localStorage.setItem('winpos:'+w.id,JSON.stringify({left:w.offsetLeft,top:w.offsetTop}))}catch(e){}}});
+   try{let p=JSON.parse(localStorage.getItem('winpos:'+w.id)||'null');if(p&&!w.classList.contains('maxed')){w.style.left=p.left+'px';w.style.top=p.top+'px'}}catch(e){}
+ });
+ // Start menu gets the two flagship apps.
+ let tg=document.querySelector('.tilegrid');if(tg){[['🟢','Spotify','spotify'],['🟩','GeForce NOW','geforcenow']].forEach(([ic,n,id])=>{if(!tg.querySelector('[data-start-app="'+id+'"]')){let b=document.createElement('div');b.className='tile';b.dataset.startApp=id;b.innerHTML=ic+'<br>'+n;b.onclick=()=>{openApp(id);toggleStart()};tg.appendChild(b)}})}
+ // Add richer search results.
+ const oldLive=window.liveSearch;window.liveSearch=function(v){if(!v){oldLive(v);return}let q=v.toLowerCase(),hits=Object.entries(appNames).filter(([id,n])=>n.toLowerCase().includes(q)||id.includes(q));let box=$('searchResults');box.innerHTML=hits.length?hits.map(([id,n])=>`<div class="searchResult" onclick="closeSearchPanel();openApp('${id}')">▣ ${n}<small style="display:block;opacity:.55;margin-left:20px">App</small></div>`).join(''):'<div style="padding:15px;color:#bbb">No results found.</div>';};
+ // Keyboard shortcuts.
+ document.addEventListener('keydown',e=>{
+   if(e.key==='Escape'){['startMenu','searchPanel','actionCenter','clockPanel','virtualView','taskbarContext','contextMenu'].forEach(id=>{let x=$(id);if(x)x.style.display='none'})}
+   if(e.ctrlKey&&e.shiftKey&&e.key.toLowerCase()==='escape'){e.preventDefault();openApp('taskmgr')}
+   if(e.metaKey&&e.key.toLowerCase()==='e'){e.preventDefault();openApp('explorer')}
+   if(e.metaKey&&e.key.toLowerCase()==='i'){e.preventDefault();openApp('settings')}
+   if(e.metaKey&&e.key.toLowerCase()==='r'){e.preventDefault();openApp('runbox')}
+   if(e.metaKey&&e.key.toLowerCase()==='d'){e.preventDefault();showDesktop()}
+ });
+ // Right-click desktop: richer menu and coordinates.
+ D.addEventListener('contextmenu',e=>{if(e.target.closest('.window,#taskbar,#startMenu'))return;e.preventDefault();let m=$('contextMenu');if(!m)return;m.style.display='block';m.style.left=Math.min(e.clientX,innerWidth-215)+'px';m.style.top=Math.min(e.clientY,innerHeight-180)+'px'});
+ document.addEventListener('click',e=>{if(!e.target.closest('#contextMenu')){let m=$('contextMenu');if(m)m.style.display='none'}});
+ // Accent/theme persistence.
+ let accent=localStorage.getItem('win10.accent');if(accent)document.documentElement.style.setProperty('--accent',accent);
+ window.setAccent=function(c){document.documentElement.style.setProperty('--accent',c);localStorage.setItem('win10.accent',c);showToast('Accent color updated')};
+ // Smooth toast state.
+ let oldToast=window.showToast;window.showToast=function(msg){let t=$('toast');if(t){t.textContent=msg;t.style.display='block';t.classList.add('toast-show');clearTimeout(window.showToast.t);window.showToast.t=setTimeout(()=>{t.classList.remove('toast-show');setTimeout(()=>t.style.display='none',180)},1800)}else oldToast(msg)};
+ // Re-apply after layout changes.
+ window.addEventListener('resize',()=>{document.querySelectorAll('.window:not(.maxed)').forEach(w=>{if(w.offsetLeft+w.offsetWidth>innerWidth)w.style.left=Math.max(0,innerWidth-w.offsetWidth-8)+'px';if(w.offsetTop+w.offsetHeight>innerHeight-45)w.style.top=Math.max(0,innerHeight-w.offsetHeight-50)+'px'})});
+ // Expose desktop reset for the context menu / settings.
+ window.resetDesktopLayout=function(){localStorage.removeItem(POSKEY);loadPos();showToast('Desktop layout reset')};
+})();
 </script>
 </body>
 </html>
