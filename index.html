@@ -50,16 +50,16 @@
         </nav>
         <main class="content-view">
             <div class="grid">
-                <div class="card" data-cat="DASH" onclick="launch('https://www.crazygames.com')">
+                <div class="card" data-cat="DASH" onclick="launchBlank('https://crazygames.com', 'CrazyGames')">
                     <div class="thumb">CG</div><div class="info"><div class="title">CrazyGames</div><div class="tag">Dashboard</div></div>
                 </div>
-                <div class="card" data-cat="DASH" onclick="launch('https://poki.com')">
+                <div class="card" data-cat="DASH" onclick="launchBlank('https://poki.com', 'Poki Hub')">
                     <div class="thumb">PK</div><div class="info"><div class="title">Poki Hub</div><div class="tag">Dashboard</div></div>
                 </div>
-                <div class="card" data-cat="CLOUD" onclick="launch('https://geforcenow.com')">
+                <div class="card" data-cat="CLOUD" onclick="launchBlank('https://geforcenow.com', 'GeForce NOW')">
                     <div class="thumb">GF</div><div class="info"><div class="title">GeForce NOW</div><div class="tag">Cloud Play</div></div>
                 </div>
-                <div class="card" data-cat="EMU" onclick="launch('https://retrogames.cc')">
+                <div class="card" data-cat="EMU" onclick="launchBlank('https://retrogames.cc', 'Retro Arcade')">
                     <div class="thumb">RA</div><div class="info"><div class="title">Retro Arcade</div><div class="tag">Emulation</div></div>
                 </div>
             </div>
@@ -84,8 +84,24 @@
                 cards[i].style.display = (cat === 'ALL' || c === cat) ? "" : "none";
             }
         }
-        function launch(url) {
-            window.open(url, '_blank', 'noopener,noreferrer');
+        
+        // The blank tab wrapper engine
+        function launchBlank(url, name) {
+            const tab = window.open('about:blank', '_blank');
+            if (tab) {
+                tab.document.title = name;
+                const iframe = tab.document.createElement('iframe');
+                iframe.src = url;
+                iframe.style.position = 'fixed';
+                iframe.style.top = '0';
+                iframe.style.left = '0';
+                iframe.style.width = '100vw';
+                iframe.style.height = '100vh';
+                iframe.style.border = 'none';
+                iframe.style.backgroundColor = '#000';
+                tab.document.body.appendChild(iframe);
+                tab.document.body.style.margin = '0';
+            }
         }
     </script>
 </body>
