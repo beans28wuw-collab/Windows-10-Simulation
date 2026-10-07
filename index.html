@@ -2,805 +2,456 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Windows 11 Gaming Edition</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Windows 10 Web Desktop</title>
 <style>
-*{box-sizing:border-box}
-:root{--accent:#0078d7;--glass:rgba(32,32,32,.96);--text:#f7f9fc}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:"Segoe UI",Arial,sans-serif;background:#06111e;color:var(--text)}
-button,input,textarea{font:inherit}
-button{cursor:pointer}
-#desktop{position:fixed;inset:0 0 40px;background:radial-gradient(circle at 65% 40%,#176ca5 0,transparent 32%),radial-gradient(circle at 25% 75%,#33246d 0,transparent 30%),linear-gradient(135deg,#020811,#082d50 55%,#030a14);overflow:hidden}
-#desktop:before{content:"";position:absolute;inset:-20%;background:linear-gradient(60deg,transparent 45%,rgba(80,190,255,.11) 49%,rgba(80,190,255,.04) 52%,transparent 57%);transform:rotate(-10deg)}
-.desktop-icons{position:absolute;z-index:2;left:8px;top:8px;width:90px;display:flex;flex-direction:column;gap:3px}
-.desktop-icon{height:82px;border:1px solid transparent;border-radius:7px;text-align:center;padding:5px;font-size:12px;text-shadow:0 2px 4px #000}
-.desktop-icon:hover{background:#ffffff16;border-color:#ffffff12}
-.desktop-icon .ico{display:block;font-size:34px;line-height:45px}
-#taskbar{position:fixed;z-index:900000;left:0;right:0;bottom:0;height:52px;background:#1f1f1f;display:flex;align-items:center;padding:0 6px;border-top:1px solid #333}
-.task-center{margin:auto;display:flex;gap:2px}
-.taskbtn{height:38px;min-width:42px;border:0;background:transparent;color:#fff;border-radius:7px}
-.taskbtn:hover,.taskbtn.active{background:#ffffff14}
-.taskbtn.active{box-shadow:inset 0 -2px var(--accent)}
-#searchBtn{width:210px;text-align:left;padding-left:14px}
-#clock{position:absolute;right:6px;width:78px;text-align:center;font-size:11px;line-height:14px}
-.panel{position:fixed;z-index:850000;display:none;background:var(--glass);backdrop-filter:blur(25px);border:1px solid #ffffff18;border-radius:12px;box-shadow:0 20px 70px #000b}
-.panel.open{display:block}
-#start{left:50%;bottom:59px;transform:translateX(-50%);width:690px;height:610px;padding:20px}
-.start-search,.searchInput{width:100%;height:43px;border-radius:8px;border:1px solid #555;background:#10141b;color:#fff;padding:0 13px;outline:none}
-.start-top{display:flex;justify-content:space-between;margin:20px 3px 10px}
-.start-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.start-app{height:94px;background:#ffffff0b;color:#fff;border:0;border-radius:8px;text-align:left;padding:11px}
-.start-app:hover{background:#49bfff22}
-.start-app span{display:block;font-size:29px;margin-bottom:7px}
-.start-footer{position:absolute;bottom:16px;left:20px;right:20px;border-top:1px solid #333;padding-top:10px;display:flex;justify-content:space-between;align-items:center}
-#searchPanel{left:50%;bottom:59px;transform:translateX(-50%);width:650px;height:500px;padding:18px}
-.searchResults{height:420px;overflow:auto;margin-top:10px}
-.searchResult{padding:13px;border-radius:7px;display:flex;gap:12px}
-.searchResult:hover{background:#ffffff0e}
-#actionCenter{right:10px;bottom:59px;width:370px;height:420px;padding:18px}
-.quickgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:15px}
-.quickgrid button{height:68px;background:#ffffff0c;color:#fff;border:1px solid #ffffff16;border-radius:8px}
-.window{position:absolute;width:760px;height:500px;display:none;overflow:hidden;background:#f7f8fa;color:#222;border:1px solid #555;border-radius:9px;box-shadow:0 20px 70px #000b;resize:both;min-width:320px;min-height:230px}
-.window.show{display:block}
-.window.max{left:0!important;top:0!important;width:100%!important;height:100%!important;border-radius:0;resize:none}
-.titlebar{height:38px;background:#f2f3f5;display:flex;align-items:center;color:#222;user-select:none}
-.titleIcon{width:42px;text-align:center}.title{flex:1;font-size:13px;cursor:move}.controls{height:38px;display:flex}.control{width:46px;height:38px;border:0;background:transparent}.control:hover{background:#ddd}.control.close:hover{background:#e81123;color:#fff}
-.body{position:absolute;top:38px;left:0;right:0;bottom:0;overflow:hidden;background:#fff}
-.toolbar{height:45px;background:#f1f2f4;border-bottom:1px solid #ddd;display:flex;gap:5px;align-items:center;padding:5px 8px}.toolbar button{border:0;background:transparent;padding:7px}.toolbar button:hover{background:#ddd}.address{flex:1;height:32px;border:1px solid #aaa;border-radius:6px;padding:0 9px;outline:none}
-.explorer{height:100%;display:flex;flex-direction:column}.explorer-main{flex:1;display:flex}.side{width:185px;background:#f1f2f4;border-right:1px solid #ddd;padding:8px}.side div{padding:9px;border-radius:5px;font-size:13px}.side div:hover{background:#ddd}.files{flex:1;display:grid;grid-template-columns:repeat(auto-fill,105px);grid-auto-rows:95px;gap:6px;padding:15px;overflow:auto}.file{display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid transparent;border-radius:5px;font-size:12px}.file:hover{background:#e4f0fb;border-color:#acd2ed}.fileIcon{font-size:36px}
-.notepad{width:100%;height:100%;border:0;outline:0;resize:none;padding:12px;font:14px Consolas,monospace}
-.calc{height:100%;background:#eee;padding:14px}.calcDisplay{height:70px;background:#fff;border:1px solid #ccc;display:flex;align-items:center;justify-content:flex-end;padding:10px;font-size:30px}.calcGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:10px}.calcGrid button{height:55px;border:1px solid #ccc;background:#fafafa}.calcGrid button:hover{background:#ddd}
-.settings{height:100%;display:flex}.settingsSide{width:220px;background:#f1f2f4;padding:18px;border-right:1px solid #ddd;overflow:auto}.settingsSide h2{font-weight:400}.settingTab{padding:10px;border-radius:6px;margin:2px 0}.settingTab:hover,.settingTab.active{background:#dbeeff}.settingsContent{flex:1;padding:25px;overflow:auto;color:#222}.card{border:1px solid #ddd;border-radius:7px;padding:15px;margin-bottom:12px}.card button{padding:8px 12px;border:1px solid #aaa;border-radius:5px;background:#eee}
-.browser{height:100%;display:flex;flex-direction:column}.browser-tabs{height:37px;background:#20242b;display:flex;align-items:end;padding-left:5px}.browser-tab{height:31px;min-width:125px;background:#f5f5f5;color:#222;border-radius:8px 8px 0 0;padding:7px 15px}.browser-nav{height:45px;background:#f1f2f4;display:flex;align-items:center;gap:4px;padding:5px}.browser-nav button{border:0;background:transparent;width:34px;height:32px;border-radius:5px}.browser-nav button:hover{background:#ddd}.browser-content{flex:1;background:#fff}.browser-content iframe{width:100%;height:100%;border:0}.browser-home{height:100%;display:flex;flex-direction:column;align-items:center;padding-top:55px}.browser-home h1{font-size:44px;color:#1680c8}.browser-home input{width:65%;height:44px;border:1px solid #aaa;border-radius:22px;padding:0 17px}
-.gaming{height:100%;overflow:auto;background:linear-gradient(135deg,#0b101a,#111d35);color:#fff;padding:22px}.gamehero{padding:20px;border:1px solid #29364d;border-radius:14px;background:#152746;margin-bottom:17px}.gamehero h1{margin:0 0 5px}.gamegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.gamecard{min-height:170px;border:1px solid #29364d;border-radius:12px;background:#101724;padding:15px;display:flex;flex-direction:column;justify-content:space-between}.gamecard:hover{border-color:var(--accent)}.gameemoji{font-size:43px}.playbtn{border:0;border-radius:7px;background:var(--accent);padding:9px;font-weight:700}
-.game-screen{height:100%;display:flex;flex-direction:column;background:#080b10;color:#fff}.game-head{height:45px;padding:11px 14px;background:#121823;display:flex;justify-content:space-between}.game-area{flex:1;display:flex;align-items:center;justify-content:center;overflow:auto}.game-ui{text-align:center;padding:8px}.game-ui button{padding:7px 13px;margin:3px}
-.proxy{height:100%;padding:30px;background:#f7f7f7;color:#222;overflow:auto}.proxybox{max-width:620px;margin:auto;border:1px solid #ddd;border-radius:12px;padding:22px;background:#fff}.proxybox input{width:100%;height:38px;margin:5px 0 12px;border:1px solid #aaa;border-radius:6px;padding:0 9px}.proxybox button{padding:9px 15px;border:0;border-radius:6px;background:#1680ca;color:#fff;margin-right:5px}.proxyStatus{padding:10px;border-radius:7px;background:#eee;margin-bottom:15px}.proxyStatus.ok{background:#def4e4;color:#145b2b}
-.paint{height:100%;display:flex;flex-direction:column}.paintTools{height:50px;background:#eee;display:flex;gap:6px;align-items:center;padding:5px}.paintTools button{height:36px;border:1px solid #ccc;background:#fff}.paintCanvasWrap{flex:1;background:#ddd;display:flex;align-items:center;justify-content:center}.paintCanvasWrap canvas{background:#fff;box-shadow:0 0 5px #888;cursor:crosshair}
-#cmdOutput{height:calc(100% - 35px);overflow:auto;padding:10px;white-space:pre-wrap}.cmdInput{position:absolute;left:10px;right:10px;bottom:7px;height:25px;background:#050505;color:#fff;border:0;outline:0;font-family:Consolas,monospace}
-#notification{position:fixed;right:15px;bottom:68px;width:330px;background:#20242c;color:#fff;padding:15px;border-radius:9px;display:none;z-index:9999999;box-shadow:0 8px 30px #0009}
-#notification b{display:block;margin-bottom:5px}
-#context{position:fixed;width:235px;background:#f5f5f5;color:#222;border:1px solid #999;box-shadow:0 8px 30px #0007;border-radius:7px;display:none;z-index:9999999;padding:5px}.contextItem{height:36px;padding:0 12px;display:flex;align-items:center;border-radius:4px}.contextItem:hover{background:#dcecff}
-#lockScreen,#loginScreen{position:fixed;inset:0;z-index:10000000;display:none;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 35%,rgba(35,130,220,.45),transparent 35%),linear-gradient(135deg,#020914,#07345d,#020b17);color:#fff;text-align:center}
-#loginScreen{z-index:10000001}
-.loginBox{width:360px;padding:35px;background:#141922dc;backdrop-filter:blur(30px);border:1px solid #ffffff20;border-radius:18px;box-shadow:0 30px 100px #000b}.loginLogo,.bootLogo{width:80px;height:80px;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:54px;border-radius:18px;background:linear-gradient(135deg,#1689d5,#735cff);box-shadow:0 10px 35px #1689d566}.loginUser{font-size:25px}.loginEdition{color:#aeb6c5;font-size:13px;margin:5px 0 25px}.loginBox input{width:100%;height:46px;padding:0 15px;text-align:center;color:#fff;background:#0006;border:1px solid #ffffff33;border-radius:8px;outline:0}.loginBox input:focus{border-color:#4cc2ff;box-shadow:0 0 0 2px #4cc2ff22}.loginButton{width:100%;height:44px;margin-top:12px;border:0;border-radius:8px;background:#1689d5;color:#fff;font-weight:600}.loginButton:hover{background:#279de9}#loginError{display:none;color:#ff6b6b;font-size:13px;margin-top:12px}.loginHint{margin-top:25px;color:#858e9d;font-size:12px}.bootLogo{width:100px;height:100px;font-size:70px}.bootText{margin-top:24px}.bootPulse{animation:pulse 1.5s infinite alternate}@keyframes pulse{to{transform:scale(1.04);opacity:.75}}
-@media(max-width:700px){#searchBtn{display:none}#start{left:5px;right:5px;transform:none;width:auto;height:calc(100% - 70px)}#searchPanel{left:5px;right:5px;transform:none;width:auto}.start-grid{grid-template-columns:repeat(2,1fr)}.window{width:94vw;height:75vh}.settingsSide{width:155px}}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:"Segoe UI",Arial,sans-serif;background:#0879b8;color:#fff}
+button,input{font:inherit}button{border:0;color:inherit}
+#boot{position:fixed;inset:0;background:#0078d7;display:flex;align-items:center;justify-content:center;z-index:99999}
+.bootbox{text-align:center}.winlogo{width:76px;height:76px;margin:auto auto 30px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:4px;transform:skewY(-3deg)}.winlogo i{background:#fff}.bootbox .spinner{width:28px;height:28px;border:3px solid #ffffff55;border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite;margin:auto}@keyframes spin{to{transform:rotate(360deg)}}
+#login{position:fixed;inset:0;background:linear-gradient(#087bc0,#0065a3);z-index:99998;display:none;align-items:center;justify-content:center;text-align:center}.avatar{width:110px;height:110px;border-radius:50%;background:#eee;color:#777;display:flex;align-items:center;justify-content:center;font-size:54px;margin:auto}.loginbox{width:min(350px,90vw)}.loginbox h2{font-weight:400}.loginbox input{width:100%;padding:13px;border:1px solid #aaa;background:#fff;color:#222}.loginbox button{margin-top:10px;padding:11px 25px;background:#1677b9;cursor:pointer}.loginerr{height:22px;color:#ffd7d7;font-size:13px}
+#desktop{position:fixed;inset:0;background:linear-gradient(135deg,#086fa9,#155ca1 50%,#092d72);background-size:cover}
+.ctx{padding:9px 14px;cursor:pointer}.ctx:hover{background:#e5f1fb}
 
-/* Windows 10 Gaming additions */
-.win10-start{border-radius:0!important;left:0!important;bottom:52px!important;transform:none!important;width:620px!important;height:570px!important;background:#252525!important}
-.tile{background:#0078d7;color:#fff;border-radius:0;padding:12px;min-height:78px}
-.tile:hover{filter:brightness(1.12)}
-.gamingnav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.gamingnav button{background:#202b3a;color:#fff;border:1px solid #35465d;padding:9px 12px;border-radius:4px}
-.gamingnav button:hover{background:#0078d7}
-.hubpage{display:none}.hubpage.active{display:block}
-.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}
-.stat{background:#182235;border:1px solid #30415b;border-radius:6px;padding:14px}
-.stat b{display:block;font-size:24px;color:#66c7ff}
-.progress{height:8px;background:#303947;border-radius:5px;overflow:hidden;margin-top:8px}.progress i{display:block;height:100%;background:#0078d7}
-.storegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
-.storecard{background:#172132;border:1px solid #33455e;padding:12px;border-radius:6px}
-.storecard .cover{height:80px;display:flex;align-items:center;justify-content:center;font-size:40px;background:#253650;margin:-12px -12px 10px}
-.badge{display:inline-block;background:#0078d7;color:#fff;padding:3px 7px;border-radius:3px;font-size:11px}
-.profile{display:flex;gap:16px;align-items:center;background:#172132;padding:16px;border-radius:7px;margin-bottom:12px}
-.avatar{width:70px;height:70px;border-radius:50%;background:#0078d7;display:flex;align-items:center;justify-content:center;font-size:34px}
-.friend{display:flex;align-items:center;gap:10px;padding:10px;border-bottom:1px solid #29364d}
-.dot{width:9px;height:9px;border-radius:50%;background:#39d353}.dot.off{background:#777}
-@media(max-width:700px){.win10-start{width:calc(100vw - 5px)!important;height:calc(100vh - 45px)!important}}
+.wallpaper-glow{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,#ffffff12,transparent 35%)}
+#desktopIcons{position:absolute;left:8px;top:8px;bottom:55px;display:flex;flex-direction:column;gap:7px}.deskicon{width:76px;text-align:center;padding:5px 3px;border-radius:3px;cursor:pointer;font-size:12px;text-shadow:1px 1px 2px #000}.deskicon:hover{background:#ffffff22}.ico{font-size:30px;height:36px}
+#taskbar{position:absolute;left:0;right:0;bottom:0;height:48px;background:#171717eF;display:flex;align-items:center;z-index:9000}.tbbtn{height:48px;min-width:48px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer}.tbbtn:hover{background:#ffffff18}.startlogo{font-size:24px}.search{height:36px;width:210px;background:#fff;color:#333;border:0;margin:0 5px;padding:0 10px}.taskapps{display:flex;height:100%;align-items:center;gap:2px}.taskapp{height:44px;min-width:46px;background:transparent;cursor:pointer;font-size:22px}.taskapp:hover,.taskapp.active{background:#ffffff16;border-bottom:2px solid #2aa9ff}.tray{margin-left:auto;height:100%;display:flex;align-items:center}.tray button{height:100%;padding:0 9px;background:transparent;cursor:pointer}.clock{font-size:12px;min-width:75px;text-align:center}
+#startMenu{position:absolute;bottom:48px;left:0;width:min(640px,100vw);height:min(570px,calc(100vh - 48px));background:#202020f5;display:none;z-index:8999;box-shadow:0 0 18px #0008}.start-inner{display:flex;height:100%}.start-left{width:65px;display:flex;flex-direction:column;justify-content:flex-end}.start-left button{height:52px;background:transparent;cursor:pointer;font-size:21px}.start-left button:hover{background:#ffffff16}.tiles{flex:1;padding:16px;overflow:auto}.tiles h3{font-weight:400;font-size:14px}.tilegrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.tile{min-height:80px;background:#0879c9;padding:9px;text-align:left;cursor:pointer}.tile:hover{filter:brightness(1.15)}.tile.wide{grid-column:span 2}
+.window{position:absolute;min-width:300px;min-height:180px;width:650px;height:430px;background:#f3f3f3;color:#222;box-shadow:0 8px 35px #0009;border:1px solid #555;display:none;z-index:100}.titlebar{height:38px;background:#fff;color:#333;display:flex;align-items:center;padding-left:12px;user-select:none}.titletext{flex:1;font-size:13px}.wincontrols{display:flex;height:100%}.wincontrols button{width:45px;background:transparent;color:#333;cursor:pointer}.wincontrols button:hover{background:#ddd}.wincontrols .close:hover{background:#e81123;color:#fff}.content{height:calc(100% - 38px);overflow:auto}.maxed{left:0!important;top:0!important;width:100%!important;height:calc(100% - 48px)!important}
+.explorer{height:100%;display:flex;flex-direction:column}.explorerbar{height:42px;background:#fafafa;border-bottom:1px solid #ddd;display:flex;align-items:center;gap:5px;padding:5px}.explorerbar button{background:transparent;color:#444;padding:7px;cursor:pointer}.path{flex:1;background:#fff;border:1px solid #ccc;padding:6px;color:#555}.explorerbody{display:flex;flex:1}.side{width:180px;border-right:1px solid #ddd;padding:8px;background:#f8f8f8}.side div{padding:8px;cursor:pointer}.side div:hover{background:#e5f1fb}.files{padding:15px;display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));align-content:start;gap:10px;flex:1}.file{padding:10px;text-align:center;cursor:pointer;border-radius:3px}.file:hover{background:#e5f1fb}.file .fi{font-size:38px}
+.browser{height:100%;display:flex;flex-direction:column}.browserbar{height:45px;background:#eee;display:flex;gap:5px;padding:6px}.browserbar button{color:#333;background:transparent;padding:5px;cursor:pointer}.url{flex:1;border:1px solid #aaa;padding:7px;color:#222}.webpage{flex:1;background:#fff;color:#222;padding:25px;overflow:auto}.webpage h1{color:#0078d4;font-weight:400}.webpage .card{border:1px solid #ddd;padding:15px;margin:12px 0}.webpage a{color:#06c;cursor:pointer}
+.settings{height:100%;display:flex;background:#fff}.setnav{width:180px;background:#f3f3f3;border-right:1px solid #ddd;padding:10px}.setnav button{display:block;width:100%;text-align:left;color:#333;background:transparent;padding:11px;cursor:pointer}.setnav button.active,.setnav button:hover{background:#ddd}.setpage{padding:25px;color:#222;flex:1;overflow:auto}.setting-card{border:1px solid #ddd;padding:15px;margin:12px 0}.toggle{float:right;width:44px;height:24px;border-radius:12px;background:#888;cursor:pointer}.toggle.on{background:#0078d7}.toggle:after{content:"";display:block;width:20px;height:20px;margin:2px;background:#fff;border-radius:50%;transition:.2s}.toggle.on:after{margin-left:22px}
+.notes{height:100%;display:flex;flex-direction:column}.notes textarea{flex:1;border:0;resize:none;padding:15px;color:#222;font-size:15px;outline:0}.notesbar{padding:6px;background:#eee;color:#333;font-size:12px}
+.calc{height:100%;background:#202020;padding:12px;display:flex;flex-direction:column}.calcdisplay{height:65px;background:#202020;color:#fff;text-align:right;font-size:34px;padding:12px;overflow:hidden}.calckeys{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;flex:1}.calckeys button{background:#333;color:#fff;font-size:18px;cursor:pointer}.calckeys button:hover{background:#444}.calckeys .op{background:#555}
+.toast{position:absolute;right:15px;bottom:62px;background:#222;color:#fff;padding:13px 17px;box-shadow:0 3px 15px #0008;display:none;z-index:10000}
+@media(max-width:700px){.search{width:130px}.window{width:94vw;height:72vh}.side{width:125px}.setnav{width:125px}.tilegrid{grid-template-columns:repeat(3,1fr)}}
 
-</style>
+#actionCenter{position:absolute;right:0;bottom:48px;width:min(360px,100vw);height:430px;background:#202020f5;z-index:15000;display:none;box-shadow:0 0 22px #0009;padding:14px}
+.ac-title{font-size:18px;margin-bottom:12px}.quickgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.quick{background:#333;padding:14px;cursor:pointer}.quick:hover{background:#444}.quick.on{background:#0879c9}.notification{background:#333;padding:12px;margin-top:10px}.volume{width:100%}
+#virtualView{position:absolute;left:50%;bottom:48px;transform:translateX(-50%);background:#202020f5;padding:10px;z-index:15000;display:none;box-shadow:0 0 18px #0009}.deskThumb{display:inline-block;width:150px;height:85px;margin:5px;background:#145d91;padding:8px;cursor:pointer;border:2px solid transparent}.deskThumb.active{border-color:#fff}
+.dialogOverlay{position:absolute;inset:0;background:#0008;z-index:16000;display:none;align-items:center;justify-content:center}.dialog{width:min(420px,92vw);background:#f3f3f3;color:#222;padding:20px;box-shadow:0 5px 25px #000}.dialog input{width:100%;padding:9px;border:1px solid #999;color:#222}.dialog button{padding:8px 18px;margin-left:7px;color:#222;cursor:pointer}
 
-<style id="win10-taskbar">
-#taskbar{
-  height:40px!important;
-  min-height:40px!important;
-  bottom:0!important;
-  left:0!important;
-  right:0!important;
-  border-radius:0!important;
-  background:#202020f5!important;
-  backdrop-filter:blur(12px);
-  display:flex!important;
-  align-items:center;
-  padding:0 6px!important;
-  gap:2px!important;
-  z-index:9999!important;
-}
-#taskbar .task-left,#taskbar .task-center{display:flex;align-items:center;gap:2px}
-#taskbar .task-center{margin:0!important;flex:0 0 auto!important}
-#taskbar .task-right{margin-left:auto!important}
-#taskbar button,.task-btn{
-  height:36px!important;
-  min-width:38px;
-  border:0!important;
-  border-radius:2px!important;
-  background:transparent!important;
-  color:#fff!important;
-  padding:0 9px!important;
-  font-size:14px!important;
-  transition:background .12s ease,transform .08s ease;
-}
-#taskbar button:hover,.task-btn:hover{background:#ffffff18!important}
-#taskbar button:active,.task-btn:active{transform:scale(.96)}
-.task-icon{font-size:18px;line-height:1}
-.task-label{margin-left:6px;vertical-align:middle}
-.win10-start-btn{font-size:20px!important;width:42px!important;padding:0!important}
-.task-search{
-  width:210px!important;height:32px!important;margin:0 4px!important;
-  border:0!important;border-radius:0!important;
-  background:#fff!important;color:#222!important;padding:0 12px!important;
-}
-.task-app.active{background:#ffffff20!important;border-bottom:2px solid #4cc2ff!important}
-#desktop{bottom:40px!important}
-</style>
+#taskbar{user-select:none}
+#taskbar .taskapp{position:relative}
+#taskbar .taskapp.active:after{content:"";position:absolute;bottom:0;left:10px;right:10px;height:3px;background:#4cc2ff}
+#taskbar .taskapp.minimized{opacity:.55}
+#taskbarContext{position:absolute;display:none;z-index:25000;background:#fff;color:#222;min-width:210px;border:1px solid #aaa;box-shadow:0 5px 18px #0007;padding:4px 0;font-size:13px}
+#taskbarContext div{padding:9px 14px;cursor:pointer}
+#taskbarContext div:hover{background:#e5f1fb}
+#clockPanel{position:absolute;right:0;bottom:48px;width:310px;background:#202020f5;color:#fff;display:none;z-index:18000;padding:18px;box-shadow:0 0 20px #0009}
+#clockBig{font-size:38px}.calmini{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:12px}.calmini div{text-align:center;padding:7px;font-size:12px}.calmini .today{background:#0078d7}
+#searchPanel{position:absolute;left:0;bottom:48px;width:min(430px,100vw);height:500px;background:#202020f5;display:none;z-index:18000;box-shadow:0 0 20px #0009;padding:16px}
+#searchPanel input{width:100%;padding:11px;border:0;color:#222}.searchResult{padding:12px;margin-top:5px;background:#333;cursor:pointer}.searchResult:hover{background:#444}
+#showDesktop{margin-left:2px;width:8px;height:48px;border-left:1px solid #555;background:transparent;cursor:pointer}
+#showDesktop:hover{background:#ffffff18}
 
-<style>
-.window .titlebar .win-icon{display:inline-flex;width:24px;height:24px;align-items:center;justify-content:center;margin-right:7px;font-size:16px}
-.window .titlebar{user-select:none}
-#taskbar .task-clock{min-width:68px;text-align:center;font-size:12px;color:#fff;padding:0 5px}
-.desktop-icon{transition:transform .12s ease,background .12s ease}
-.desktop-icon:hover{transform:translateY(-1px);background:#ffffff18}
-</style>
-
-<style>
-.window,.panel,.desktop-icon,#taskbar button{will-change:transform,opacity}
-.window{transition:opacity .14s ease,transform .14s ease!important}
-*{scrollbar-width:thin}
-button,input,textarea,select{font-family:inherit}
+/* ===== NEXT-LEVEL WINDOWS FEATURES ===== */
+.jumpmenu,.thumbpreview,.trayoverflow{position:fixed;z-index:30000;background:#202020f7;color:#fff;border:1px solid #555;box-shadow:0 8px 28px #0009;border-radius:2px}
+.jumpmenu{width:270px;padding:6px}.jumpmenu .jmhead{padding:10px;border-bottom:1px solid #444;font-weight:600}.jumpmenu button,.trayoverflow button{display:block;width:100%;padding:9px 10px;border:0;background:transparent;color:#fff;text-align:left}.jumpmenu button:hover,.trayoverflow button:hover{background:#0866ad}
+.thumbpreview{display:flex;gap:6px;padding:7px;max-width:520px}.thumb{width:145px;height:95px;background:#111;border:1px solid #555;overflow:hidden;position:relative;cursor:pointer}.thumb .mini{transform:scale(.18);transform-origin:top left;width:550px;height:360px;pointer-events:none}.thumb label{position:absolute;left:0;right:0;bottom:0;background:#000b;padding:4px;font-size:11px}
+.tb.dragging{opacity:.45}.tb.dropTarget{outline:2px solid #39f}.badge{position:absolute;top:4px;right:5px;background:#e81123;color:#fff;border-radius:10px;min-width:16px;height:16px;line-height:16px;font-size:10px;padding:0 4px}.tb{position:relative}
+.startapps{margin-top:14px;border-top:1px solid #444;padding-top:12px}.startapps input{width:100%;background:#333;color:#fff;border:1px solid #555;padding:9px}.applist{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:7px}.applist button{border:0;background:transparent;color:#fff;text-align:left;padding:8px}.applist button:hover{background:#333}
+.trayoverflow{width:190px;padding:6px}.tray-more{font-size:16px!important;min-width:32px!important}.desktop.snap-left{outline:3px solid #fff2}.snapzone{position:fixed;top:0;bottom:40px;width:50px;z-index:25000;display:none}.snapzone.left{left:0}.snapzone.right{right:0}.snapzone.top{left:20%;right:20%;height:45px;bottom:auto;width:auto}.snapzone.show{display:block;background:#1984ff18;border:1px solid #1984ff55}
 </style>
 </head>
 <body>
+<div id="boot"><div class="bootbox"><div class="winlogo"><i></i><i></i><i></i><i></i></div><div class="spinner"></div></div></div>
+
+<div id="login"><div class="loginbox"><div class="avatar">👤</div><h2>Windows Web</h2><input id="pw" type="password" placeholder="Password"><div class="loginerr" id="loginerr"></div><button onclick="login()">Sign in ➜</button><p style="font-size:12px;opacity:.8">Default password: <b>1234</b></p></div></div>
 
 <div id="desktop">
- <div class="desktop-icons">
-  <div class="desktop-icon" ondblclick="openApp('explorer')"><span class="ico">🖥️</span>This PC</div>
-  <div class="desktop-icon" ondblclick="openApp('recycle')"><span class="ico">🗑️</span>Recycle Bin</div>
-  <div class="desktop-icon" ondblclick="openApp('browser')"><span class="ico">🌐</span>Web Browser</div>
-  <div class="desktop-icon" ondblclick="openApp('gaming')"><span class="ico">🎮</span>Gaming Hub</div>
-  <div class="desktop-icon" ondblclick="openApp('settings')"><span class="ico">⚙️</span>Settings</div>
-  <div class="desktop-icon" ondblclick="openApp('notepad')"><span class="ico">📝</span>Notepad</div>
-  <div class="desktop-icon" ondblclick="openApp('paint')"><span class="ico">🎨</span>Paint</div>
- </div>
+<div class="wallpaper-glow"></div>
+<div id="contextMenu" style="display:none;position:absolute;z-index:20000;width:210px;background:#fff;color:#222;border:1px solid #aaa;box-shadow:0 4px 16px #0006;font-size:13px;padding:4px 0">
+<div class="ctx" onclick="openApp('explorer');hideContext()">Open File Explorer</div>
+<div class="ctx" onclick="openApp('settings');hideContext()">Personalize</div>
+<div class="ctx" onclick="refreshDesktop()">Refresh</div>
+<div class="ctx" onclick="showToast('Display settings');hideContext()">Display settings</div>
+</div>
+<div id="desktopIcons">
+  <div class="deskicon" ondblclick="openApp('explorer')"><div class="ico">📁</div>File Explorer</div>
+  <div class="deskicon" ondblclick="openApp('browser')"><div class="ico">🌐</div>Browser</div>
+  <div class="deskicon" ondblclick="openApp('settings')"><div class="ico">⚙️</div>Settings</div>
+  <div class="deskicon" ondblclick="openApp('notes')"><div class="ico">📝</div>Notes</div>
+  <div class="deskicon" ondblclick="openApp('calc')"><div class="ico">🧮</div>Calculator</div>
+  <div class="deskicon" ondblclick="openApp('taskmgr')"><div class="ico">📊</div>Task Manager</div>
+  <div class="deskicon" ondblclick="openApp('runbox')"><div class="ico">▶️</div>Run</div>
+  <div class="deskicon" ondblclick="openApp('recycle')"><div class="ico">🗑️</div>Recycle Bin</div>
+  <div class="deskicon" ondblclick="openApp('calendar')"><div class="ico">📅</div>Calendar</div>
+  <div class="deskicon" ondblclick="openApp('paint')"><div class="ico">🎨</div>Paint</div>
+  <div class="deskicon" ondblclick="openApp('media')"><div class="ico">🎵</div>Media Player</div>
+  <div class="deskicon" ondblclick="openApp('photos')"><div class="ico">🖼️</div>Photos</div>
+  <div class="deskicon" ondblclick="openApp('terminal')"><div class="ico">⌨️</div>Terminal</div>
+  <div class="deskicon" ondblclick="openApp('weather')"><div class="ico">☀️</div>Weather</div>
 </div>
 
-<div id="start" class="panel">
- <input id="startSearch" class="start-search" placeholder="Search for apps, settings, and games">
- <div class="start-top"><b>Pinned</b><span style="color:#9da7b6">Windows 10 Gaming</span></div>
- <div class="start-grid" id="startGrid">
-  <button class="start-app" onclick="openApp('gaming')"><span>🎮</span>Gaming Hub</button>
-  <button class="start-app" onclick="openApp('browser')"><span>🌐</span>Web Browser</button>
-  <button class="start-app" onclick="openApp('explorer')"><span>📁</span>File Explorer</button>
-  <button class="start-app" onclick="openApp('settings')"><span>⚙️</span>Settings</button>
-  <button class="start-app" onclick="openApp('notepad')"><span>📝</span>Notepad</button>
-  <button class="start-app" onclick="openApp('calculator')"><span>🧮</span>Calculator</button>
-  <button class="start-app" onclick="openApp('paint')"><span>🎨</span>Paint</button>
-  <button class="start-app" onclick="openApp('cmd')"><span>⌨️</span>Terminal</button>
-  <button class="start-app" onclick="openApp('taskmgr')"><span>📊</span>Task Manager</button>
-  <button class="start-app" onclick="openApp('proxy')"><span>🛡️</span>Proxy Center</button>
- </div>
- <div class="start-footer"><span>👤 Administrator</span><button class="taskbtn" onclick="lockWindows()">🔒</button></div>
+<div id="startMenu"><div class="start-inner"><div class="start-left">
+<button onclick="openApp('settings');toggleStart()">☰</button><button onclick="lock()">🔒</button><button onclick="shutdown()">⏻</button>
+</div><div class="tiles"><h3>START</h3><div class="tilegrid">
+<div class="tile wide" onclick="openApp('browser');toggleStart()">🌐<br>Browser</div>
+<div class="tile" onclick="openApp('explorer');toggleStart()">📁<br>Explorer</div>
+<div class="tile" onclick="openApp('settings');toggleStart()">⚙️<br>Settings</div>
+<div class="tile" onclick="openApp('notes');toggleStart()">📝<br>Notes</div>
+<div class="tile" onclick="openApp('calc');toggleStart()">🧮<br>Calculator</div>
+<div class="tile" onclick="openApp('taskmgr');toggleStart()">📊<br>Task Manager</div>
+<div class="tile" onclick="openApp('runbox');toggleStart()">▶️<br>Run</div>
+<div class="tile" onclick="openApp('recycle');toggleStart()">🗑️<br>Recycle Bin</div>
+<div class="tile" onclick="openApp('calendar');toggleStart()">📅<br>Calendar</div>
+<div class="tile" onclick="openApp('paint');toggleStart()">🎨<br>Paint</div>
+<div class="tile" onclick="openApp('media');toggleStart()">🎵<br>Media Player</div>
+<div class="tile" onclick="openApp('photos');toggleStart()">🖼️<br>Photos</div>
+<div class="tile" onclick="openApp('terminal');toggleStart()">⌨️<br>Terminal</div>
+<div class="tile" onclick="openApp('weather');toggleStart()">☀️<br>Weather</div>
+<div class="tile wide" onclick="showToast('Windows Web is running!')">💻<br>About this PC</div>
+<div class="tile" onclick="showToast('Shortcuts: Esc closes menus')">⌨️<br>Tips</div>
+</div></div></div></div>
+
+
+
+<div id="taskbarContext">
+<div onclick="taskbarNewWindow()">Open new window</div>
+<div onclick="toggleTaskbarLock()">Lock the taskbar</div>
+<div onclick="openApp('settings');hideTaskbarContext()">Taskbar settings</div>
+<div onclick="hideTaskbarContext()">Close menu</div>
+</div>
+<div id="clockPanel">
+<div id="clockBig"></div><div id="clockDate"></div>
+<div class="calmini" id="miniCal"></div>
+<div style="margin-top:14px"><button onclick="openApp('settings');hideClock()" style="padding:8px;color:#222">Date & time settings</button></div>
+</div>
+<div id="searchPanel">
+<input id="panelSearch" placeholder="Search apps, settings, and files" oninput="liveSearch(this.value)">
+<div id="searchResults"></div>
+</div>
+<div id="actionCenter">
+<div class="ac-title">Notifications</div>
+<div class="quickgrid">
+<div class="quick on" onclick="this.classList.toggle('on')">📶 Wi‑Fi</div>
+<div class="quick on" onclick="this.classList.toggle('on')">🔵 Bluetooth</div>
+<div class="quick" onclick="this.classList.toggle('on')">✈️ Airplane mode</div>
+<div class="quick" onclick="toggleNight()">🌙 Night light</div>
+</div>
+<div class="notification"><b>Windows Web</b><br><small>Everything is up to date.</small></div>
+<div class="notification"><b>Tip</b><br><small>Use Win-style shortcuts like Ctrl+Shift+Esc for Task Manager.</small></div>
+<p>🔊 Volume</p><input class="volume" type="range" min="0" max="100" value="70" oninput="showToast('Volume '+this.value+'%')">
+</div>
+<div id="virtualView"><b>Virtual desktops</b><br><div class="deskThumb active" onclick="switchDesk(1)">🖥️ Desktop 1</div><div class="deskThumb" onclick="switchDesk(2)">🖥️ Desktop 2</div><br><button onclick="addDesktop()" style="padding:7px;color:#222">＋ New desktop</button></div>
+<div id="taskbar">
+<button class="tbbtn" onclick="toggleStart()"><span class="startlogo">⊞</span></button>
+<input class="search" id="taskSearch" placeholder="Type here to search" onfocus="openSearchPanel()" oninput="liveSearch(this.value)" onkeydown="if(event.key==='Enter')doSearch(this.value)">
+<div class="taskapps">
+<button class="taskapp" id="tb-explorer" onclick="openApp('explorer')">📁</button>
+<button class="taskapp" id="tb-browser" onclick="openApp('browser')">🌐</button>
+<button class="taskapp" id="tb-settings" onclick="openApp('settings')">⚙️</button>
+<button class="taskapp" id="tb-notes" onclick="openApp('notes')">📝</button>
+<button class="taskapp" id="tb-calc" onclick="openApp('calc')">🧮</button>
+<button class="taskapp" id="tb-taskmgr" onclick="openApp('taskmgr')">📊</button>
+<button class="taskapp" id="tb-calendar" onclick="openApp('calendar')">📅</button>
+<button class="taskapp" id="tb-paint" onclick="openApp('paint')">🎨</button>
+<button class="taskapp" id="tb-media" onclick="openApp('media')">🎵</button>
+<button class="taskapp" id="tb-terminal" onclick="openApp('terminal')">⌨️</button>
+</div><button class="tbbtn" onclick="toggleVirtual()">🖥️</button><button class="tbbtn" onclick="toggleAction()">🔔</button><button id="showDesktop" title="Show desktop" onclick="showDesktop()"></button><div class="tray"><button onclick="toggleAction()">🔔</button><button onclick="showToast('Network connected')">📶</button><button class="tray-more" id="traymore" onclick="toggleTrayOverflow(event)">⌃</button><button class="clock" id="clock" onclick="showClock()"></button></div>
 </div>
 
-<div id="searchPanel" class="panel">
- <input id="searchInput" class="searchInput" placeholder="Type here to search">
- <div class="searchResults">
-  <div class="searchResult" data-search="gaming games snake 2048 minesweeper" onclick="openApp('gaming')">🎮 <b>Gaming Hub</b></div>
-  <div class="searchResult" data-search="browser web youtube internet" onclick="openApp('browser')">🌐 <b>Web Browser</b></div>
-  <div class="searchResult" data-search="settings system personalization" onclick="openApp('settings')">⚙️ <b>Settings</b></div>
-  <div class="searchResult" data-search="files explorer pc folders" onclick="openApp('explorer')">📁 <b>File Explorer</b></div>
-  <div class="searchResult" data-search="proxy network" onclick="openApp('proxy')">🛡️ <b>Proxy Center</b></div>
-  <div class="searchResult" data-search="notepad text" onclick="openApp('notepad')">📝 <b>Notepad</b></div>
-  <div class="searchResult" data-search="calculator math" onclick="openApp('calculator')">🧮 <b>Calculator</b></div>
- </div>
+<div class="window" id="explorer"><div class="titlebar"><span class="titletext">📁 File Explorer</span><div class="wincontrols"><button onclick="minimize('explorer')">—</button><button onclick="maximize('explorer')">□</button><button class="close" onclick="closeApp('explorer')">✕</button></div></div><div class="content"><div class="explorer"><div class="explorerbar"><button onclick="showToast('Back')">←</button><button onclick="showToast('Forward')">→</button><div class="path">This PC</div><button onclick="showNewDialog()">＋</button><button onclick="sortFiles()">↕</button><button onclick="showToast('Search is ready')">🔍</button></div><div class="explorerbody"><div class="side"><div onclick="showFolder('Quick access')">⭐ Quick access</div><div onclick="showFolder('Desktop')">🖥️ Desktop</div><div onclick="showFolder('Documents')">📄 Documents</div><div onclick="showFolder('Downloads')">⬇️ Downloads</div><div onclick="showFolder('This PC')">💻 This PC</div></div><div class="files" id="files"></div></div></div></div></div>
+
+<div class="window" id="browser"><div class="titlebar"><span class="titletext">🌐 Browser</span><div class="wincontrols"><button onclick="minimize('browser')">—</button><button onclick="maximize('browser')">□</button><button class="close" onclick="closeApp('browser')">✕</button></div></div><div class="content"><div class="browser"><div class="browserbar"><button onclick="browserHome()">⌂</button><button onclick="showToast('Back')">←</button><input class="url" id="url" value="https://www.example.com" onkeydown="if(event.key==='Enter')navigate()"><button onclick="navigate()">↵</button></div><div class="webpage" id="webpage"></div></div></div></div>
+
+<div class="window" id="settings"><div class="titlebar"><span class="titletext">⚙️ Settings</span><div class="wincontrols"><button onclick="minimize('settings')">—</button><button onclick="maximize('settings')">□</button><button class="close" onclick="closeApp('settings')">✕</button></div></div><div class="content"><div class="settings"><div class="setnav">
+<button class="active" onclick="setPage(this,'system')">🖥️ System</button><button onclick="setPage(this,'personal')">🎨 Personalization</button><button onclick="setPage(this,'privacy')">🔒 Privacy</button><button onclick="setPage(this,'update')">🔄 Update & Security</button><button onclick="setPage(this,'accounts')">👤 Accounts</button>
+</div><div class="setpage" id="setpage"></div></div></div></div>
+
+<div class="window" id="notes"><div class="titlebar"><span class="titletext">📝 Notepad</span><div class="wincontrols"><button onclick="minimize('notes')">—</button><button onclick="maximize('notes')">□</button><button class="close" onclick="closeApp('notes')">✕</button></div></div><div class="content"><div class="notes"><textarea id="noteText" placeholder="Start typing..."></textarea><div class="notesbar">Saved automatically in this browser</div></div></div></div>
+
+<div class="window" id="calc"><div class="titlebar"><span class="titletext">🧮 Calculator</span><div class="wincontrols"><button onclick="minimize('calc')">—</button><button onclick="maximize('calc')">□</button><button class="close" onclick="closeApp('calc')">✕</button></div></div><div class="content"><div class="calc"><div class="calcdisplay" id="calcdisplay">0</div><div class="calckeys">
+<button onclick="calcClear()">C</button><button onclick="calcAdd('(')">(</button><button onclick="calcAdd(')')">)</button><button class="op" onclick="calcAdd('/')">÷</button>
+<button onclick="calcAdd('7')">7</button><button onclick="calcAdd('8')">8</button><button onclick="calcAdd('9')">9</button><button class="op" onclick="calcAdd('*')">×</button>
+<button onclick="calcAdd('4')">4</button><button onclick="calcAdd('5')">5</button><button onclick="calcAdd('6')">6</button><button class="op" onclick="calcAdd('-')">−</button>
+<button onclick="calcAdd('1')">1</button><button onclick="calcAdd('2')">2</button><button onclick="calcAdd('3')">3</button><button class="op" onclick="calcAdd('+')">+</button>
+<button onclick="calcAdd('0')">0</button><button onclick="calcAdd('.')">.</button><button onclick="calcBack()">⌫</button><button class="op" onclick="calcEqual()">=</button>
+</div></div></div></div>
 </div>
 
-<div id="actionCenter" class="panel">
- <h2>Quick Settings</h2>
- <div style="color:#aaa">Windows 11 Gaming Edition</div>
- <div class="quickgrid">
-  <button onclick="notify('Wi-Fi','Connected')">📶 Wi-Fi<br><small>Connected</small></button>
-  <button onclick="notify('Bluetooth','On')">🔵 Bluetooth<br><small>On</small></button>
-  <button onclick="notify('Gaming Mode','Enabled')">🎮 Gaming Mode<br><small>On</small></button>
-  <button onclick="notify('Night light','Toggled')">🌙 Night light</button>
- </div>
-</div>
 
-<!-- Explorer -->
-<div class="window" id="explorer" style="left:120px;top:70px">
- <div class="titlebar" onmousedown="dragStart(event,'explorer')"><div class="titleIcon">📁</div><div class="title">File Explorer</div><div class="controls"><button class="control" onclick="minimize('explorer')">─</button><button class="control" onclick="maximize('explorer')">□</button><button class="control close" onclick="closeApp('explorer')">✕</button></div></div>
- <div class="body"><div class="explorer"><div class="toolbar">
-<button onclick="explorerBack()">←</button><button onclick="explorerForward()">→</button><button onclick="explorerUp()">↑</button>
-<input id="explorerAddress" class="address" value="This PC" onkeydown="if(event.key==='Enter')explorerOpen(this.value)">
-<button onclick="explorerOpen($('explorerAddress').value)">🔍</button>
-</div><div class="explorer-main">
-  <div class="side" id="explorerSide">
-    <div onclick="explorerOpen('Quick access')">⭐ Quick access</div>
-    <div onclick="explorerOpen('Desktop')">📁 Desktop</div>
-    <div onclick="explorerOpen('Downloads')">📥 Downloads</div>
-    <div onclick="explorerOpen('Documents')">📄 Documents</div>
-    <div onclick="explorerOpen('Pictures')">🖼️ Pictures</div>
-    <div onclick="explorerOpen('Music')">🎵 Music</div>
-    <div onclick="explorerOpen('Videos')">🎬 Videos</div>
-    <div onclick="explorerOpen('This PC')">💻 This PC</div>
-    <div onclick="explorerOpen('Local Disk (C:)')">💾 Local Disk (C:)</div>
-  </div>
-  <div class="files" id="explorerFiles"></div>
-</div><div class="files"><div class="file"><span class="fileIcon">💾</span>Local Disk (C:)</div><div class="file"><span class="fileIcon">📁</span>Documents</div><div class="file"><span class="fileIcon">📁</span>Downloads</div><div class="file"><span class="fileIcon">📁</span>Pictures</div><div class="file"><span class="fileIcon">📁</span>Music</div><div class="file"><span class="fileIcon">📁</span>Videos</div><div class="file"><span class="fileIcon">📄</span>README.txt</div></div></div></div></div>
-</div>
+<div class="window" id="taskmgr"><div class="titlebar"><span class="titletext">📊 Task Manager</span><div class="wincontrols"><button onclick="minimize('taskmgr')">—</button><button onclick="maximize('taskmgr')">□</button><button class="close" onclick="closeApp('taskmgr')">✕</button></div></div><div class="content">
+<div style="height:100%;background:#fff;color:#222">
+<div style="display:flex;border-bottom:1px solid #ddd"><button class="tmnav" onclick="tmPage(this,'processes')">Processes</button><button class="tmnav" onclick="tmPage(this,'performance')">Performance</button><button class="tmnav" onclick="tmPage(this,'startup')">Startup</button></div>
+<div id="tmcontent" style="padding:15px"></div>
+</div></div></div>
 
-<!-- Notepad -->
-<div class="window" id="notepad" style="left:210px;top:95px;width:650px;height:470px">
- <div class="titlebar" onmousedown="dragStart(event,'notepad')"><div class="titleIcon">📝</div><div class="title">Untitled - Notepad</div><div class="controls"><button class="control" onclick="minimize('notepad')">─</button><button class="control" onclick="maximize('notepad')">□</button><button class="control close" onclick="closeApp('notepad')">✕</button></div></div>
- <div class="body"><textarea id="notepadText" class="notepad" spellcheck="false" placeholder="Type here..."></textarea></div>
-</div>
+<div class="window" id="runbox"><div class="titlebar"><span class="titletext">▶️ Run</span><div class="wincontrols"><button onclick="minimize('runbox')">—</button><button class="close" onclick="closeApp('runbox')">✕</button></div></div><div class="content">
+<div style="padding:25px;color:#222"><h2 style="font-weight:400">Run</h2><p>Type the name of a program, folder, document, or website.</p><input id="runinput" style="width:100%;padding:10px;border:1px solid #aaa;color:#222" placeholder="explorer, settings, calc, browser..."><div style="text-align:right;margin-top:15px"><button onclick="runCommand()" style="padding:9px 22px;background:#0078d7;color:#fff;cursor:pointer">OK</button></div></div>
+</div></div>
 
-<!-- Calculator -->
-<div class="window" id="calculator" style="left:360px;top:80px;width:370px;height:520px">
- <div class="titlebar" onmousedown="dragStart(event,'calculator')"><div class="titleIcon">🧮</div><div class="title">Calculator</div><div class="controls"><button class="control" onclick="minimize('calculator')">─</button><button class="control" onclick="maximize('calculator')">□</button><button class="control close" onclick="closeApp('calculator')">✕</button></div></div>
- <div class="body"><div class="calc"><div id="calcDisplay" class="calcDisplay">0</div><div class="calcGrid">
-  <button onclick="calcClear()">C</button><button onclick="calcInput('(')">(</button><button onclick="calcInput(')')">)</button><button onclick="calcInput('/')">÷</button>
-  <button onclick="calcInput('7')">7</button><button onclick="calcInput('8')">8</button><button onclick="calcInput('9')">9</button><button onclick="calcInput('*')">×</button>
-  <button onclick="calcInput('4')">4</button><button onclick="calcInput('5')">5</button><button onclick="calcInput('6')">6</button><button onclick="calcInput('-')">−</button>
-  <button onclick="calcInput('1')">1</button><button onclick="calcInput('2')">2</button><button onclick="calcInput('3')">3</button><button onclick="calcInput('+')">+</button>
-  <button onclick="calcInput('0')">0</button><button onclick="calcInput('.')">.</button><button onclick="calcResult()">=</button><button onclick="calcClear()">CE</button>
- </div></div></div>
-</div>
+<div class="window" id="recycle"><div class="titlebar"><span class="titletext">🗑️ Recycle Bin</span><div class="wincontrols"><button onclick="minimize('recycle')">—</button><button class="close" onclick="closeApp('recycle')">✕</button></div></div><div class="content">
+<div style="padding:18px;color:#222"><h2 style="font-weight:400">Recycle Bin</h2><div id="trashitems" style="border:1px solid #ddd;min-height:130px;padding:15px">Recycle Bin is empty.</div><button onclick="emptyTrash()" style="margin-top:12px;padding:8px 14px;color:#222">Empty Recycle Bin</button></div>
+</div></div>
 
-<!-- Settings -->
-<div class="window" id="settings" style="left:170px;top:65px;width:820px;height:550px">
- <div class="titlebar" onmousedown="dragStart(event,'settings')"><div class="titleIcon">⚙️</div><div class="title">Settings</div><div class="controls"><button class="control" onclick="minimize('settings')">─</button><button class="control" onclick="maximize('settings')">□</button><button class="control close" onclick="closeApp('settings')">✕</button></div></div>
- <div class="body"><div class="settings"><div class="settingsSide"><h2>Settings</h2>
-  <div class="settingTab active" data-page="system">🖥️ System</div><div class="settingTab" data-page="devices">📱 Devices</div><div class="settingTab" data-page="network">🌐 Network</div><div class="settingTab" data-page="gaming">🎮 Gaming</div><div class="settingTab" data-page="personalization">🎨 Personalization</div><div class="settingTab" data-page="apps">📦 Apps</div><div class="settingTab" data-page="accounts">👤 Accounts</div><div class="settingTab" data-page="privacy">🔒 Privacy</div><div class="settingTab" data-page="update">🔄 Update & Security</div>
- </div><div class="settingsContent" id="settingsContent"></div></div></div>
-</div>
 
-<!-- Browser -->
-<div class="window" id="browser" style="left:90px;top:55px;width:940px;height:590px">
- <div class="titlebar" onmousedown="dragStart(event,'browser')"><div class="titleIcon">🌐</div><div class="title">Microsoft Edge-style Browser</div><div class="controls"><button class="control" onclick="minimize('browser')">─</button><button class="control" onclick="maximize('browser')">□</button><button class="control close" onclick="closeApp('browser')">✕</button></div></div>
- <div class="body"><div class="browser"><div class="browser-tabs"><div class="browser-tab" id="browserTab">New tab</div></div><div class="browser-nav"><button onclick="browserBack()">←</button><button onclick="browserForward()">→</button><button onclick="browserReload()">↻</button><button onclick="browserHome()">🏠</button><input id="browserUrl" class="address" placeholder="Search or enter address"><button onclick="navigateBrowser()">↵</button></div><div class="browser-content" id="browserContent"></div></div></div>
-</div>
+<div class="dialogOverlay" id="newDialog"><div class="dialog"><h3>Create new item</h3><p>Choose a name:</p><input id="newName" value="New Folder"><div style="text-align:right;margin-top:15px"><button onclick="closeDialog()">Cancel</button><button onclick="createItem()">Create</button></div></div></div>
 
-<!-- Gaming Hub -->
-<div class="window" id="gaming" style="left:60px;top:45px;width:1020px;height:640px">
-  <div class="titlebar" onmousedown="dragStart(event,'gaming')"><div class="titleIcon">🎮</div><div class="title">Xbox Game Bar / Gaming Hub</div><div class="controls"><button class="control" onclick="minimize('gaming')">─</button><button class="control" onclick="maximize('gaming')">□</button><button class="control close" onclick="closeApp('gaming')">✕</button></div></div>
-  <div class="body"><div class="gaming">
-    <div class="gamehero"><h1>🎮 Windows 10 Gaming Hub</h1><div style="color:#aeb6c5">Your games, launcher tools, performance dashboard and gaming profile.</div></div>
-    <div class="gamingnav">
-      <button onclick="hubTab('library')">🎮 Library</button><button onclick="hubTab('roblox')">🟦 Roblox Hub</button>
-      <button onclick="hubTab('geforce')">🟩 GeForce Center</button><button onclick="hubTab('store')">🛒 Game Store</button>
-      <button onclick="hubTab('profile')">👤 Profile</button><button onclick="hubTab('friends')">👥 Friends</button>
-    </div>
+<div class="window" id="calendar"><div class="titlebar"><span class="titletext">📅 Calendar</span><div class="wincontrols"><button onclick="minimize('calendar')">—</button><button onclick="maximize('calendar')">□</button><button class="close" onclick="closeApp('calendar')">✕</button></div></div><div class="content"><div style="padding:20px;color:#222"><h1 id="calTitle" style="font-weight:400"></h1><div id="calGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px"></div></div></div></div>
 
-    <div id="hub-library" class="hubpage active">
-      <div class="gamegrid">
-        <div class="gamecard"><div><div class="gameemoji">🐍</div><h3>Snake</h3></div><button class="playbtn" onclick="launchGame('snake')">PLAY</button></div>
-        <div class="gamecard"><div><div class="gameemoji">🔢</div><h3>2048</h3></div><button class="playbtn" onclick="launchGame('2048')">PLAY</button></div>
-        <div class="gamecard"><div><div class="gameemoji">💣</div><h3>Minesweeper</h3></div><button class="playbtn" onclick="launchGame('mines')">PLAY</button></div>
-        <div class="gamecard"><div><div class="gameemoji">❌</div><h3>Tic-Tac-Toe</h3></div><button class="playbtn" onclick="launchGame('ttt')">PLAY</button></div>
-        <div class="gamecard"><div><div class="gameemoji">🧱</div><h3>Breakout</h3></div><button class="playbtn" onclick="launchGame('breakout')">PLAY</button></div>
-        <div class="gamecard"><div><div class="gameemoji">⚡</div><h3>Reaction</h3></div><button class="playbtn" onclick="launchGame('reaction')">PLAY</button></div>
-        <div class="gamecard"><div><div class="gameemoji">🏓</div><h3>Pong</h3></div><button class="playbtn" onclick="launchGame('pong')">PLAY</button></div>
-        <div class="gamecard"><div><div class="gameemoji">🚀</div><h3>Space Shooter</h3></div><button class="playbtn" onclick="launchGame('shooter')">PLAY</button></div>
-      </div>
-    </div>
+<div class="window" id="paint"><div class="titlebar"><span class="titletext">🎨 Paint</span><div class="wincontrols"><button onclick="minimize('paint')">—</button><button onclick="maximize('paint')">□</button><button class="close" onclick="closeApp('paint')">✕</button></div></div><div class="content"><div style="height:100%;display:flex;flex-direction:column;background:#ddd"><div style="height:45px;padding:6px;background:#f4f4f4"><button onclick="clearPaint()" style="color:#222;padding:6px">Clear</button> <input id="paintColor" type="color" value="#000000"></div><canvas id="paintCanvas" style="background:white;flex:1;touch-action:none"></canvas></div></div></div>
 
-    <div id="hub-roblox" class="hubpage">
-      <div class="profile"><div class="avatar">🧱</div><div><h2 style="margin:0">Roblox-style Game Hub</h2><div style="color:#aaa">A simulated launcher for your web OS.</div></div></div>
-      <div class="storegrid">
-        <div class="storecard"><div class="cover">🏙️</div><h3>Brookhaven-style RP</h3><p>Roleplay world</p><button class="playbtn" onclick="launchPortal('Brookhaven')">Launch</button></div>
-        <div class="storecard"><div class="cover">🏁</div><h3>Racing World</h3><p>Arcade racing</p><button class="playbtn" onclick="launchPortal('Racing World')">Launch</button></div>
-        <div class="storecard"><div class="cover">🗺️</div><h3>Adventure Quest</h3><p>Explore and collect</p><button class="playbtn" onclick="launchPortal('Adventure Quest')">Launch</button></div>
-      </div>
-    </div>
+<div class="window" id="media"><div class="titlebar"><span class="titletext">🎵 Media Player</span><div class="wincontrols"><button onclick="minimize('media')">—</button><button onclick="maximize('media')">□</button><button class="close" onclick="closeApp('media')">✕</button></div></div><div class="content"><div style="height:100%;background:#171717;color:#fff;padding:25px;text-align:center"><div style="font-size:80px">🎵</div><h2 id="trackName">Windows Web Radio</h2><p>Ready to play local audio</p><input id="audioFile" type="file" accept="audio/*" style="max-width:100%"><audio id="audioPlayer" controls style="width:100%;margin-top:20px"></audio></div></div></div>
 
-    <div id="hub-geforce" class="hubpage">
-      <h2>🟩 GeForce-style Performance Center</h2>
-      <div class="statgrid">
-        <div class="stat"><small>FPS</small><b id="fpsStat">144</b><span>Target</span></div>
-        <div class="stat"><small>GPU</small><b id="gpuStat">62%</b><div class="progress"><i id="gpuBar" style="width:62%"></i></div></div>
-        <div class="stat"><small>CPU</small><b id="cpuStat">34%</b><div class="progress"><i id="cpuBar" style="width:34%"></i></div></div>
-        <div class="stat"><small>RAM</small><b id="ramStat">7.2 GB</b><div class="progress"><i style="width:48%"></i></div></div>
-        <div class="stat"><small>Temperature</small><b id="tempStat">58°C</b></div>
-      </div>
-      <div class="card" style="background:#172132;color:#fff;border-color:#33455e;margin-top:12px">
-        <h3>Performance Mode</h3>
-        <button class="playbtn" onclick="setPerf('Performance')">Performance</button>
-        <button onclick="setPerf('Balanced')" style="padding:9px;margin:3px">Balanced</button>
-        <button onclick="setPerf('Battery Saver')" style="padding:9px;margin:3px">Battery Saver</button>
-        <p id="perfText">Current mode: Balanced</p>
-      </div>
-    </div>
+<div class="window" id="photos"><div class="titlebar"><span class="titletext">🖼️ Photos</span><div class="wincontrols"><button onclick="minimize('photos')">—</button><button onclick="maximize('photos')">□</button><button class="close" onclick="closeApp('photos')">✕</button></div></div><div class="content"><div style="padding:18px;color:#222"><input id="photoFiles" type="file" accept="image/*" multiple><div id="photoGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:15px"></div></div></div></div>
 
-    <div id="hub-store" class="hubpage">
-      <h2>🛒 Game Store</h2>
-      <div class="storegrid">
-        <div class="storecard"><div class="cover">🎯</div><h3>Aim Trainer</h3><p>Free</p><button class="playbtn" onclick="launchGame('reaction')">Play</button></div>
-        <div class="storecard"><div class="cover">🧩</div><h3>2048</h3><p>Free</p><button class="playbtn" onclick="launchGame('2048')">Play</button></div>
-        <div class="storecard"><div class="cover">🧱</div><h3>Brick Breaker</h3><p>Free</p><button class="playbtn" onclick="launchGame('breakout')">Play</button></div>
-        <div class="storecard"><div class="cover">🚀</div><h3>Space Shooter</h3><p>Free</p><button class="playbtn" onclick="launchGame('shooter')">Play</button></div>
-      </div>
-    </div>
+<div class="window" id="terminal"><div class="titlebar"><span class="titletext">⌨️ Windows Web Terminal</span><div class="wincontrols"><button onclick="minimize('terminal')">—</button><button onclick="maximize('terminal')">□</button><button class="close" onclick="closeApp('terminal')">✕</button></div></div><div class="content"><div id="termOut" style="height:calc(100% - 45px);background:#0c0c0c;color:#eee;padding:12px;overflow:auto;font-family:Consolas,monospace;font-size:13px">Windows Web Terminal<br>Type <b>help</b> for commands.<br></div><div style="height:45px;background:#0c0c0c;padding:7px"><input id="termInput" autocomplete="off" style="width:100%;background:#0c0c0c;border:0;outline:0;color:#fff;font-family:Consolas,monospace" placeholder="C:\\Windows>"></div></div></div>
 
-    <div id="hub-profile" class="hubpage">
-      <div class="profile"><div class="avatar">🎮</div><div><h2 style="margin:0">Administrator</h2><div>Level 12 • Gamer</div><div><span class="badge">Windows 10 Gaming</span> <span class="badge">Achievement Hunter</span></div></div></div>
-      <div class="statgrid"><div class="stat"><small>Games Played</small><b>24</b></div><div class="stat"><small>Achievements</small><b>18</b></div><div class="stat"><small>Play Time</small><b>37h</b></div></div>
-    </div>
-
-    <div id="hub-friends" class="hubpage">
-      <h2>👥 Friends & Party</h2>
-      <div class="friend"><span class="dot"></span><b>PixelPlayer</b><span style="margin-left:auto">Playing a game</span></div>
-      <div class="friend"><span class="dot"></span><b>GameMaster</b><span style="margin-left:auto">Online</span></div>
-      <div class="friend"><span class="dot off"></span><b>BlockBuilder</b><span style="margin-left:auto">Offline</span></div>
-      <div class="card" style="margin-top:12px"><button onclick="notify('Party','Party invite sent.')">🎙️ Invite to party</button> <button onclick="notify('Chat','Gaming chat opened.')">💬 Open chat</button></div>
-    </div>
-  </div></div>
- </div>
-
- <!-- Game window -->
-<div class="window" id="gameWindow" style="left:190px;top:70px;width:760px;height:550px">
- <div class="titlebar" onmousedown="dragStart(event,'gameWindow')"><div class="titleIcon">🎮</div><div class="title" id="gameTitle">Game</div><div class="controls"><button class="control" onclick="minimize('gameWindow')">─</button><button class="control" onclick="maximize('gameWindow')">□</button><button class="control close" onclick="closeApp('gameWindow')">✕</button></div></div>
- <div class="body"><div class="game-screen"><div class="game-head"><b id="gameName">Game</b><span id="gameScore">Score: 0</span></div><div class="game-area" id="gameArea"></div><div class="game-ui" id="gameUI"></div></div></div>
-</div>
-
-<!-- Proxy -->
-<div class="window" id="proxy" style="left:250px;top:85px;width:700px;height:500px">
- <div class="titlebar" onmousedown="dragStart(event,'proxy')"><div class="titleIcon">🛡️</div><div class="title">Proxy Center</div><div class="controls"><button class="control" onclick="minimize('proxy')">─</button><button class="control" onclick="maximize('proxy')">□</button><button class="control close" onclick="closeApp('proxy')">✕</button></div></div>
- <div class="body"><div class="proxy"><div class="proxybox"><h2>🛡️ Proxy Center</h2><div id="proxyStatus" class="proxyStatus">● Disconnected</div><label>Proxy host</label><input id="proxyHost" placeholder="proxy.example.com"><label>Port</label><input id="proxyPort" type="number" placeholder="8080"><p style="color:#666;font-size:13px">This frontend stores proxy settings. A normal webpage cannot force the browser itself to use an arbitrary proxy; a backend is required for actual proxy routing.</p><button onclick="connectProxy()">Connect</button><button onclick="disconnectProxy()">Disconnect</button><button onclick="saveProxy()">Save</button></div></div></div>
-</div>
-
-<!-- Paint -->
-<div class="window" id="paint" style="left:150px;top:80px;width:800px;height:550px">
- <div class="titlebar" onmousedown="dragStart(event,'paint')"><div class="titleIcon">🎨</div><div class="title">Paint</div><div class="controls"><button class="control" onclick="minimize('paint')">─</button><button class="control" onclick="maximize('paint')">□</button><button class="control close" onclick="closeApp('paint')">✕</button></div></div>
- <div class="body"><div class="paint"><div class="paintTools"><button onclick="paintTool='pen'">✏️ Pen</button><button onclick="paintTool='eraser'">🧹 Eraser</button><button onclick="clearPaint()">🗑️ Clear</button><input type="color" id="paintColor" value="#000000"><input type="range" id="paintSize" min="1" max="30" value="4"></div><div class="paintCanvasWrap"><canvas id="paintCanvas" width="700" height="420"></canvas></div></div></div>
-</div>
-
-<!-- Terminal -->
-<div class="window" id="cmd" style="left:180px;top:100px;width:720px;height:450px">
- <div class="titlebar" onmousedown="dragStart(event,'cmd')"><div class="titleIcon">⌨️</div><div class="title">Terminal</div><div class="controls"><button class="control" onclick="minimize('cmd')">─</button><button class="control" onclick="maximize('cmd')">□</button><button class="control close" onclick="closeApp('cmd')">✕</button></div></div>
- <div class="body" style="background:#050505;color:#fff;font-family:Consolas,monospace"><div id="cmdOutput">Microsoft Windows [Version 10.0.26100]<br>(c) Microsoft Corporation. All rights reserved.<br><br>C:\Users\Administrator&gt;</div><input id="cmdInput" class="cmdInput" autocomplete="off"></div>
-</div>
-
-<!-- Task Manager -->
-<div class="window" id="taskmgr" style="left:200px;top:90px;width:700px;height:470px">
- <div class="titlebar" onmousedown="dragStart(event,'taskmgr')"><div class="titleIcon">📊</div><div class="title">Task Manager</div><div class="controls"><button class="control" onclick="minimize('taskmgr')">─</button><button class="control" onclick="maximize('taskmgr')">□</button><button class="control close" onclick="closeApp('taskmgr')">✕</button></div></div>
- <div class="body" style="padding:20px;overflow:auto"><h2>Task Manager</h2><div class="card">🖥️ Desktop Window Manager <span style="float:right">1.2%</span></div><div class="card">🎮 Gaming Hub <span style="float:right">2.4%</span></div><div class="card">🌐 Browser <span style="float:right">3.1%</span></div><div class="card">⚙️ Settings <span style="float:right">0.3%</span></div></div>
-</div>
-
-<!-- Recycle -->
-<div class="window" id="recycle" style="left:260px;top:120px;width:600px;height:400px">
- <div class="titlebar" onmousedown="dragStart(event,'recycle')"><div class="titleIcon">🗑️</div><div class="title">Recycle Bin</div><div class="controls"><button class="control" onclick="minimize('recycle')">─</button><button class="control" onclick="maximize('recycle')">□</button><button class="control close" onclick="closeApp('recycle')">✕</button></div></div>
- <div class="body" style="display:flex;align-items:center;justify-content:center;flex-direction:column"><div style="font-size:70px">🗑️</div><div>The Recycle Bin is empty.</div></div>
-</div>
-
-<div id="notification"><b id="notificationTitle">Windows</b><span id="notificationText">Notification</span></div>
-
-<div id="context">
- <div class="contextItem" onclick="refreshDesktop()">🔄 &nbsp; Refresh</div>
- <div class="contextItem" onclick="openApp('gaming')">🎮 &nbsp; Gaming Hub</div>
- <div class="contextItem" onclick="openApp('settings')">⚙️ &nbsp; Personalize</div>
- <div class="contextItem" onclick="openApp('browser')">🌐 &nbsp; Open Browser</div>
- <div class="contextItem" onclick="openApp('explorer')">📁 &nbsp; Open File Explorer</div>
-</div>
-
-<div id="lockScreen">
- <div>
-  <div style="font-size:75px;font-weight:200" id="lockClock">12:00</div>
-  <div style="font-size:20px;margin-bottom:30px" id="lockDate"></div>
-  <button class="loginButton" style="width:180px" onclick="showLogin()">Sign in</button>
- </div>
-</div>
-
-<!-- Startup password screen -->
-<div id="loginScreen">
- <div class="loginBox">
-  <div class="loginLogo">⊞</div>
-  <div class="loginUser">Administrator</div>
-  <div class="loginEdition">Windows 11 Gaming Edition</div>
-  <input id="startupPassword" type="password" placeholder="Password" autocomplete="off">
-  <button class="loginButton" onclick="unlockWindows()">Sign in</button>
-  <div id="loginError">Incorrect password</div>
-  <div class="loginHint">🔒 Lock screen password</div>
- </div>
-</div>
-
- <div id="taskbar">
-  <div class="task-left">
-    <button class="win10-start-btn" title="Start" onclick="toggleStart()">⊞</button>
-    <input id="taskSearch" class="task-search" placeholder="Type here to search" onkeydown="if(event.key==='Enter'){searchAll(this.value)}">
-  </div>
-  <div class="task-center" id="taskApps">
-    <button class="task-app" title="File Explorer" onclick="openApp('explorer')"><span class="task-icon">📁</span><span class="task-label">Explorer</span></button>
-    <button class="task-app" title="Browser" onclick="openApp('browser')"><span class="task-icon">🌐</span><span class="task-label">Browser</span></button>
-    <button class="task-app" title="Gaming Hub" onclick="openApp('gaming')"><span class="task-icon">🎮</span><span class="task-label">Gaming</span></button>
-    <button class="task-app" title="Notepad" onclick="openApp('notepad')"><span class="task-icon">📝</span><span class="task-label">Notepad</span></button>
-    <button class="task-app" title="Calculator" onclick="openApp('calculator')"><span class="task-icon">🧮</span><span class="task-label">Calculator</span></button>
-    <button class="task-app" title="Paint" onclick="openApp('paint')"><span class="task-icon">🎨</span><span class="task-label">Paint</span></button>
-    <button class="task-app" title="Terminal" onclick="openApp('terminal')"><span class="task-icon">⌨️</span><span class="task-label">Terminal</span></button>
-    <button class="task-app" title="Task Manager" onclick="openApp('taskmgr')"><span class="task-icon">📊</span><span class="task-label">Task Manager</span></button>
-    <button class="task-app" title="Settings" onclick="openApp('settings')"><span class="task-icon">⚙️</span><span class="task-label">Settings</span></button>
-    <button class="task-app" title="Recycle Bin" onclick="openApp('recycle')"><span class="task-icon">🗑️</span><span class="task-label">Recycle Bin</span></button>
-  </div>
-  <div class="task-right">
-    <button title="Show desktop" onclick="showDesktop()">▭</button>
-    <button title="Action Center" onclick="toggleAction()">🔔</button>
-    <button title="Network" onclick="openApp('settings');settingsPage('network')">📶</button>
-    <button title="Sound" onclick="notify('Sound','Volume controls opened.')">🔊</button>
-    <button title="Power" onclick="notify('Power','Power options opened.')">🔋</button>
-    <span id="clock" class="task-clock"></span>
-  </div>
-</div>
-
+<div class="window" id="weather"><div class="titlebar"><span class="titletext">☀️ Weather</span><div class="wincontrols"><button onclick="minimize('weather')">—</button><button onclick="maximize('weather')">□</button><button class="close" onclick="closeApp('weather')">✕</button></div></div><div class="content"><div style="padding:30px;color:#222"><h1 style="font-weight:400">☀️ Weather</h1><h2>Windows Web Forecast</h2><div class="setting-card">Today <b style="float:right">☀️ 72°F</b><br><small>Clear skies</small></div><div class="setting-card">Tomorrow <b style="float:right">⛅ 74°F</b><br><small>Partly cloudy</small></div><button onclick="showToast('Weather refreshed')" style="padding:8px;color:#222">Refresh</button></div></div></div>
+<div class="toast" id="toast"></div>
 <script>
+const apps=['explorer','browser','settings','notes','calc','taskmgr','runbox','recycle','calendar','paint','media','photos','terminal','weather'];let z=100;let calcExpr='';
 const $=id=>document.getElementById(id);
-let z=100,dragging=null,calcExpression="",paintTool="pen",drawing=false,lastX=0,lastY=0;
-let gameTimer=null,gameCleanup=null;
-const STARTUP_PASSWORD="Gaming123!";
+function showToast(s){$('toast').textContent=s;$('toast').style.display='block';clearTimeout(showToast.t);showToast.t=setTimeout(()=>$('toast').style.display='none',1800)}
+function toggleStart(){let s=$('startMenu');s.style.display=s.style.display==='block'?'none':'block'}
+function openApp(id){let w=$(id);if(w.style.display==='block'&&w.style.zIndex==z){w.style.display='none';w.dataset.wasopen='1';updateTaskStates();return}w.style.display='block';delete w.dataset.wasopen;w.style.zIndex=++z;$(id).classList.remove('maxed');$('tb-'+id)?.classList.add('active');if(id==='explorer')showFolder('This PC');if(id==='browser')browserHome();if(id==='settings')setPage(document.querySelector('.setnav button.active'),'system');if(id==='notes')$('noteText').value=localStorage.note||'';updateTaskStates();if(id==='taskmgr')tmPage(null,'processes');if(id==='recycle')showTrash();if(id==='calendar')setupCalendar();if(id==='paint')setupPaint();if(id==='terminal')setupTerminal()}
+function closeApp(id){$(id).style.display='none';delete $(id).dataset.wasopen;updateTaskStates();}
+function minimize(id){$(id).style.display='none';$(id).dataset.wasopen='1';updateTaskStates()}
+function maximize(id){$(id).classList.toggle('maxed');$(id).style.zIndex=++z}
+document.querySelectorAll('.window').forEach(w=>{w.addEventListener('mousedown',()=>w.style.zIndex=++z);let bar=w.querySelector('.titlebar');let dragging=false,ox=0,oy=0;bar.addEventListener('pointerdown',e=>{if(e.target.closest('.wincontrols')||w.classList.contains('maxed'))return;dragging=true;ox=e.clientX-w.offsetLeft;oy=e.clientY-w.offsetTop;bar.setPointerCapture(e.pointerId)});bar.addEventListener('pointermove',e=>{if(!dragging)return;w.style.left=Math.max(0,e.clientX-ox)+'px';w.style.top=Math.max(0,e.clientY-oy)+'px'});bar.addEventListener('pointerup',()=>dragging=false)});
+function showFolder(name){
+  const files=[
+    ['📁','Desktop'],['📄','Documents'],['⬇️','Downloads'],['🖼️','Pictures'],
+    ['🎵','Music'],['🎬','Videos'],['💾','Local Disk (C:)'],['📦','New Folder']
+  ];
+  $('files').innerHTML=files.map(x=>`<div class="file" ondblclick="fileAction('${x[1]}')"><div class="fi">${x[0]}</div>${x[1]}</div>`).join('');
+  document.querySelector('#explorer .path').textContent=name;
+}
+function fileAction(name){
+  if(name==='New Folder'){showToast('Folder opened');return}
+  if(name==='Documents'||name==='Downloads'||name==='Desktop')showToast(name+' opened');
+  else showToast(name);
+}
+function showTrash(){if($('trashitems'))$('trashitems').innerHTML='Recycle Bin is empty.'}
+function browserHome(){ $('url').value='https://www.example.com';$('webpage').innerHTML='<h1>Windows Web Browser</h1><p>This is a working local browser interface for your Windows Web desktop.</p><div class="card"><b>Quick links</b><p><a onclick="demoPage(\\'home\\')">Home</a> · <a onclick="demoPage(\\'about\\')">About</a> · <a onclick="demoPage(\\'help\\')">Help</a></p></div><p>Type a URL or search phrase in the address bar. Network pages may be limited by browser security when running from a local HTML file.</p>'}
+function navigate(){let v=$('url').value.trim();if(!v)return;if(!/^https?:\\/\\//i.test(v)){demoPage(v);return} $('webpage').innerHTML='<h1>Loading…</h1><p>'+esc(v)+'</p><p style="font-size:13px">If this page blocks embedding, use the address bar in your normal browser.</p>'}
+function demoPage(v){$('url').value=v;$('webpage').innerHTML='<h1>'+esc(v==='about'?'About Windows Web':v==='help'?'Help':'Windows Web')+'</h1><p>Everything on this desktop is running from one HTML file.</p><div class="card">Try File Explorer, Settings, Notes, Calculator, the Start menu, search, window controls and the lock screen.</div>'}
+function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+const pages={system:['System','Display, sound, notifications, storage and basic device options.'],personal:['Personalization','Customize the Windows Web experience.'],privacy:['Privacy','Control local app permissions and privacy options.'],update:['Update & Security','Windows Web is up to date.'],accounts:['Accounts','Manage the local Windows Web account.']};
+function setPage(btn,key){document.querySelectorAll('.setnav button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');let p=pages[key]||pages.system;$('setpage').innerHTML='<h1>'+p[0]+'</h1><p>'+p[1]+'</p><div class="setting-card">Wi‑Fi <span class="toggle on" onclick="this.classList.toggle(\\'on\\')"></span><br><small>Connected</small></div><div class="setting-card">Notifications <span class="toggle on" onclick="this.classList.toggle(\\'on\\')"></span><br><small>Allow notifications</small></div><div class="setting-card">Windows Web password <button style="float:right;padding:6px 12px;color:#222" onclick="changePassword()">Change</button><br><small>Used for the startup lock screen</small></div>'}
+function changePassword(){let p=prompt('Set a new password:');if(p){localStorage.webpw=p;showToast('Password changed')}}
+function calcAdd(x){calcExpr+=x;$('calcdisplay').textContent=calcExpr}
+function calcClear(){calcExpr='';$('calcdisplay').textContent='0'}
+function calcBack(){calcExpr=calcExpr.slice(0,-1);$('calcdisplay').textContent=calcExpr||'0'}
+function calcEqual(){try{if(!/^[0-9+*/(). -]+$/.test(calcExpr))throw 0;calcExpr=String(Function('return '+calcExpr)());$('calcdisplay').textContent=calcExpr}catch(e){$('calcdisplay').textContent='Error';calcExpr=''}}
+function doSearch(v){v=v.trim();if(!v)return;toggleStart();openApp('browser');$('url').value=v;if(/^https?:\\/\\//i.test(v))navigate();else demoPage('Search: '+v)}
+$('noteText').addEventListener('input',e=>localStorage.note=e.target.value)
+function login(){let want=localStorage.webpw||'1234';if($('pw').value===want){$('login').style.display='none';sessionStorage.unlocked='1'}else $('loginerr').textContent='Wrong password'}
+function lock(){$('startMenu').style.display='none';$('login').style.display='flex';$('pw').value='';$('loginerr').textContent=''}
+function shutdown(){showToast('Shutting down…');setTimeout(()=>{document.body.innerHTML='<div style="background:#000;color:#fff;position:fixed;inset:0;display:flex;align-items:center;justify-content:center;font-family:Segoe UI;font-size:20px">It is now safe to close this tab.</div>'},800)}
+function tick(){let d=new Date();$('clock').innerHTML=d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})+'<br>'+d.toLocaleDateString();}setInterval(tick,1000);tick()
+setTimeout(()=>{ $('boot').style.display='none'; if(sessionStorage.unlocked!=='1')$('login').style.display='flex'},1000)
 
-function closeMenus(){
- $("start").classList.remove("open");$("searchPanel").classList.remove("open");$("actionCenter").classList.remove("open");$("context").style.display="none";
+function tmPage(btn,key){
+  document.querySelectorAll('.tmnav').forEach(x=>x.style.background='transparent');
+  if(btn)btn.style.background='#e5f1fb';
+  const c=$('tmcontent');
+  if(key==='processes') c.innerHTML='<h3>Processes</h3><div style="border:1px solid #ddd"><p style="padding:10px">🖥️ Windows Web Desktop <b style="float:right">Running</b></p><p style="padding:10px">🌐 Browser <b style="float:right">Active</b></p><p style="padding:10px">📁 File Explorer <b style="float:right">Active</b></p><p style="padding:10px">⚙️ Settings <b style="float:right">Background</b></p></div>';
+  if(key==='performance') c.innerHTML='<h3>Performance</h3><div class="setting-card">CPU <b style="float:right">12%</b></div><div class="setting-card">Memory <b style="float:right">34%</b></div><div class="setting-card">Storage <b style="float:right">18%</b></div>';
+  if(key==='startup') c.innerHTML='<h3>Startup apps</h3><div class="setting-card">Windows Web Shell <b style="float:right">Enabled</b></div><div class="setting-card">Notes <b style="float:right">Disabled</b></div>';
 }
-function openApp(id){
- const w=$(id);if(!w)return;closeMenus();w.classList.add("show");w.classList.remove("minimized");w.style.zIndex=++z;
- document.querySelectorAll(".taskbtn").forEach(x=>x.classList.remove("active"));$("task-"+id)?.classList.add("active");
- if(id==="settings")settingsPage(localStorage.getItem("settingsPage")||"system");
- if(id==="browser")browserHome();
- if(id==="cmd")setTimeout(()=>$("cmdInput").focus(),50);
+function runCommand(){
+  let v=$('runinput').value.trim().toLowerCase();
+  const map={explorer:'explorer',settings:'settings',browser:'browser',chrome:'browser',calc:'calc',calculator:'calc',notepad:'notes',notes:'notes','taskmgr':'taskmgr','task manager':'taskmgr',recycle:'recycle',calendar:'calendar',paint:'paint',media:'media','media player':'media',photos:'photos',terminal:'terminal',cmd:'terminal',weather:'weather'};
+  if(map[v]){closeApp('runbox');openApp(map[v]);}
+  else if(/^https?:\/\//.test(v)){closeApp('runbox');openApp('browser');$('url').value=v;navigate();}
+  else if(v){closeApp('runbox');showToast('Windows cannot find "'+v+'"');}
 }
-function closeApp(id){
- $(id)?.classList.remove("show","active-window");
- $("task-"+id)?.classList.remove("active");
- if(id==="gameWindow"){
-   if(gameCleanup){try{gameCleanup()}catch(e){}gameCleanup=null}
-   clearInterval(gameTimer);gameTimer=null;
-   $("gameArea").innerHTML="";$("gameUI").innerHTML="";
+function emptyTrash(){$('trashitems').innerHTML='Recycle Bin is empty.';showToast('Recycle Bin emptied')}
+function tmOpen(){openApp('taskmgr');tmPage(null,'processes')}
+
+
+
+let taskbarLocked=false,desktopHidden=false;
+const taskAppNames={explorer:'File Explorer',browser:'Browser',settings:'Settings',notes:'Notepad',calc:'Calculator',taskmgr:'Task Manager',runbox:'Run',recycle:'Recycle Bin',calendar:'Calendar',paint:'Paint',media:'Media Player',photos:'Photos',terminal:'Terminal',weather:'Weather'};
+function hideTaskbarContext(){$('taskbarContext').style.display='none'}
+function toggleTaskbarLock(){taskbarLocked=!taskbarLocked;hideTaskbarContext();showToast(taskbarLocked?'Taskbar locked':'Taskbar unlocked')}
+function taskbarNewWindow(){hideTaskbarContext();openApp('explorer')}
+function showDesktop(){desktopHidden=!desktopHidden;apps.forEach(a=>{let w=$(a);if(desktopHidden){if(w.style.display==='block')w.dataset.wasopen='1';w.style.display='none'}else if(w.dataset.wasopen==='1'){w.style.display='block';w.style.zIndex=++z;delete w.dataset.wasopen}})}
+function openSearchPanel(){$('searchPanel').style.display='block';$('startMenu').style.display='none';setTimeout(()=>$('panelSearch').focus(),0)}
+function closeSearchPanel(){$('searchPanel').style.display='none'}
+function liveSearch(v){
+ v=v.trim().toLowerCase();let box=$('searchResults');if(!v){box.innerHTML='<div style="padding:15px;color:#bbb">Start typing to search apps and settings.</div>';return}
+ let hits=apps.filter(a=>(taskAppNames[a]||a).toLowerCase().includes(v));
+ box.innerHTML=hits.length?hits.map(a=>`<div class="searchResult" onclick="closeSearchPanel();openApp('${a}')">🔹 ${taskAppNames[a]}</div>`).join(''):'<div style="padding:15px;color:#bbb">No results found.</div>';
+}
+function updateTaskStates(){
+ apps.forEach(a=>{let b=$('tb-'+a);if(!b)return;let w=$(a);b.classList.toggle('active',w.style.display==='block');b.classList.toggle('minimized',w.style.display!=='block'&&w.dataset.wasopen==='1')})
+}
+function taskbarMenu(e){if(e.target.closest('#taskbar')){e.preventDefault();let m=$('taskbarContext');m.style.display='block';m.style.left=Math.min(e.clientX,innerWidth-220)+'px';m.style.bottom='48px'}}
+function showClock(){let p=$('clockPanel');p.style.display=p.style.display==='block'?'none':'block';$('actionCenter').style.display='none';$('searchPanel').style.display='none';buildMiniCalendar()}
+function hideClock(){$('clockPanel').style.display='none'}
+function buildMiniCalendar(){
+ let d=new Date(),y=d.getFullYear(),m=d.getMonth(),first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),today=d.getDate();
+ $('miniCal').innerHTML=['S','M','T','W','T','F','S'].map(x=>'<div><b>'+x+'</b></div>').join('');
+ for(let i=0;i<first;i++)$('miniCal').innerHTML+='<div></div>';
+ for(let i=1;i<=days;i++)$('miniCal').innerHTML+=`<div class="${i===today?'today':''}">${i}</div>`;
+}
+function toggleAction(){let a=$('actionCenter');a.style.display=a.style.display==='block'?'none':'block';$('startMenu').style.display='none'}
+function toggleVirtual(){let v=$('virtualView');v.style.display=v.style.display==='block'?'none':'block'}
+function switchDesk(n){document.querySelectorAll('.deskThumb').forEach((x,i)=>x.classList.toggle('active',i===n-1));showToast('Switched to Desktop '+n);$('virtualView').style.display='none'}
+function addDesktop(){let v=$('virtualView');let count=v.querySelectorAll('.deskThumb').length+1;let d=document.createElement('div');d.className='deskThumb';d.textContent='🖥️ Desktop '+count;d.onclick=()=>switchDesk(count);v.insertBefore(d,v.querySelector('br'));showToast('Desktop '+count+' created')}
+function toggleNight(){document.body.style.filter=document.body.style.filter?'':'sepia(.35) brightness(.8)';showToast('Night light toggled')}
+function showNewDialog(){$('newDialog').style.display='flex';$('newName').focus()}
+function closeDialog(){$('newDialog').style.display='none'}
+function createItem(){let n=$('newName').value.trim()||'New Folder';let d=document.createElement('div');d.className='file';d.innerHTML='<div class="fi">📁</div>'+esc(n);d.ondblclick=()=>showToast(n+' opened');$('files').appendChild(d);closeDialog();showToast(n+' created')}
+function sortFiles(){let box=$('files');[...box.children].sort((a,b)=>a.textContent.localeCompare(b.textContent)).forEach(x=>box.appendChild(x));showToast('Files sorted A–Z')}
+
+function setupCalendar(){
+  const d=new Date(), y=d.getFullYear(), m=d.getMonth();
+  $('calTitle').textContent=d.toLocaleString([], {month:'long',year:'numeric'});
+  const first=new Date(y,m,1).getDay(), days=new Date(y,m+1,0).getDate();
+  let s=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(x=>'<b style="text-align:center">'+x+'</b>').join('');
+  for(let i=0;i<first;i++)s+='<div></div>';
+  for(let i=1;i<=days;i++)s+='<div onclick="showToast(\'Calendar: '+i+' selected\')" style="padding:12px;text-align:center;border:1px solid #eee;cursor:pointer">'+i+'</div>';
+  $('calGrid').innerHTML=s;
+}
+let paintReady=false,painting=false;
+function setupPaint(){
+  const c=$('paintCanvas'); if(paintReady)return; paintReady=true;
+  const resize=()=>{let r=c.getBoundingClientRect();c.width=Math.max(300,r.width);c.height=Math.max(250,r.height)};
+  resize(); window.addEventListener('resize',resize);
+  const pos=e=>{let r=c.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top]};
+  c.addEventListener('pointerdown',e=>{painting=true;c.setPointerCapture(e.pointerId);let [x,y]=pos(e);let q=c.getContext('2d');q.beginPath();q.moveTo(x,y)});
+  c.addEventListener('pointermove',e=>{if(!painting)return;let [x,y]=pos(e),q=c.getContext('2d');q.strokeStyle=$('paintColor').value;q.lineWidth=4;q.lineCap='round';q.lineTo(x,y);q.stroke()});
+  c.addEventListener('pointerup',()=>painting=false);
+}
+function clearPaint(){let c=$('paintCanvas');c.getContext('2d').clearRect(0,0,c.width,c.height)}
+function setupTerminal(){
+ $('termInput').onkeydown=e=>{if(e.key!=='Enter')return;let v=e.target.value.trim(),o=$('termOut');o.innerHTML+='<br>C:\\\\Windows&gt; '+esc(v)+'<br>';let cmd=v.toLowerCase();
+ if(cmd==='help')o.innerHTML+='help, cls, dir, explorer, settings, calc, notepad, browser, taskmgr, date, time, ver, echo';
+ else if(cmd==='cls')o.innerHTML='';
+ else if(cmd==='dir')o.innerHTML+='Desktop&nbsp;&nbsp; Documents&nbsp;&nbsp; Downloads&nbsp;&nbsp; Pictures&nbsp;&nbsp; Windows';
+ else if(cmd==='explorer'||cmd==='start explorer'){openApp('explorer');o.innerHTML+='Opening File Explorer...'}
+ else if(cmd==='settings'){openApp('settings');o.innerHTML+='Opening Settings...'}
+ else if(cmd==='calc'){openApp('calc');o.innerHTML+='Opening Calculator...'}
+ else if(cmd==='notepad'){openApp('notes');o.innerHTML+='Opening Notepad...'}
+ else if(cmd==='browser'){openApp('browser');o.innerHTML+='Opening Browser...'}
+ else if(cmd==='taskmgr'){tmOpen();o.innerHTML+='Opening Task Manager...'}
+ else if(cmd==='date')o.innerHTML+=new Date().toLocaleDateString();
+ else if(cmd==='time')o.innerHTML+=new Date().toLocaleTimeString();
+ else if(cmd==='ver')o.innerHTML+='Microsoft Windows Web [Version 10.0-Web]';
+ else if(cmd.startsWith('echo '))o.innerHTML+=esc(v.slice(5));
+ else if(v)o.innerHTML+="'"+esc(v)+"' is not recognized as a command.";
+ e.target.value='';o.scrollTop=o.scrollHeight;
  }
 }
-function minimize(id){$(id)?.classList.remove("show");$("task-"+id)?.classList.remove("active")}
-function maximize(id){const w=$(id);if(w){w.classList.toggle("max");w.style.zIndex=++z}}
-function dragStart(e,id){const w=$(id);if(!w||w.classList.contains("max")||e.target.closest(".controls"))return;dragging={id,x:e.clientX,y:e.clientY,left:w.offsetLeft,top:w.offsetTop};w.style.zIndex=++z;e.preventDefault()}
-document.addEventListener("mousemove",e=>{if(!dragging)return;const w=$(dragging.id);if(w){w.style.left=dragging.left+e.clientX-dragging.x+"px";w.style.top=dragging.top+e.clientY-dragging.y+"px"}});
-document.addEventListener("mouseup",()=>dragging=null);
-document.querySelectorAll(".window").forEach(w=>w.addEventListener("mousedown",()=>w.style.zIndex=++z));
-
-$("startBtn").onclick=e=>{e.stopPropagation();$("start").classList.toggle("open");$("searchPanel").classList.remove("open")};
-$("searchBtn").onclick=e=>{e.stopPropagation();$("searchPanel").classList.add("open");$("start").classList.remove("open");$("searchInput").focus()};
-$("startSearch").oninput=function(){const q=this.value.toLowerCase();document.querySelectorAll(".start-app").forEach(x=>x.style.display=x.textContent.toLowerCase().includes(q)?"block":"none")};
-$("searchInput").oninput=function(){const q=this.value.toLowerCase();document.querySelectorAll(".searchResult").forEach(x=>x.style.display=x.dataset.search.includes(q)?"flex":"none")};
-document.addEventListener("click",e=>{if(!e.target.closest("#start")&&!e.target.closest("#startBtn")&&!e.target.closest("#searchPanel")&&!e.target.closest("#searchBtn"))closeMenus()});
-
-const settingsPages={
- system:["System",["🖥️ Display — brightness, scale and resolution.","🔊 Sound — speakers, microphone and volume.","🔔 Notifications — app notification controls.","ℹ️ About — Windows 11 Gaming Edition."]],
- devices:["Bluetooth & devices",["🖨️ Printers & scanners","🖱️ Mouse","⌨️ Keyboard","📱 Bluetooth devices"]],
- network:["Network & Internet",["📶 Wi-Fi — Connected","🌐 Ethernet — Disconnected","✈️ Airplane mode — Off"]],
- gaming:["Gaming",["🎮 Game Mode — On","🕹️ Game Bar — Enabled","📹 Captures — Ready","⚡ Performance — Balanced"]],
- personalization:["Personalization",["🖼️ Background — Windows Gaming","🎨 Colors — Accent color","🪟 Themes — Gaming Dark"]],
- apps:["Apps",["📦 Installed apps","🔗 Default apps","🧩 Optional features"]],
- accounts:["Accounts",["👤 Administrator","🔐 Sign-in options","☁️ Backup"]],
- privacy:["Privacy",["📍 Location","📷 Camera","🎙️ Microphone","🛡️ Security"]],
- update:["Windows Update",["✅ Your system is up to date.","🔄 Check for updates"]]
-};
-function settingsPage(page){
- const d=settingsPages[page]||settingsPages.system;
- document.querySelectorAll(".settingTab").forEach(t=>t.classList.toggle("active",t.dataset.page===page));
- const box=$("settingsContent"); box.innerHTML="<h1>"+d[0]+"</h1>";
- d[1].forEach((x,i)=>{
-  const card=document.createElement("div"); card.className="card"; card.innerHTML="<b>"+x+"</b>";
-  if(page==="personalization"&&i===0){const b=document.createElement("button");b.textContent="Change wallpaper";b.onclick=changeWallpaper;card.appendChild(document.createElement("br"));card.appendChild(b)}
-  if(page==="update"&&i===1){const b=document.createElement("button");b.textContent="Check for updates";b.onclick=()=>notify("Windows Update","You are up to date.");card.appendChild(document.createElement("br"));card.appendChild(b)}
-  box.appendChild(card);
- });
- localStorage.setItem("settingsPage",page)
-}
-document.querySelectorAll(".settingTab").forEach(t=>t.onclick=()=>settingsPage(t.dataset.page));
-
-function updateClock(){const n=new Date();$("clock").innerHTML=n.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})+"<br>"+n.toLocaleDateString();$("lockClock").textContent=n.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});$("lockDate").textContent=n.toLocaleDateString([],{weekday:"long",month:"long",day:"numeric"})}
-updateClock();setInterval(updateClock,1000);
-let nt;function notify(t,x){$("notificationTitle").textContent=t;$("notificationText").textContent=x;$("notification").style.display="block";clearTimeout(nt);nt=setTimeout(()=>$("notification").style.display="none",3500)}
-function toggleActionCenter(){$("actionCenter").classList.toggle("open")}
-
-$("desktop").addEventListener("contextmenu",e=>{e.preventDefault();const m=$("context");m.style.display="block";m.style.left=Math.min(e.clientX,innerWidth-245)+"px";m.style.top=Math.min(e.clientY,innerHeight-250)+"px"});
-document.addEventListener("contextmenu",e=>{if(!e.target.closest("#desktop"))$("context").style.display="none"});
-function refreshDesktop(){$("context").style.display="none";notify("Windows","Desktop refreshed.")}
-
-function calcInput(v){if(calcExpression==="Error")calcExpression="";calcExpression+=v;$("calcDisplay").textContent=calcExpression||"0"}
-function calcClear(){calcExpression="";$("calcDisplay").textContent="0"}
-function calcResult(){try{if(!/^[0-9+*/(). -]+$/.test(calcExpression))throw 0;calcExpression=String(Function('"use strict";return ('+calcExpression+')')())}catch{calcExpression="Error"}$("calcDisplay").textContent=calcExpression}
-
-const saved=localStorage.getItem("win11_note");if(saved!==null)$("notepadText").value=saved;
-$("notepadText").oninput=e=>localStorage.setItem("win11_note",e.target.value);
-
-function changeWallpaper(){const a=["radial-gradient(circle at 65% 40%,#176ca5,transparent 32%),linear-gradient(135deg,#020811,#082d50)","linear-gradient(135deg,#25004b,#006bb6,#03152b)","linear-gradient(135deg,#102000,#116b3b,#021a12)","linear-gradient(135deg,#320000,#9a1717,#180000)"];$("desktop").style.background=a[Math.floor(Math.random()*a.length)]}
-
-const canvas=$("paintCanvas"),ctx=canvas.getContext("2d");
-canvas.onmousedown=e=>{drawing=true;const r=canvas.getBoundingClientRect();lastX=e.clientX-r.left;lastY=e.clientY-r.top};
-canvas.onmousemove=e=>{if(!drawing)return;const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;ctx.beginPath();ctx.moveTo(lastX,lastY);ctx.lineTo(x,y);ctx.lineWidth=+$("paintSize").value;ctx.lineCap="round";ctx.strokeStyle=paintTool==="eraser"?"#fff":$("paintColor").value;ctx.stroke();lastX=x;lastY=y};
-window.onmouseup=()=>drawing=false;function clearPaint(){ctx.clearRect(0,0,canvas.width,canvas.height)}
-
-document.addEventListener("keydown",e=>{
- if(e.key==="Escape"){closeMenus();document.querySelectorAll(".window.show").forEach(w=>w.classList.remove("show"))}
-});
-$("cmdInput").onkeydown=e=>{if(e.key!=="Enter")return;const c=e.target.value.trim(),l=c.toLowerCase(),o=$("cmdOutput");o.innerHTML+="<br>C:\\Users\\Administrator&gt;"+c+"<br>";if(l==="cls")o.innerHTML="";else if(l==="dir")o.innerHTML+="<br>&lt;DIR&gt; Users<br>&lt;DIR&gt; Windows<br>&lt;DIR&gt; Program Files<br>README.txt<br>";else if(l==="ver")o.innerHTML+="<br>Microsoft Windows [Version 10.0.26100]<br>";else if(l==="whoami")o.innerHTML+="<br>administrator<br>";else if(l==="help")o.innerHTML+="<br>DIR CLS VER WHOAMI HELP DATE TIME<br>";else if(l==="date")o.innerHTML+="<br>"+new Date().toLocaleDateString()+"<br>";else if(l==="time")o.innerHTML+="<br>"+new Date().toLocaleTimeString()+"<br>";else if(c)o.innerHTML+="<br>'"+c+"' is not recognized as an internal or external command.<br>";e.target.value="";o.scrollTop=o.scrollHeight};
-
-let browserHistory=[],browserIndex=-1;
-
-function browserBack(){if(browserIndex>0){browserIndex--;loadBrowser()}}function browserForward(){if(browserIndex<browserHistory.length-1){browserIndex++;loadBrowser()}}function browserReload(){if(browserIndex>=0)loadBrowser()}
-
-function saveProxy(){localStorage.setItem("proxyHost",$("proxyHost").value);localStorage.setItem("proxyPort",$("proxyPort").value);notify("Proxy","Settings saved.")}function connectProxy(){$("proxyStatus").className="proxyStatus ok";$("proxyStatus").textContent="● Configured — "+$("proxyHost").value+":"+$("proxyPort").value;notify("Proxy","Configuration enabled.")}function disconnectProxy(){$("proxyStatus").className="proxyStatus";$("proxyStatus").textContent="● Disconnected"}
-
-function launchGame(type){
- openApp("gameWindow");
- if(gameCleanup){try{gameCleanup()}catch(e){}gameCleanup=null}
- clearInterval(gameTimer);gameTimer=null;
- $("gameArea").innerHTML="";$("gameUI").innerHTML="";
- const games={snake:["Snake",startSnake],"2048":["2048",start2048],mines:["Minesweeper",startMines],ttt:["Tic-Tac-Toe",startTTT],breakout:["Breakout",startBreakout],reaction:["Reaction",startReaction],pong:["Pong",startPong],shooter:["Space Shooter",startShooter]};
- const g=games[type];
- if(!g){notify("Gaming Hub","That game is unavailable.");return}
- $("gameTitle").textContent=g[0];$("gameName").textContent=g[0];$("gameScore").textContent="Score: 0";
- g[1]();
-}
-
-function startSnake(){const c=document.createElement("canvas");c.width=500;c.height=400;$("gameArea").appendChild(c);const x=c.getContext("2d"),s=20,C=25,R=20;let snake=[{x:12,y:10}],d={x:1,y:0},f={x:5,y:5},score=0,run=true;function spawn(){f={x:Math.floor(Math.random()*C),y:Math.floor(Math.random()*R)}}function draw(){x.fillStyle="#071018";x.fillRect(0,0,c.width,c.height);x.fillStyle="#49bfff";snake.forEach(p=>x.fillRect(p.x*s,p.y*s,s-2,s-2));x.fillStyle="#ff4d6d";x.fillRect(f.x*s,f.y*s,s-2,s-2)}function tick(){if(!run)return;let h={x:snake[0].x+d.x,y:snake[0].y+d.y};if(h.x<0||h.y<0||h.x>=C||h.y>=R||snake.some(p=>p.x===h.x&&p.y===h.y)){run=false;notify("Game Over","Snake score: "+score);return}snake.unshift(h);if(h.x===f.x&&h.y===f.y){score++;$("gameScore").textContent="Score: "+score;spawn()}else snake.pop();draw()}const key=e=>{if(e.key==="ArrowUp"&&d.y!==1)d={x:0,y:-1};if(e.key==="ArrowDown"&&d.y!==-1)d={x:0,y:1};if(e.key==="ArrowLeft"&&d.x!==1)d={x:-1,y:0};if(e.key==="ArrowRight"&&d.x!==-1)d={x:1,y:0}};document.addEventListener("keydown",key);gameTimer=setInterval(tick,110);draw();gameCleanup=()=>document.removeEventListener("keydown",key);$("gameUI").textContent="Use the arrow keys."}
-
-function start2048(){const b=document.createElement("div");b.style.cssText="display:grid;grid-template-columns:repeat(4,80px);gap:7px;background:#777;padding:7px";$("gameArea").appendChild(b);let a=Array(16).fill(0),score=0;function add(){let e=a.map((v,i)=>v?null:i).filter(v=>v!==null);if(e.length)a[e[Math.floor(Math.random()*e.length)]]=Math.random()<.9?2:4}function draw(){b.innerHTML="";a.forEach(v=>{let d=document.createElement("div");d.style.cssText="width:80px;height:80px;background:"+(v?"#ddd":"#aaa")+";display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:bold;color:#222";d.textContent=v||"";b.appendChild(d)})}function move(dir){let old=a.join(),rows=[];for(let r=0;r<4;r++){let row=a.slice(r*4,r*4+4);if(dir==="up"||dir==="down")row=[a[r],a[r+4],a[r+8],a[r+12]];if(dir==="right"||dir==="down")row.reverse();row=row.filter(Boolean);for(let i=0;i<row.length-1;i++)if(row[i]===row[i+1]){row[i]*=2;score+=row[i];row.splice(i+1,1)}while(row.length<4)row.push(0);if(dir==="right"||dir==="down")row.reverse();rows.push(row)}if(dir==="up"||dir==="down"){let n=Array(16);for(let r=0;r<4;r++)for(let q=0;q<4;q++)n[q*4+r]=rows[r][q];a=n}else a=rows.flat();if(a.join()!==old){add();$("gameScore").textContent="Score: "+score;draw()}}const key=e=>{const m={ArrowUp:"up",ArrowDown:"down",ArrowLeft:"left",ArrowRight:"right"};if(m[e.key]){e.preventDefault();move(m[e.key])}};document.addEventListener("keydown",key);add();add();draw();gameCleanup=()=>document.removeEventListener("keydown",key);$("gameUI").textContent="Use arrow keys."}
-
-function startMines(){const g=document.createElement("div");g.style.cssText="display:grid;grid-template-columns:repeat(8,35px);gap:2px";$("gameArea").appendChild(g);let mines=new Set();while(mines.size<10)mines.add(Math.floor(Math.random()*64));for(let i=0;i<64;i++){let b=document.createElement("button");b.style.cssText="width:35px;height:35px";b.onclick=()=>{if(mines.has(i)){b.textContent="💣";notify("Minesweeper","Boom!");return}let n=0;for(let y=-1;y<=1;y++)for(let q=-1;q<=1;q++){let k=i+y*8+q;if(k>=0&&k<64&&Math.abs(k%8-i%8)<=1&&mines.has(k))n++}b.textContent=n||"·"};g.appendChild(b)}$("gameUI").textContent="Click squares. Avoid the mines."}
-
-function startTTT(){const g=document.createElement("div");g.style.cssText="display:grid;grid-template-columns:repeat(3,90px);gap:5px";$("gameArea").appendChild(g);let a=Array(9).fill(""),over=false;function win(){return[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]].some(r=>a[r[0]]&&a[r[0]]===a[r[1]]&&a[r[1]]===a[r[2]])}function draw(){g.innerHTML="";a.forEach((v,i)=>{let b=document.createElement("button");b.style.cssText="width:90px;height:90px;font-size:35px";b.textContent=v;b.onclick=()=>{if(over||a[i])return;a[i]="X";draw();if(win()){over=true;notify("Tic-Tac-Toe","You win!");return}let e=a.map((v,i)=>v?null:i).filter(i=>i!==null);if(!e.length)return;let q=e[Math.floor(Math.random()*e.length)];a[q]="O";draw();if(win()){over=true;notify("Tic-Tac-Toe","Computer wins!")} };g.appendChild(b)})}draw();$("gameUI").textContent="You are X."}
-
-function startBreakout(){const c=document.createElement("canvas");c.width=560;c.height=360;$("gameArea").appendChild(c);const x=c.getContext("2d");let px=240,ball={x:280,y:300,dx:3,dy:-3},score=0,blocks=[];for(let r=0;r<4;r++)for(let q=0;q<9;q++)blocks.push({x:15+q*60,y:25+r*22,w:52,h:15,on:true});function draw(){x.fillStyle="#05070b";x.fillRect(0,0,560,360);x.fillStyle="#49bfff";x.fillRect(px,340,80,10);x.fillStyle="#fff";x.beginPath();x.arc(ball.x,ball.y,7,0,Math.PI*2);x.fill();x.fillStyle="#ff5577";blocks.forEach(b=>{if(b.on)x.fillRect(b.x,b.y,b.w,b.h)})}function tick(){ball.x+=ball.dx;ball.y+=ball.dy;if(ball.x<7||ball.x>553)ball.dx*=-1;if(ball.y<7)ball.dy*=-1;if(ball.y>330&&ball.x>px&&ball.x<px+80)ball.dy=-Math.abs(ball.dy);for(const b of blocks)if(b.on&&ball.x>b.x&&ball.x<b.x+b.w&&ball.y>b.y&&ball.y<b.y+b.h){b.on=false;ball.dy*=-1;score++;$("gameScore").textContent="Score: "+score;break}if(ball.y>370){notify("Breakout","Game over!");clearInterval(gameTimer)}draw()}const key=e=>{if(e.key==="ArrowLeft")px=Math.max(0,px-30);if(e.key==="ArrowRight")px=Math.min(480,px+30)};document.addEventListener("keydown",key);gameTimer=setInterval(tick,16);draw();gameCleanup=()=>document.removeEventListener("keydown",key);$("gameUI").textContent="Use ← and →."}
-
-function startReaction(){
- const b=document.createElement("button");
- b.textContent="WAIT...";
- b.style.cssText="width:250px;height:150px;font-size:28px";
- $("gameArea").appendChild(b);
- let start=0,ready=false,finished=false;
- let timer=setTimeout(()=>{ready=true;b.textContent="CLICK!";start=performance.now()},Math.random()*2500+1000);
- b.onclick=()=>{
-   if(finished)return;
-   if(!ready){clearTimeout(timer);finished=true;b.textContent="Too early — close and restart";notify("Reaction","Too early!");return}
-   const ms=Math.round(performance.now()-start);
-   $("gameScore").textContent="Score: "+ms+" ms";
-   b.textContent=ms+" ms — click to play again";
-   ready=false; finished=true;
- };
- gameCleanup=()=>{clearTimeout(timer);finished=true};
- $("gameUI").textContent="Wait for CLICK, then react.";
-}
+$('audioFile')?.addEventListener('change',e=>{let f=e.target.files[0];if(f){$('audioPlayer').src=URL.createObjectURL(f);$('trackName').textContent=f.name}})
+$('photoFiles')?.addEventListener('change',e=>{let g=$('photoGrid');g.innerHTML='';[...e.target.files].forEach(f=>{let img=document.createElement('img');img.src=URL.createObjectURL(f);img.style.width='100%';img.style.height='130px';img.style.objectFit='cover';img.style.cursor='pointer';img.onclick=()=>window.open(img.src);g.appendChild(img)})})
+function hideContext(){ $('contextMenu').style.display='none' }
+function refreshDesktop(){hideContext();$('desktopIcons').style.opacity='.35';setTimeout(()=>$('desktopIcons').style.opacity='1',180);showToast('Desktop refreshed')}
+$('desktop').addEventListener('contextmenu',e=>{if(e.target.closest('.window')||e.target.closest('#taskbar')||e.target.closest('#startMenu'))return;e.preventDefault();let m=$('contextMenu');m.style.display='block';m.style.left=Math.min(e.clientX,innerWidth-215)+'px';m.style.top=Math.min(e.clientY,innerHeight-180)+'px'})
+document.addEventListener('click',e=>{if(!e.target.closest('#contextMenu'))hideContext();if(!e.target.closest('#taskbarContext')&&!e.target.closest('#taskbar'))hideTaskbarContext();if(!e.target.closest('#clockPanel')&&!e.target.closest('#clock'))hideClock();if(!e.target.closest('#searchPanel')&&!e.target.closest('.search'))closeSearchPanel()})
+$('taskbar').addEventListener('contextmenu',taskbarMenu)
+document.addEventListener('dblclick',e=>{if(e.target===document.body||e.target.id==='desktop'||e.target.classList.contains('wallpaper-glow'))openApp('explorer')})
+window.addEventListener('keydown',e=>{
+ if(e.key==='Escape'){$('startMenu').style.display='none';hideContext();$('actionCenter').style.display='none';$('virtualView').style.display='none'}
+ if(e.key==='Enter'&&document.activeElement===$('pw'))login();
+ if(e.ctrlKey&&e.shiftKey&&e.key.toLowerCase()==='escape'){e.preventDefault();tmOpen()}
+ if(e.altKey&&e.key==='F4'){let visible=apps.filter(a=>$(a).style.display==='block').sort((a,b)=>$(a).style.zIndex-$(b).style.zIndex).pop();if(visible)closeApp(visible)}
+ if(e.key==='F2'&&document.activeElement!==$('pw'))showToast('Rename: select an item first')
+ if(e.key==='F5'){e.preventDefault();refreshDesktop()}
+ if(e.ctrlKey&&e.key.toLowerCase()==='n'&&$('explorer').style.display==='block'){e.preventDefault();showNewDialog()}
+ if(e.key==='Meta'&&e.key.toLowerCase()==='s'){e.preventDefault();openSearchPanel()}
+ if(e.key==='Meta'&&e.key.toLowerCase()==='d'){e.preventDefault();showDesktop()}
+ if(e.key==='Meta'&&e.key.toLowerCase()==='a'){e.preventDefault();toggleAction()}
+})
 
 
-function hubTab(tab){document.querySelectorAll(".hubpage").forEach(x=>x.classList.remove("active"));$("hub-"+tab)?.classList.add("active")}
-function launchPortal(name){notify("Game Launcher",name+" launched in the Roblox-style hub.")}
-function setPerf(mode){$("perfText").textContent="Current mode: "+mode;notify("Gaming Mode",mode+" enabled.")}
-setInterval(()=>{if($("gpuStat")){let g=45+Math.floor(Math.random()*35),c=20+Math.floor(Math.random()*35),t=52+Math.floor(Math.random()*14);$("gpuStat").textContent=g+"%";$("cpuStat").textContent=c+"%";$("tempStat").textContent=t+"°C";$("gpuBar").style.width=g+"%";$("cpuBar").style.width=c+"%" }},1500);
-
-function startPong(){
- const c=document.createElement("canvas");c.width=600;c.height=360;$("gameArea").appendChild(c);const x=c.getContext("2d");
- let py=140,ay=140,b={x:300,y:180,dx:4,dy:3},score=0,run=true;
- const key=e=>{if(e.key==="ArrowUp")py=Math.max(0,py-25);if(e.key==="ArrowDown")py=Math.min(280,py+25)};
- document.addEventListener("keydown",key);
- function tick(){if(!run)return;b.x+=b.dx;b.y+=b.dy;if(b.y<6||b.y>354)b.dy*=-1;let ai=b.y-40;ay+=Math.max(-3,Math.min(3,ai-ay));if(b.x<28&&b.y>py&&b.y<py+80)b.dx=Math.abs(b.dx);if(b.x>572&&b.y>ay&&b.y<ay+80)b.dx=-Math.abs(b.dx);if(b.x<0){run=false;notify("Pong","Game over!")}if(b.x>600){score++;$("gameScore").textContent="Score: "+score;b={x:300,y:180,dx:-4,dy:3}}x.fillStyle="#05070b";x.fillRect(0,0,600,360);x.fillStyle="#fff";x.fillRect(15,py,10,80);x.fillRect(575,ay,10,80);x.beginPath();x.arc(b.x,b.y,7,0,7);x.fill()}gameTimer=setInterval(tick,16);gameCleanup=()=>document.removeEventListener("keydown",key);$("gameUI").textContent="Use ↑ and ↓."}
-
-function startShooter(){
- const c=document.createElement("canvas");c.width=600;c.height=360;$("gameArea").appendChild(c);const x=c.getContext("2d");
- let ship=280,shots=[],enemies=[],score=0,run=true,spawn=0;
- const key=e=>{if(e.key==="ArrowLeft")ship=Math.max(15,ship-25);if(e.key==="ArrowRight")ship=Math.min(555,ship+25);if(e.key===" ")shots.push({x:ship,y:315})};
- document.addEventListener("keydown",key);
- function tick(){if(!run)return;spawn++;if(spawn%30===0)enemies.push({x:20+Math.random()*560,y:15});shots.forEach(s=>s.y-=7);enemies.forEach(e=>e.y+=2);for(const s of shots)for(const e of enemies)if(Math.hypot(s.x-e.x,s.y-e.y)<18){e.dead=true;s.dead=true;score++;$("gameScore").textContent="Score: "+score}shots=shots.filter(s=>!s.dead&&s.y>0);enemies=enemies.filter(e=>!e.dead&&e.y<360);if(enemies.some(e=>e.y>320)){run=false;notify("Space Shooter","Game over!")}x.fillStyle="#03050a";x.fillRect(0,0,600,360);x.fillStyle="#49bfff";x.beginPath();x.moveTo(ship,300);x.lineTo(ship-18,335);x.lineTo(ship+18,335);x.fill();x.fillStyle="#fff";shots.forEach(s=>x.fillRect(s.x-2,s.y,4,10));x.fillStyle="#ff5577";enemies.forEach(e=>{x.beginPath();x.arc(e.x,e.y,12,0,7);x.fill()})}
- gameTimer=setInterval(tick,16);gameCleanup=()=>document.removeEventListener("keydown",key);$("gameUI").textContent="← → move • Space shoot";
-}
-
-function showLogin(){$("lockScreen").style.display="none";$("loginScreen").style.display="flex";$("startupPassword").focus()}
-function unlockWindows(){if($("startupPassword").value===STARTUP_PASSWORD){$("loginError").style.display="none";$("loginScreen").style.display="none";$("desktop").style.display="block";$("taskbar").style.display="flex";$("startupPassword").value="";notify("Windows 10 Gaming","Welcome back, Administrator!")}else{$("loginError").style.display="block";$("startupPassword").value="";$("startupPassword").focus()}}
-function lockWindows(){closeMenus();document.querySelectorAll(".window").forEach(w=>w.classList.remove("show"));$("desktop").style.display="none";$("taskbar").style.display="none";$("lockScreen").style.display="flex"}
-$("startupPassword").onkeydown=e=>{if(e.key==="Enter")unlockWindows()};
-
-window.addEventListener("load",()=>{
- settingsPage("system"); browserHome();
- const ph=localStorage.getItem("proxyHost"),pp=localStorage.getItem("proxyPort");
- if(ph)$("proxyHost").value=ph;if(pp)$("proxyPort").value=pp;
- $("desktop").style.display="block";$("taskbar").style.display="flex";$("loginScreen").style.display="none";
-});
-
-<script>
-/* Mobile controls + safety layer */
-(function(){
-  const area=$("gameArea");
-  if(!area)return;
-
-  const pad=document.createElement("div");
-  pad.id="mobileGamePad"; if($("mobileGamePad"))$("mobileGamePad").remove();
-  pad.innerHTML='<button data-k="ArrowUp">▲</button><div><button data-k="ArrowLeft">◀</button><button data-k="Space">●</button><button data-k="ArrowRight">▶</button></div><button data-k="ArrowDown">▼</button>';
-  pad.style.cssText="display:flex;flex-direction:column;align-items:center;gap:5px;margin:12px auto 0;user-select:none";
-  pad.querySelectorAll("div").forEach(d=>d.style.cssText="display:flex;gap:5px");
-  pad.querySelectorAll("button").forEach(b=>{
-    b.style.cssText="width:48px;height:52px;border:1px solid #ffffff33;border-radius:6px;background:#182533;color:white;font-size:18px;touch-action:manipulation";
-    const fire=e=>{e.preventDefault();document.dispatchEvent(new KeyboardEvent("keydown",{key:b.dataset.k,bubbles:true}))};
-    b.addEventListener("pointerdown",fire);
+/* ===== ADVANCED TASKBAR / SHELL ===== */
+const PIN_KEY='win10.pins', NOTEY='win10.notifications';
+let pins;
+try{pins=JSON.parse(localStorage.getItem(PIN_KEY)||'["explorer","edge","settings","notepad","calc","taskmgr","calendar","paint","media","terminal"]')}catch(e){pins=["explorer","edge","settings","notepad","calc","taskmgr","calendar","paint","media","terminal"]}
+function savePins(){localStorage.setItem(PIN_KEY,JSON.stringify(pins))}
+function pinnedApps(){return pins.map(id=>document.getElementById('t-'+id)).filter(Boolean)}
+function rebuildPins(){
+  const bar=document.querySelector('.taskbar'); if(!bar)return;
+  const search=bar.querySelector('.search'), start=bar.querySelector('.winlogo')?.parentElement;
+  const virtual=bar.querySelector('[onclick*="toggleVirtual"]'), show=bar.querySelector('[onclick*="showDesktop"]');
+  if(!search||!start)return;
+  [...bar.querySelectorAll('.tb[data-pin]')].forEach(x=>x.remove());
+  let ref=virtual||show||bar.querySelector('.tray');
+  pins.forEach((id,i)=>{
+    const old=document.getElementById('t-'+id);
+    if(!old)return;
+    const b=old.cloneNode(true); b.id='t-'+id; b.className='tb'; b.dataset.pin=id;
+    b.draggable=true; b.title=(old.title||id)+' — right-click for jump list';
+    b.onclick=()=>openWin(id);
+    b.oncontextmenu=e=>{e.preventDefault();showJumpList(e,id)};
+    b.ondragstart=e=>{b.classList.add('dragging');e.dataTransfer.setData('text/plain',id)};
+    b.ondragend=()=>b.classList.remove('dragging');
+    b.ondragover=e=>e.preventDefault();
+    b.ondrop=e=>{e.preventDefault();const from=e.dataTransfer.getData('text/plain');reorderPin(from,id)};
+    ref.parentNode.insertBefore(b,ref);
   });
-  area.parentElement.appendChild(pad);
-
-  const originalLaunch = window.launchGame;
-  window.launchGame = function(type){
-    originalLaunch(type);
-    pad.style.display=["snake","2048","pong","shooter","breakout"].includes(type)?"flex":"none";
+  updateTaskStates();
+}
+function reorderPin(a,b){if(a===b)return;const ia=pins.indexOf(a),ib=pins.indexOf(b);if(ia<0||ib<0)return;pins.splice(ia,1);pins.splice(pins.indexOf(b),0,a);savePins();rebuildPins();toast('Taskbar','Pinned apps reordered.')}
+function showJumpList(e,id){
+  closeJumpList();
+  const names={explorer:'File Explorer',edge:'Microsoft Edge',settings:'Settings',notepad:'Notepad',calc:'Calculator',taskmgr:'Task Manager',calendar:'Calendar',paint:'Paint',media:'Media Player',terminal:'Terminal'};
+  const menu=document.createElement('div');menu.className='jumpmenu';menu.id='jumpmenu';
+  const actions={
+    explorer:[['📁 Open File Explorer',"openWin('explorer')"],['🗂️ This PC',"openWin('explorer');current='This PC';renderFiles()"],['📥 Downloads',"openWin('explorer');current='Downloads';renderFiles()"]],
+    edge:[['🌐 New tab',"openWin('edge');toast('Edge','New tab opened')"],['⭐ Favorites',"openWin('edge');toast('Edge','Favorites opened')"]],
+    settings:[['⚙️ System',"openWin('settings')"],['🎨 Personalization',"openWin('settings');toast('Settings','Personalization')"]],
+    notepad:[['📝 New note',"openWin('notepad');document.getElementById('note').value=''"],['📄 Open notes',"openWin('notepad')"]],
+    calc:[['🧮 Calculator',"openWin('calc')"],['🧹 Clear',"openWin('calc');calc='';document.getElementById('screen').textContent='0'"]],
+    taskmgr:[['📊 Processes',"openWin('taskmgr')"],['⚡ Performance',"openWin('taskmgr');toast('Task Manager','Performance')"]],
+    calendar:[['📅 Today',"openWin('calendar')"]],paint:[['🎨 New canvas',"openWin('paint');clearPaint()']],
+    media:[['🎵 Media Player',"openWin('media')"]],terminal:[['⌨️ New terminal',"openWin('terminal')"]]
   };
+  menu.innerHTML='<div class="jmhead">'+(names[id]||id)+'</div>'+((actions[id]||[['Open',`openWin('${id}')`]]).map(a=>`<button onclick="${a[1]};closeJumpList()">${a[0]}</button>`).join(''))+
+    `<button onclick="unpinApp('${id}');closeJumpList()">📌 Unpin from taskbar</button>`;
+  document.body.appendChild(menu);
+  menu.style.left=Math.min(innerWidth-280,Math.max(4,e.clientX-10))+'px';
+  menu.style.top=Math.min(innerHeight-260,Math.max(4,e.clientY-250))+'px';
+}
+function closeJumpList(){document.getElementById('jumpmenu')?.remove()}
+function unpinApp(id){pins=pins.filter(x=>x!==id);savePins();rebuildPins();toast('Taskbar',id+' unpinned')}
+function pinApp(id){if(!pins.includes(id)){pins.push(id);savePins();rebuildPins();toast('Taskbar',id+' pinned')}}
+document.addEventListener('click',e=>{if(!e.target.closest('.jumpmenu'))closeJumpList()});
 
-  window.addEventListener("error",e=>{
-    if(typeof notify==="function") notify("Windows 10 Gaming","An app hit an error and was safely stopped.");
-  });
-})();
-</script>
+function showThumbs(id){
+  closeThumbs();
+  const apps=pins.filter(x=>document.getElementById(x)?.classList.contains('visible'));
+  if(!apps.length)return;
+  const panel=document.createElement('div');panel.className='thumbpreview';panel.id='thumbpreview';
+  apps.forEach(a=>{const w=document.getElementById(a),d=document.createElement('div');d.className='thumb';d.innerHTML=`<div class="mini">${w.outerHTML}</div><label>${w.querySelector('.tt')?.textContent||a}</label>`;d.onclick=()=>{openWin(a);closeThumbs()};panel.appendChild(d)});
+  document.body.appendChild(panel);const b=document.getElementById('t-'+id);const r=b?.getBoundingClientRect();if(r){panel.style.left=Math.min(innerWidth-panel.offsetWidth-5,Math.max(5,r.left))+'px';panel.style.bottom='43px'}
+}
+function closeThumbs(){document.getElementById('thumbpreview')?.remove()}
+function addBadges(){
+  const counts={edge:2,notepad:1,terminal:3};
+  Object.entries(counts).forEach(([id,n])=>{const b=document.getElementById('t-'+id);if(b&&!b.querySelector('.badge'))b.insertAdjacentHTML('beforeend',`<span class="badge">${n}</span>`)});
+}
+function clearBadges(id){document.querySelector(`#t-${id} .badge`)?.remove()}
+document.addEventListener('mouseover',e=>{const b=e.target.closest('.tb[data-pin]');if(b){clearTimeout(window._thumbTimer);window._thumbTimer=setTimeout(()=>showThumbs(b.dataset.pin),450)}})
+document.addEventListener('mouseout',e=>{if(e.target.closest('.tb[data-pin]')){clearTimeout(window._thumbTimer);setTimeout(()=>{if(!document.querySelector('#thumbpreview:hover'))closeThumbs()},120)}})
 
-<script>
-document.addEventListener("click",function(e){
-  const b=e.target.closest("#settingsNav button");
-  if(b){
-    const t=b.dataset.tab || (b.getAttribute("onclick")||"").match(/settingsPage\(['"]([^'"]+)/)?.[1];
-    if(t){e.preventDefault();settingsPage(t);}
-  }
-});
-</script>
+function toggleTrayOverflow(e){
+  e?.stopPropagation(); document.getElementById('trayoverflow')?.remove();
+  const d=document.createElement('div');d.id='trayoverflow';d.className='trayoverflow';
+  d.innerHTML='<button onclick="toast(\'Network\',\'Wi‑Fi connected\');this.parentNode.remove()">📶 Wi‑Fi</button><button onclick="toast(\'Bluetooth\',\'Bluetooth is on\');this.parentNode.remove()">ᛒ Bluetooth</button><button onclick="toast(\'Battery\',\'Battery 100%\');this.parentNode.remove()">🔋 Battery</button><button onclick="openWin(\'settings\');this.parentNode.remove()">⚙️ System settings</button>';
+  document.body.appendChild(d);const b=document.getElementById('traymore'),r=b.getBoundingClientRect();d.style.right='8px';d.style.bottom='43px';
+}
+document.addEventListener('click',e=>{if(!e.target.closest('#trayoverflow')&&!e.target.closest('#traymore'))document.getElementById('trayoverflow')?.remove()});
 
-
-<script>
-(function(){
-  function applySettings(){
-    const dark=localStorage.getItem("theme")!=="light";
-    document.body.classList.toggle("light-theme",!dark);
-    const accent=localStorage.getItem("accent");
-    if(accent)document.documentElement.style.setProperty("--accent",accent);
-  }
-  window.setTheme=function(theme){
-    localStorage.setItem("theme",theme);
-    applySettings();
-    notify("Settings","Theme changed to "+theme+".");
-  };
-  window.setAccent=function(color){
-    localStorage.setItem("accent",color);
-    document.documentElement.style.setProperty("--accent",color);
-    notify("Settings","Accent color updated.");
-  };
-  window.resetSettings=function(){
-    localStorage.removeItem("theme");localStorage.removeItem("accent");
-    localStorage.removeItem("settingsTab");
-    localStorage.removeItem("proxyHost");localStorage.removeItem("proxyPort");
-    applySettings();settingsPage("system");
-    notify("Settings","Settings reset.");
-  };
-  applySettings();
-})();
-</script>
-
-
-<script>
-window.addEventListener("error",function(e){
-  console.error(e.error||e.message);
-  if(typeof notify==="function") notify("Windows 11","A component failed safely. Other apps are still available.");
-});
-window.addEventListener("unhandledrejection",function(e){
-  console.error(e.reason);
-  if(typeof notify==="function") notify("Windows 11","A background action failed safely.");
-});
-</script>
-
-
-<script>
-(function(){
- const iconMap={explorer:"📁",browser:"🌐",notepad:"📝",calculator:"🧮",settings:"⚙️",gamingHub:"🎮",gameWindow:"🎮",paint:"🎨",terminal:"⌨️",taskManager:"📊",recycle:"🗑️",proxy:"🌐"};
- function addIcons(){
-   document.querySelectorAll(".window").forEach(w=>{
-     if(w.querySelector(".titlebar .win-icon"))return;
-     const id=w.id, bar=w.querySelector(".titlebar");
-     if(bar){const s=document.createElement("span");s.className="win-icon";s.textContent=iconMap[id]||"🪟";bar.prepend(s)}
-   });
- }
- function clock(){
-   const e=document.getElementById("clock");if(e)e.textContent=new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
- }
- setInterval(clock,1000);clock();
- setTimeout(addIcons,0);
- new MutationObserver(addIcons).observe(document.body,{childList:true,subtree:true});
- window.showDesktop=function(){
-   document.querySelectorAll(".window.show").forEach(w=>w.classList.remove("show"));
-   if(typeof closeMenus==="function")closeMenus();
- };
- window.searchAll=function(q){
-   q=(q||"").trim();if(!q)return;
-   const map={explorer:"explorer",browser:"browser",gaming:"gamingHub",games:"gamingHub",settings:"settings",notepad:"notepad",calculator:"calculator",paint:"paint",terminal:"terminal"};
-   const k=q.toLowerCase();
-   const target=Object.keys(map).find(x=>k.includes(x));
-   if(target){openApp(map[target]);return}
-   if(typeof notify==="function")notify("Search","No local app matched “"+q+"”.");
- };
-})();
-</script>
-
-<script>
-(function(){
- const FS={
-  "This PC":[["💾","Local Disk (C:)","folder"],["📁","Documents","folder"],["📥","Downloads","folder"],["🖼️","Pictures","folder"],["🎵","Music","folder"],["🎬","Videos","folder"],["🖥️","Desktop","folder"]],
-  "Quick access":[["📁","Desktop","folder"],["📥","Downloads","folder"],["📄","Documents","folder"],["🖼️","Pictures","folder"]],
-  "Desktop":[["📄","index.html","file"],["🎮","Gaming Hub","app"],["🌐","Browser","app"],["⚙️","Settings","app"]],
-  "Downloads":[["📦","Windows11Gaming.zip","file"],["📄","README.txt","file"]],
-  "Documents":[["📄","Gaming Notes.txt","file"],["📄","My Games.txt","file"]],
-  "Pictures":[["🖼️","Wallpaper.png","file"],["🖼️","Screenshot.png","file"]],
-  "Music":[["🎵","Gaming Mix.mp3","file"]],
-  "Videos":[["🎬","Gameplay.mp4","file"]],
-  "Local Disk (C:)":[["📁","Program Files","folder"],["📁","Users","folder"],["📁","Windows","folder"],["📁","Games","folder"]]
- };
- let path="This PC", back=[], forward=[];
- function render(){
-  const files=$("explorerFiles"), addr=$("explorerAddress");
-  if(!files)return;
-  addr.value=path;
-  files.innerHTML="";
-  (FS[path]||[]).forEach(([icon,name,type])=>{
-   const d=document.createElement("div");d.className="file";d.tabIndex=0;
-   d.innerHTML='<span class="fileIcon">'+icon+'</span><span>'+name+'</span>';
-   d.ondblclick=()=>type==="folder"?explorerOpen(name):openExplorerItem(name,type);
-   d.onclick=()=>{document.querySelectorAll("#explorerFiles .file").forEach(x=>x.classList.remove("selected"));d.classList.add("selected")};
-   files.appendChild(d);
-  });
- }
- window.explorerOpen=function(p){
-  p=(p||"This PC").trim();
-  if(FS[p]){if(p!==path){back.push(path);forward=[]}path=p;render();return}
-  const hit=Object.keys(FS).find(x=>x.toLowerCase()===p.toLowerCase());
-  if(hit){if(hit!==path){back.push(path);forward=[]}path=hit;render();return}
-  notify("File Explorer","Folder not found: "+p);
- };
- window.explorerBack=function(){if(!back.length)return;forward.push(path);path=back.pop();render()};
- window.explorerForward=function(){if(!forward.length)return;back.push(path);path=forward.pop();render()};
- window.explorerUp=function(){if(path==="This PC")return;explorerOpen("This PC")};
- window.openExplorerItem=function(name,type){
-  if(name==="Browser")openApp("browser");
-  else if(name==="Gaming Hub")openApp("gaming");
-  else if(name==="Settings")openApp("settings");
-  else if(name.endsWith(".txt"))openApp("notepad");
-  else if(name.endsWith(".html"))notify("File Explorer","index.html is available in your GitHub Pages site.");
-  else notify("File Explorer",name+" opened.");
- };
- window.refreshExplorer=render;
- setTimeout(render,0);
-})();
-</script>
-
-<script>
-(function(){
- const builtins={
-  "home":()=>'<div class="browser-home"><h1>🌐 Web Browser</h1><p>Windows 11 Gaming Edition</p><div class="quick"><button onclick="navigateBrowser(\'https://www.youtube.com\')">▶️ YouTube</button><button onclick="navigateBrowser(\'https://www.google.com\')">🔎 Google</button><button onclick="navigateBrowser(\'https://www.github.com\')">🐙 GitHub</button></div><p class="muted">Enter a web address above. Some websites block embedding in browsers inside webpages.</p></div>',
-  "blocked":u=>'<div class="browser-home"><h2>Site can’t be displayed inside this web OS</h2><p>'+u.replace(/</g,"&lt;")+'</p><button onclick="window.open(\''+u.replace(/'/g,"%27")+'\',\'_blank\')">Open in browser tab</button></div>'
- };
- function show(url){
-  const box=$("browserContent"); if(!box)return;
-  if(!url){box.innerHTML=builtins.home();return}
-  $("browserUrl").value=url;
-  try{$("browserTab").textContent=new URL(url).hostname}catch{$("browserTab").textContent="Page"}
-  box.innerHTML='<div class="browser-loading">Loading…</div><iframe id="webFrame" src="'+url.replace(/"/g,"&quot;")+'" title="Web page" style="width:100%;height:100%;border:0;background:white"></iframe>';
-  const f=$("webFrame");
-  f.addEventListener("load",()=>{$("browserContent").querySelector(".browser-loading")?.remove()});
-  f.addEventListener("error",()=>{box.innerHTML=builtins.blocked(url)});
- }
- window.browserHome=function(){browserHistory=[];browserIndex=-1;$("browserUrl").value="";$("browserTab").textContent="New tab";show("")};
- window.navigateBrowser=function(url){
-  url=(url||$("browserUrl").value||"").trim(); if(!url)return browserHome();
-  if(!/^https?:\/\//i.test(url))url="https://www.google.com/search?q="+encodeURIComponent(url);
-  browserHistory=browserHistory.slice(0,browserIndex+1);browserHistory.push(url);browserIndex++;
-  show(url);
- };
- window.loadBrowser=function(){if(browserIndex>=0)show(browserHistory[browserIndex])};
- window.browserBack=function(){if(browserIndex>0){browserIndex--;show(browserHistory[browserIndex])}};
- window.browserForward=function(){if(browserIndex<browserHistory.length-1){browserIndex++;show(browserHistory[browserIndex])}};
- window.browserReload=function(){if(browserIndex>=0)show(browserHistory[browserIndex]);else browserHome()};
- setTimeout(browserHome,0);
-})();
-</script>
-
-<script>
-document.addEventListener("dblclick",e=>{
- const icon=e.target.closest(".desktop-icon");
- if(icon){const a=icon.getAttribute("ondblclick");if(a)try{new Function(a).call(icon)}catch(err){console.error(err)}}
-});
+function showSnapZones(){document.querySelectorAll('.snapzone').forEach(x=>x.classList.add('show'))}
+function hideSnapZones(){document.querySelectorAll('.snapzone').forEach(x=>x.classList.remove('show'))}
+function snapWindow(id,side){const w=document.getElementById(id);if(!w)return;w.classList.remove('max');w.style.top='0px';w.style.height='calc(100vh - 40px)';w.style.width='50vw';w.style.left=side==='right'?'50vw':'0px';hideSnapZones();toast('Window','Snapped '+side)}
+function addSnapZones(){if(document.querySelector('.snapzone'))return;['left','right','top'].forEach(s=>{const z=document.createElement('div');z.className='snapzone '+s;z.ondragover=()=>showSnapZones();z.ondrop=()=>{if(drag)snapWindow(drag.id,s==='top'?'left':s)};document.body.appendChild(z)})}
+function startMenuApps(){
+  const box=document.querySelector('.startapps');if(!box)return;
+  box.innerHTML='<div class="starthead">All apps</div><input placeholder="Search apps..." oninput="filterStartApps(this.value)"><div class="applist">'+[
+    ['📁','File Explorer','explorer'],['🌐','Microsoft Edge','edge'],['⚙️','Settings','settings'],['📝','Notepad','notepad'],['🧮','Calculator','calc'],['📊','Task Manager','taskmgr'],['📅','Calendar','calendar'],['🎨','Paint','paint'],['🎵','Media Player','media'],['⌨️','Terminal','terminal'],['🖼️','Photos','photos'],['🌤️','Weather','weather'],['▶️','Run','run'],['🗑️','Recycle Bin','recycle']
+  ].map(a=>`<button data-app="${a[1].toLowerCase()}" onclick="openWin('${a[2]}')">${a[0]} ${a[1]}</button>`).join('')+'</div>';
+}
+function filterStartApps(v){document.querySelectorAll('.applist button').forEach(b=>b.style.display=b.dataset.app.includes(v.toLowerCase())?'block':'none')}
+function shellInit(){addSnapZones();rebuildPins();addBadges();startMenuApps()}
+setTimeout(shellInit,300);
 </script>
 </body>
 </html>
