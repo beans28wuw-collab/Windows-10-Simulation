@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Windows 11 Gaming Edition</title>
+<style>
+*{box-sizing:border-box}
+:root{--accent:#0078d7;--glass:rgba(32,32,32,.96);--text:#f7f9fc}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:"Segoe UI",Arial,sans-serif;background:#06111e;color:var(--text)}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+#desktop{position:fixed;inset:0 0 40px;background:radial-gradient(circle at 65% 40%,#176ca5 0,transparent 32%),radial-gradient(circle at 25% 75%,#33246d 0,transparent 30%),linear-gradient(135deg,#020811,#082d50 55%,#030a14);overflow:hidden}
+#desktop:before{content:"";position:absolute;inset:-20%;background:linear-gradient(60deg,transparent 45%,rgba(80,190,255,.11) 49%,rgba(80,190,255,.04) 52%,transparent 57%);transform:rotate(-10deg)}
+.desktop-icons{position:absolute;z-index:2;left:8px;top:8px;width:90px;display:flex;flex-direction:column;gap:3px}
+.desktop-icon{height:82px;border:1px solid transparent;border-radius:7px;text-align:center;padding:5px;font-size:12px;text-shadow:0 2px 4px #000}
+.desktop-icon:hover{background:#ffffff16;border-color:#ffffff12}
+.desktop-icon .ico{display:block;font-size:34px;line-height:45px}
+#taskbar{position:fixed;z-index:900000;left:0;right:0;bottom:0;height:52px;background:#1f1f1f;display:flex;align-items:center;padding:0 6px;border-top:1px solid #333}
+.task-center{margin:auto;display:flex;gap:2px}
+.taskbtn{height:38px;min-width:42px;border:0;background:transparent;color:#fff;border-radius:7px}
+.taskbtn:hover,.taskbtn.active{background:#ffffff14}
+.taskbtn.active{box-shadow:inset 0 -2px var(--accent)}
+#searchBtn{width:210px;text-align:left;padding-left:14px}
+#clock{position:absolute;right:6px;width:78px;text-align:center;font-size:11px;line-height:14px}
+.panel{position:fixed;z-index:850000;display:none;background:var(--glass);backdrop-filter:blur(25px);border:1px solid #ffffff18;border-radius:12px;box-shadow:0 20px 70px #000b}
+.panel.open{display:block}
+#start{left:50%;bottom:59px;transform:translateX(-50%);width:690px;height:610px;padding:20px}
+.start-search,.searchInput{width:100%;height:43px;border-radius:8px;border:1px solid #555;background:#10141b;color:#fff;padding:0 13px;outline:none}
+.start-top{display:flex;justify-content:space-between;margin:20px 3px 10px}
+.start-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.start-app{height:94px;background:#ffffff0b;color:#fff;border:0;border-radius:8px;text-align:left;padding:11px}
+.start-app:hover{background:#49bfff22}
+.start-app span{display:block;font-size:29px;margin-bottom:7px}
+.start-footer{position:absolute;bottom:16px;left:20px;right:20px;border-top:1px solid #333;padding-top:10px;display:flex;justify-content:space-between;align-items:center}
+#searchPanel{left:50%;bottom:59px;transform:translateX(-50%);width:650px;height:500px;padding:18px}
+.searchResults{height:420px;overflow:auto;margin-top:10px}
+.searchResult{padding:13px;border-radius:7px;display:flex;gap:12px}
+.searchResult:hover{background:#ffffff0e}
+#actionCenter{right:10px;bottom:59px;width:370px;height:420px;padding:18px}
+.quickgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:15px}
+.quickgrid button{height:68px;background:#ffffff0c;color:#fff;border:1px solid #ffffff16;border-radius:8px}
+.window{position:absolute;width:760px;height:500px;display:none;overflow:hidden;background:#f7f8fa;color:#222;border:1px solid #555;border-radius:9px;box-shadow:0 20px 70px #000b;resize:both;min-width:320px;min-height:230px}
+.window.show{display:block}
+.window.max{left:0!important;top:0!important;width:100%!important;height:100%!important;border-radius:0;resize:none}
+.titlebar{height:38px;background:#f2f3f5;display:flex;align-items:center;color:#222;user-select:none}
+.titleIcon{width:42px;text-align:center}.title{flex:1;font-size:13px;cursor:move}.controls{height:38px;display:flex}.control{width:46px;height:38px;border:0;background:transparent}.control:hover{background:#ddd}.control.close:hover{background:#e81123;color:#fff}
+.body{position:absolute;top:38px;left:0;right:0;bottom:0;overflow:hidden;background:#fff}
+.toolbar{height:45px;background:#f1f2f4;border-bottom:1px solid #ddd;display:flex;gap:5px;align-items:center;padding:5px 8px}.toolbar button{border:0;background:transparent;padding:7px}.toolbar button:hover{background:#ddd}.address{flex:1;height:32px;border:1px solid #aaa;border-radius:6px;padding:0 9px;outline:none}
+.explorer{height:100%;display:flex;flex-direction:column}.explorer-main{flex:1;display:flex}.side{width:185px;background:#f1f2f4;border-right:1px solid #ddd;padding:8px}.side div{padding:9px;border-radius:5px;font-size:13px}.side div:hover{background:#ddd}.files{flex:1;display:grid;grid-template-columns:repeat(auto-fill,105px);grid-auto-rows:95px;gap:6px;padding:15px;overflow:auto}.file{display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid transparent;border-radius:5px;font-size:12px}.file:hover{background:#e4f0fb;border-color:#acd2ed}.fileIcon{font-size:36px}
+.notepad{width:100%;height:100%;border:0;outline:0;resize:none;padding:12px;font:14px Consolas,monospace}
+.calc{height:100%;background:#eee;padding:14px}.calcDisplay{height:70px;background:#fff;border:1px solid #ccc;display:flex;align-items:center;justify-content:flex-end;padding:10px;font-size:30px}.calcGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:10px}.calcGrid button{height:55px;border:1px solid #ccc;background:#fafafa}.calcGrid button:hover{background:#ddd}
+.settings{height:100%;display:flex}.settingsSide{width:220px;background:#f1f2f4;padding:18px;border-right:1px solid #ddd;overflow:auto}.settingsSide h2{font-weight:400}.settingTab{padding:10px;border-radius:6px;margin:2px 0}.settingTab:hover,.settingTab.active{background:#dbeeff}.settingsContent{flex:1;padding:25px;overflow:auto;color:#222}.card{border:1px solid #ddd;border-radius:7px;padding:15px;margin-bottom:12px}.card button{padding:8px 12px;border:1px solid #aaa;border-radius:5px;background:#eee}
+.browser{height:100%;display:flex;flex-direction:column}.browser-tabs{height:37px;background:#20242b;display:flex;align-items:end;padding-left:5px}.browser-tab{height:31px;min-width:125px;background:#f5f5f5;color:#222;border-radius:8px 8px 0 0;padding:7px 15px}.browser-nav{height:45px;background:#f1f2f4;display:flex;align-items:center;gap:4px;padding:5px}.browser-nav button{border:0;background:transparent;width:34px;height:32px;border-radius:5px}.browser-nav button:hover{background:#ddd}.browser-content{flex:1;background:#fff}.browser-content iframe{width:100%;height:100%;border:0}.browser-home{height:100%;display:flex;flex-direction:column;align-items:center;padding-top:55px}.browser-home h1{font-size:44px;color:#1680c8}.browser-home input{width:65%;height:44px;border:1px solid #aaa;border-radius:22px;padding:0 17px}
+.gaming{height:100%;overflow:auto;background:linear-gradient(135deg,#0b101a,#111d35);color:#fff;padding:22px}.gamehero{padding:20px;border:1px solid #29364d;border-radius:14px;background:#152746;margin-bottom:17px}.gamehero h1{margin:0 0 5px}.gamegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.gamecard{min-height:170px;border:1px solid #29364d;border-radius:12px;background:#101724;padding:15px;display:flex;flex-direction:column;justify-content:space-between}.gamecard:hover{border-color:var(--accent)}.gameemoji{font-size:43px}.playbtn{border:0;border-radius:7px;background:var(--accent);padding:9px;font-weight:700}
+.game-screen{height:100%;display:flex;flex-direction:column;background:#080b10;color:#fff}.game-head{height:45px;padding:11px 14px;background:#121823;display:flex;justify-content:space-between}.game-area{flex:1;display:flex;align-items:center;justify-content:center;overflow:auto}.game-ui{text-align:center;padding:8px}.game-ui button{padding:7px 13px;margin:3px}
+.proxy{height:100%;padding:30px;background:#f7f7f7;color:#222;overflow:auto}.proxybox{max-width:620px;margin:auto;border:1px solid #ddd;border-radius:12px;padding:22px;background:#fff}.proxybox input{width:100%;height:38px;margin:5px 0 12px;border:1px solid #aaa;border-radius:6px;padding:0 9px}.proxybox button{padding:9px 15px;border:0;border-radius:6px;background:#1680ca;color:#fff;margin-right:5px}.proxyStatus{padding:10px;border-radius:7px;background:#eee;margin-bottom:15px}.proxyStatus.ok{background:#def4e4;color:#145b2b}
+.paint{height:100%;display:flex;flex-direction:column}.paintTools{height:50px;background:#eee;display:flex;gap:6px;align-items:center;padding:5px}.paintTools button{height:36px;border:1px solid #ccc;background:#fff}.paintCanvasWrap{flex:1;background:#ddd;display:flex;align-items:center;justify-content:center}.paintCanvasWrap canvas{background:#fff;box-shadow:0 0 5px #888;cursor:crosshair}
+#cmdOutput{height:calc(100% - 35px);overflow:auto;padding:10px;white-space:pre-wrap}.cmdInput{position:absolute;left:10px;right:10px;bottom:7px;height:25px;background:#050505;color:#fff;border:0;outline:0;font-family:Consolas,monospace}
+#notification{position:fixed;right:15px;bottom:68px;width:330px;background:#20242c;color:#fff;padding:15px;border-radius:9px;display:none;z-index:9999999;box-shadow:0 8px 30px #0009}
+#notification b{display:block;margin-bottom:5px}
+#context{position:fixed;width:235px;background:#f5f5f5;color:#222;border:1px solid #999;box-shadow:0 8px 30px #0007;border-radius:7px;display:none;z-index:9999999;padding:5px}.contextItem{height:36px;padding:0 12px;display:flex;align-items:center;border-radius:4px}.contextItem:hover{background:#dcecff}
+#lockScreen,#loginScreen{position:fixed;inset:0;z-index:10000000;display:none;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 35%,rgba(35,130,220,.45),transparent 35%),linear-gradient(135deg,#020914,#07345d,#020b17);color:#fff;text-align:center}
+#loginScreen{z-index:10000001}
+.loginBox{width:360px;padding:35px;background:#141922dc;backdrop-filter:blur(30px);border:1px solid #ffffff20;border-radius:18px;box-shadow:0 30px 100px #000b}.loginLogo,.bootLogo{width:80px;height:80px;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:54px;border-radius:18px;background:linear-gradient(135deg,#1689d5,#735cff);box-shadow:0 10px 35px #1689d566}.loginUser{font-size:25px}.loginEdition{color:#aeb6c5;font-size:13px;margin:5px 0 25px}.loginBox input{width:100%;height:46px;padding:0 15px;text-align:center;color:#fff;background:#0006;border:1px solid #ffffff33;border-radius:8px;outline:0}.loginBox input:focus{border-color:#4cc2ff;box-shadow:0 0 0 2px #4cc2ff22}.loginButton{width:100%;height:44px;margin-top:12px;border:0;border-radius:8px;background:#1689d5;color:#fff;font-weight:600}.loginButton:hover{background:#279de9}#loginError{display:none;color:#ff6b6b;font-size:13px;margin-top:12px}.loginHint{margin-top:25px;color:#858e9d;font-size:12px}.bootLogo{width:100px;height:100px;font-size:70px}.bootText{margin-top:24px}.bootPulse{animation:pulse 1.5s infinite alternate}@keyframes pulse{to{transform:scale(1.04);opacity:.75}}
+@media(max-width:700px){#searchBtn{display:none}#start{left:5px;right:5px;transform:none;width:auto;height:calc(100% - 70px)}#searchPanel{left:5px;right:5px;transform:none;width:auto}.start-grid{grid-template-columns:repeat(2,1fr)}.window{width:94vw;height:75vh}.settingsSide{width:155px}}
+
+/* Windows 10 Gaming additions */
+.win10-start{border-radius:0!important;left:0!important;bottom:52px!important;transform:none!important;width:620px!important;height:570px!important;background:#252525!important}
+.tile{background:#0078d7;color:#fff;border-radius:0;padding:12px;min-height:78px}
+.tile:hover{filter:brightness(1.12)}
+.gamingnav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.gamingnav button{background:#202b3a;color:#fff;border:1px solid #35465d;padding:9px 12px;border-radius:4px}
+.gamingnav button:hover{background:#0078d7}
+.hubpage{display:none}.hubpage.active{display:block}
+.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}
+.stat{background:#182235;border:1px solid #30415b;border-radius:6px;padding:14px}
+.stat b{display:block;font-size:24px;color:#66c7ff}
+.progress{height:8px;background:#303947;border-radius:5px;overflow:hidden;margin-top:8px}.progress i{display:block;height:100%;background:#0078d7}
+.storegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.storecard{background:#172132;border:1px solid #33455e;padding:12px;border-radius:6px}
+.storecard .cover{height:80px;display:flex;align-items:center;justify-content:center;font-size:40px;background:#253650;margin:-12px -12px 10px}
+.badge{display:inline-block;background:#0078d7;color:#fff;padding:3px 7px;border-radius:3px;font-size:11px}
+.profile{display:flex;gap:16px;align-items:center;background:#172132;padding:16px;border-radius:7px;margin-bottom:12px}
+.avatar{width:70px;height:70px;border-radius:50%;background:#0078d7;display:flex;align-items:center;justify-content:center;font-size:34px}
+.friend{display:flex;align-items:center;gap:10px;padding:10px;border-bottom:1px solid #29364d}
+.dot{width:9px;height:9px;border-radius:50%;background:#39d353}.dot.off{background:#777}
+@media(max-width:700px){.win10-start{width:calc(100vw - 5px)!important;height:calc(100vh - 45px)!important}}
+
+</style>
+
+<style id="win10-taskbar">
+#taskbar{
+  height:40px!important;
+  min-height:40px!important;
+  bottom:0!important;
+  left:0!important;
+  right:0!important;
+  border-radius:0!important;
+  background:#202020f5!important;
+  backdrop-filter:blur(12px);
+  display:flex!important;
+  align-items:center;
+  padding:0 6px!important;
+  gap:2px!important;
+  z-index:9999!important;
+}
+#taskbar .task-left,#taskbar .task-center{display:flex;align-items:center;gap:2px}
+#taskbar .task-center{margin:0!important;flex:0 0 auto!important}
+#taskbar .task-right{margin-left:auto!important}
+#taskbar button,.task-btn{
+  height:36px!important;
+  min-width:38px;
+  border:0!important;
+  border-radius:2px!important;
+  background:transparent!important;
+  color:#fff!important;
+  padding:0 9px!important;
+  font-size:14px!important;
+  transition:background .12s ease,transform .08s ease;
+}
+#taskbar button:hover,.task-btn:hover{background:#ffffff18!important}
+#taskbar button:active,.task-btn:active{transform:scale(.96)}
+.task-icon{font-size:18px;line-height:1}
+.task-label{margin-left:6px;vertical-align:middle}
+.win10-start-btn{font-size:20px!important;width:42px!important;padding:0!important}
+.task-search{
+  width:210px!important;height:32px!important;margin:0 4px!important;
+  border:0!important;border-radius:0!important;
+  background:#fff!important;color:#222!important;padding:0 12px!important;
+}
+.task-app.active{background:#ffffff20!important;border-bottom:2px solid #4cc2ff!important}
+#desktop{bottom:40px!important}
+</style>
+
+<style>
+.window .titlebar .win-icon{display:inline-flex;width:24px;height:24px;align-items:center;justify-content:center;margin-right:7px;font-size:16px}
+.window .titlebar{user-select:none}
+#taskbar .task-clock{min-width:68px;text-align:center;font-size:12px;color:#fff;padding:0 5px}
+.desktop-icon{transition:transform .12s ease,background .12s ease}
+.desktop-icon:hover{transform:translateY(-1px);background:#ffffff18}
+</style>
+
+<style>
+.window,.panel,.desktop-icon,#taskbar button{will-change:transform,opacity}
+.window{transition:opacity .14s ease,transform .14s ease!important}
+*{scrollbar-width:thin}
+button,input,textarea,select{font-family:inherit}
+</style>
+</head>
+<body>
+
+<div id="desktop">
+ <div class="desktop-icons">
+  <div class="desktop-icon" ondblclick="openApp('explorer')"><span class="ico">🖥️</span>This PC</div>
+  <div class="desktop-icon" ondblclick="openApp('recycle')"><span class="ico">🗑️</span>Recycle Bin</div>
+  <div class="desktop-icon" ondblclick="openApp('browser')"><span class="ico">🌐</span>Web Browser</div>
+  <div class="desktop-icon" ondblclick="openApp('gaming')"><span class="ico">🎮</span>Gaming Hub</div>
+  <div class="desktop-icon" ondblclick="openApp('settings')"><span class="ico">⚙️</span>Settings</div>
+  <div class="desktop-icon" ondblclick="openApp('notepad')"><span class="ico">📝</span>Notepad</div>
+  <div class="desktop-icon" ondblclick="openApp('paint')"><span class="ico">🎨</span>Paint</div>
+ </div>
+</div>
+
+<div id="start" class="panel">
+ <input id="startSearch" class="start-search" placeholder="Search for apps, settings, and games">
+ <div class="start-top"><b>Pinned</b><span style="color:#9da7b6">Windows 10 Gaming</span></div>
+ <div class="start-grid" id="startGrid">
+  <button class="start-app" onclick="openApp('gaming')"><span>🎮</span>Gaming Hub</button>
+  <button class="start-app" onclick="openApp('browser')"><span>🌐</span>Web Browser</button>
+  <button class="start-app" onclick="openApp('explorer')"><span>📁</span>File Explorer</button>
+  <button class="start-app" onclick="openApp('settings')"><span>⚙️</span>Settings</button>
+  <button class="start-app" onclick="openApp('notepad')"><span>📝</span>Notepad</button>
+  <button class="start-app" onclick="openApp('calculator')"><span>🧮</span>Calculator</button>
+  <button class="start-app" onclick="openApp('paint')"><span>🎨</span>Paint</button>
+  <button class="start-app" onclick="openApp('cmd')"><span>⌨️</span>Terminal</button>
+  <button class="start-app" onclick="openApp('taskmgr')"><span>📊</span>Task Manager</button>
+  <button class="start-app" onclick="openApp('proxy')"><span>🛡️</span>Proxy Center</button>
+ </div>
+ <div class="start-footer"><span>👤 Administrator</span><button class="taskbtn" onclick="lockWindows()">🔒</button></div>
+</div>
+
+<div id="searchPanel" class="panel">
+ <input id="searchInput" class="searchInput" placeholder="Type here to search">
+ <div class="searchResults">
+  <div class="searchResult" data-search="gaming games snake 2048 minesweeper" onclick="openApp('gaming')">🎮 <b>Gaming Hub</b></div>
+  <div class="searchResult" data-search="browser web youtube internet" onclick="openApp('browser')">🌐 <b>Web Browser</b></div>
+  <div class="searchResult" data-search="settings system personalization" onclick="openApp('settings')">⚙️ <b>Settings</b></div>
+  <div class="searchResult" data-search="files explorer pc folders" onclick="openApp('explorer')">📁 <b>File Explorer</b></div>
+  <div class="searchResult" data-search="proxy network" onclick="openApp('proxy')">🛡️ <b>Proxy Center</b></div>
+  <div class="searchResult" data-search="notepad text" onclick="openApp('notepad')">📝 <b>Notepad</b></div>
+  <div class="searchResult" data-search="calculator math" onclick="openApp('calculator')">🧮 <b>Calculator</b></div>
+ </div>
+</div>
+
+<div id="actionCenter" class="panel">
+ <h2>Quick Settings</h2>
+ <div style="color:#aaa">Windows 11 Gaming Edition</div>
+ <div class="quickgrid">
+  <button onclick="notify('Wi-Fi','Connected')">📶 Wi-Fi<br><small>Connected</small></button>
+  <button onclick="notify('Bluetooth','On')">🔵 Bluetooth<br><small>On</small></button>
+  <button onclick="notify('Gaming Mode','Enabled')">🎮 Gaming Mode<br><small>On</small></button>
+  <button onclick="notify('Night light','Toggled')">🌙 Night light</button>
+ </div>
+</div>
+
+<!-- Explorer -->
+<div class="window" id="explorer" style="left:120px;top:70px">
+ <div class="titlebar" onmousedown="dragStart(event,'explorer')"><div class="titleIcon">📁</div><div class="title">File Explorer</div><div class="controls"><button class="control" onclick="minimize('explorer')">─</button><button class="control" onclick="maximize('explorer')">□</button><button class="control close" onclick="closeApp('explorer')">✕</button></div></div>
+ <div class="body"><div class="explorer"><div class="toolbar"><button>←</button><button>→</button><button>↑</button><input class="address" value="This PC"><button>🔍</button></div><div class="explorer-main"><div class="side"><div>⭐ Quick access</div><div>📁 Desktop</div><div>📥 Downloads</div><div>📄 Documents</div><div>🖼️ Pictures</div><div>🎵 Music</div><div>🎬 Videos</div><div>💻 This PC</div><div>💾 Local Disk (C:)</div></div><div class="files"><div class="file"><span class="fileIcon">💾</span>Local Disk (C:)</div><div class="file"><span class="fileIcon">📁</span>Documents</div><div class="file"><span class="fileIcon">📁</span>Downloads</div><div class="file"><span class="fileIcon">📁</span>Pictures</div><div class="file"><span class="fileIcon">📁</span>Music</div><div class="file"><span class="fileIcon">📁</span>Videos</div><div class="file"><span class="fileIcon">📄</span>README.txt</div></div></div></div></div>
+</div>
+
+<!-- Notepad -->
+<div class="window" id="notepad" style="left:210px;top:95px;width:650px;height:470px">
+ <div class="titlebar" onmousedown="dragStart(event,'notepad')"><div class="titleIcon">📝</div><div class="title">Untitled - Notepad</div><div class="controls"><button class="control" onclick="minimize('notepad')">─</button><button class="control" onclick="maximize('notepad')">□</button><button class="control close" onclick="closeApp('notepad')">✕</button></div></div>
+ <div class="body"><textarea id="notepadText" class="notepad" spellcheck="false" placeholder="Type here..."></textarea></div>
+</div>
+
+<!-- Calculator -->
+<div class="window" id="calculator" style="left:360px;top:80px;width:370px;height:520px">
+ <div class="titlebar" onmousedown="dragStart(event,'calculator')"><div class="titleIcon">🧮</div><div class="title">Calculator</div><div class="controls"><button class="control" onclick="minimize('calculator')">─</button><button class="control" onclick="maximize('calculator')">□</button><button class="control close" onclick="closeApp('calculator')">✕</button></div></div>
+ <div class="body"><div class="calc"><div id="calcDisplay" class="calcDisplay">0</div><div class="calcGrid">
+  <button onclick="calcClear()">C</button><button onclick="calcInput('(')">(</button><button onclick="calcInput(')')">)</button><button onclick="calcInput('/')">÷</button>
+  <button onclick="calcInput('7')">7</button><button onclick="calcInput('8')">8</button><button onclick="calcInput('9')">9</button><button onclick="calcInput('*')">×</button>
+  <button onclick="calcInput('4')">4</button><button onclick="calcInput('5')">5</button><button onclick="calcInput('6')">6</button><button onclick="calcInput('-')">−</button>
+  <button onclick="calcInput('1')">1</button><button onclick="calcInput('2')">2</button><button onclick="calcInput('3')">3</button><button onclick="calcInput('+')">+</button>
+  <button onclick="calcInput('0')">0</button><button onclick="calcInput('.')">.</button><button onclick="calcResult()">=</button><button onclick="calcClear()">CE</button>
+ </div></div></div>
+</div>
+
+<!-- Settings -->
+<div class="window" id="settings" style="left:170px;top:65px;width:820px;height:550px">
+ <div class="titlebar" onmousedown="dragStart(event,'settings')"><div class="titleIcon">⚙️</div><div class="title">Settings</div><div class="controls"><button class="control" onclick="minimize('settings')">─</button><button class="control" onclick="maximize('settings')">□</button><button class="control close" onclick="closeApp('settings')">✕</button></div></div>
+ <div class="body"><div class="settings"><div class="settingsSide"><h2>Settings</h2>
+  <div class="settingTab active" data-page="system">🖥️ System</div><div class="settingTab" data-page="devices">📱 Devices</div><div class="settingTab" data-page="network">🌐 Network</div><div class="settingTab" data-page="gaming">🎮 Gaming</div><div class="settingTab" data-page="personalization">🎨 Personalization</div><div class="settingTab" data-page="apps">📦 Apps</div><div class="settingTab" data-page="accounts">👤 Accounts</div><div class="settingTab" data-page="privacy">🔒 Privacy</div><div class="settingTab" data-page="update">🔄 Update & Security</div>
+ </div><div class="settingsContent" id="settingsContent"></div></div></div>
+</div>
+
+<!-- Browser -->
+<div class="window" id="browser" style="left:90px;top:55px;width:940px;height:590px">
+ <div class="titlebar" onmousedown="dragStart(event,'browser')"><div class="titleIcon">🌐</div><div class="title">Microsoft Edge-style Browser</div><div class="controls"><button class="control" onclick="minimize('browser')">─</button><button class="control" onclick="maximize('browser')">□</button><button class="control close" onclick="closeApp('browser')">✕</button></div></div>
+ <div class="body"><div class="browser"><div class="browser-tabs"><div class="browser-tab" id="browserTab">New tab</div></div><div class="browser-nav"><button onclick="browserBack()">←</button><button onclick="browserForward()">→</button><button onclick="browserReload()">↻</button><button onclick="browserHome()">🏠</button><input id="browserUrl" class="address" placeholder="Search or enter address"><button onclick="navigateBrowser()">↵</button></div><div class="browser-content" id="browserContent"></div></div></div>
+</div>
+
+<!-- Gaming Hub -->
+<div class="window" id="gaming" style="left:60px;top:45px;width:1020px;height:640px">
+  <div class="titlebar" onmousedown="dragStart(event,'gaming')"><div class="titleIcon">🎮</div><div class="title">Xbox Game Bar / Gaming Hub</div><div class="controls"><button class="control" onclick="minimize('gaming')">─</button><button class="control" onclick="maximize('gaming')">□</button><button class="control close" onclick="closeApp('gaming')">✕</button></div></div>
+  <div class="body"><div class="gaming">
+    <div class="gamehero"><h1>🎮 Windows 10 Gaming Hub</h1><div style="color:#aeb6c5">Your games, launcher tools, performance dashboard and gaming profile.</div></div>
+    <div class="gamingnav">
+      <button onclick="hubTab('library')">🎮 Library</button><button onclick="hubTab('roblox')">🟦 Roblox Hub</button>
+      <button onclick="hubTab('geforce')">🟩 GeForce Center</button><button onclick="hubTab('store')">🛒 Game Store</button>
+      <button onclick="hubTab('profile')">👤 Profile</button><button onclick="hubTab('friends')">👥 Friends</button>
+    </div>
+
+    <div id="hub-library" class="hubpage active">
+      <div class="gamegrid">
+        <div class="gamecard"><div><div class="gameemoji">🐍</div><h3>Snake</h3></div><button class="playbtn" onclick="launchGame('snake')">PLAY</button></div>
+        <div class="gamecard"><div><div class="gameemoji">🔢</div><h3>2048</h3></div><button class="playbtn" onclick="launchGame('2048')">PLAY</button></div>
+        <div class="gamecard"><div><div class="gameemoji">💣</div><h3>Minesweeper</h3></div><button class="playbtn" onclick="launchGame('mines')">PLAY</button></div>
+        <div class="gamecard"><div><div class="gameemoji">❌</div><h3>Tic-Tac-Toe</h3></div><button class="playbtn" onclick="launchGame('ttt')">PLAY</button></div>
+        <div class="gamecard"><div><div class="gameemoji">🧱</div><h3>Breakout</h3></div><button class="playbtn" onclick="launchGame('breakout')">PLAY</button></div>
+        <div class="gamecard"><div><div class="gameemoji">⚡</div><h3>Reaction</h3></div><button class="playbtn" onclick="launchGame('reaction')">PLAY</button></div>
+        <div class="gamecard"><div><div class="gameemoji">🏓</div><h3>Pong</h3></div><button class="playbtn" onclick="launchGame('pong')">PLAY</button></div>
+        <div class="gamecard"><div><div class="gameemoji">🚀</div><h3>Space Shooter</h3></div><button class="playbtn" onclick="launchGame('shooter')">PLAY</button></div>
+      </div>
+    </div>
+
+    <div id="hub-roblox" class="hubpage">
+      <div class="profile"><div class="avatar">🧱</div><div><h2 style="margin:0">Roblox-style Game Hub</h2><div style="color:#aaa">A simulated launcher for your web OS.</div></div></div>
+      <div class="storegrid">
+        <div class="storecard"><div class="cover">🏙️</div><h3>Brookhaven-style RP</h3><p>Roleplay world</p><button class="playbtn" onclick="launchPortal('Brookhaven')">Launch</button></div>
+        <div class="storecard"><div class="cover">🏁</div><h3>Racing World</h3><p>Arcade racing</p><button class="playbtn" onclick="launchPortal('Racing World')">Launch</button></div>
+        <div class="storecard"><div class="cover">🗺️</div><h3>Adventure Quest</h3><p>Explore and collect</p><button class="playbtn" onclick="launchPortal('Adventure Quest')">Launch</button></div>
+      </div>
+    </div>
+
+    <div id="hub-geforce" class="hubpage">
+      <h2>🟩 GeForce-style Performance Center</h2>
+      <div class="statgrid">
+        <div class="stat"><small>FPS</small><b id="fpsStat">144</b><span>Target</span></div>
+        <div class="stat"><small>GPU</small><b id="gpuStat">62%</b><div class="progress"><i id="gpuBar" style="width:62%"></i></div></div>
+        <div class="stat"><small>CPU</small><b id="cpuStat">34%</b><div class="progress"><i id="cpuBar" style="width:34%"></i></div></div>
+        <div class="stat"><small>RAM</small><b id="ramStat">7.2 GB</b><div class="progress"><i style="width:48%"></i></div></div>
+        <div class="stat"><small>Temperature</small><b id="tempStat">58°C</b></div>
+      </div>
+      <div class="card" style="background:#172132;color:#fff;border-color:#33455e;margin-top:12px">
+        <h3>Performance Mode</h3>
+        <button class="playbtn" onclick="setPerf('Performance')">Performance</button>
+        <button onclick="setPerf('Balanced')" style="padding:9px;margin:3px">Balanced</button>
+        <button onclick="setPerf('Battery Saver')" style="padding:9px;margin:3px">Battery Saver</button>
+        <p id="perfText">Current mode: Balanced</p>
+      </div>
+    </div>
+
+    <div id="hub-store" class="hubpage">
+      <h2>🛒 Game Store</h2>
+      <div class="storegrid">
+        <div class="storecard"><div class="cover">🎯</div><h3>Aim Trainer</h3><p>Free</p><button class="playbtn" onclick="launchGame('reaction')">Play</button></div>
+        <div class="storecard"><div class="cover">🧩</div><h3>2048</h3><p>Free</p><button class="playbtn" onclick="launchGame('2048')">Play</button></div>
+        <div class="storecard"><div class="cover">🧱</div><h3>Brick Breaker</h3><p>Free</p><button class="playbtn" onclick="launchGame('breakout')">Play</button></div>
+        <div class="storecard"><div class="cover">🚀</div><h3>Space Shooter</h3><p>Free</p><button class="playbtn" onclick="launchGame('shooter')">Play</button></div>
+      </div>
+    </div>
+
+    <div id="hub-profile" class="hubpage">
+      <div class="profile"><div class="avatar">🎮</div><div><h2 style="margin:0">Administrator</h2><div>Level 12 • Gamer</div><div><span class="badge">Windows 10 Gaming</span> <span class="badge">Achievement Hunter</span></div></div></div>
+      <div class="statgrid"><div class="stat"><small>Games Played</small><b>24</b></div><div class="stat"><small>Achievements</small><b>18</b></div><div class="stat"><small>Play Time</small><b>37h</b></div></div>
+    </div>
+
+    <div id="hub-friends" class="hubpage">
+      <h2>👥 Friends & Party</h2>
+      <div class="friend"><span class="dot"></span><b>PixelPlayer</b><span style="margin-left:auto">Playing a game</span></div>
+      <div class="friend"><span class="dot"></span><b>GameMaster</b><span style="margin-left:auto">Online</span></div>
+      <div class="friend"><span class="dot off"></span><b>BlockBuilder</b><span style="margin-left:auto">Offline</span></div>
+      <div class="card" style="margin-top:12px"><button onclick="notify('Party','Party invite sent.')">🎙️ Invite to party</button> <button onclick="notify('Chat','Gaming chat opened.')">💬 Open chat</button></div>
+    </div>
+  </div></div>
+ </div>
+
+ <!-- Game window -->
+<div class="window" id="gameWindow" style="left:190px;top:70px;width:760px;height:550px">
+ <div class="titlebar" onmousedown="dragStart(event,'gameWindow')"><div class="titleIcon">🎮</div><div class="title" id="gameTitle">Game</div><div class="controls"><button class="control" onclick="minimize('gameWindow')">─</button><button class="control" onclick="maximize('gameWindow')">□</button><button class="control close" onclick="closeApp('gameWindow')">✕</button></div></div>
+ <div class="body"><div class="game-screen"><div class="game-head"><b id="gameName">Game</b><span id="gameScore">Score: 0</span></div><div class="game-area" id="gameArea"></div><div class="game-ui" id="gameUI"></div></div></div>
+</div>
+
+<!-- Proxy -->
+<div class="window" id="proxy" style="left:250px;top:85px;width:700px;height:500px">
+ <div class="titlebar" onmousedown="dragStart(event,'proxy')"><div class="titleIcon">🛡️</div><div class="title">Proxy Center</div><div class="controls"><button class="control" onclick="minimize('proxy')">─</button><button class="control" onclick="maximize('proxy')">□</button><button class="control close" onclick="closeApp('proxy')">✕</button></div></div>
+ <div class="body"><div class="proxy"><div class="proxybox"><h2>🛡️ Proxy Center</h2><div id="proxyStatus" class="proxyStatus">● Disconnected</div><label>Proxy host</label><input id="proxyHost" placeholder="proxy.example.com"><label>Port</label><input id="proxyPort" type="number" placeholder="8080"><p style="color:#666;font-size:13px">This frontend stores proxy settings. A normal webpage cannot force the browser itself to use an arbitrary proxy; a backend is required for actual proxy routing.</p><button onclick="connectProxy()">Connect</button><button onclick="disconnectProxy()">Disconnect</button><button onclick="saveProxy()">Save</button></div></div></div>
+</div>
+
+<!-- Paint -->
+<div class="window" id="paint" style="left:150px;top:80px;width:800px;height:550px">
+ <div class="titlebar" onmousedown="dragStart(event,'paint')"><div class="titleIcon">🎨</div><div class="title">Paint</div><div class="controls"><button class="control" onclick="minimize('paint')">─</button><button class="control" onclick="maximize('paint')">□</button><button class="control close" onclick="closeApp('paint')">✕</button></div></div>
+ <div class="body"><div class="paint"><div class="paintTools"><button onclick="paintTool='pen'">✏️ Pen</button><button onclick="paintTool='eraser'">🧹 Eraser</button><button onclick="clearPaint()">🗑️ Clear</button><input type="color" id="paintColor" value="#000000"><input type="range" id="paintSize" min="1" max="30" value="4"></div><div class="paintCanvasWrap"><canvas id="paintCanvas" width="700" height="420"></canvas></div></div></div>
+</div>
+
+<!-- Terminal -->
+<div class="window" id="cmd" style="left:180px;top:100px;width:720px;height:450px">
+ <div class="titlebar" onmousedown="dragStart(event,'cmd')"><div class="titleIcon">⌨️</div><div class="title">Terminal</div><div class="controls"><button class="control" onclick="minimize('cmd')">─</button><button class="control" onclick="maximize('cmd')">□</button><button class="control close" onclick="closeApp('cmd')">✕</button></div></div>
+ <div class="body" style="background:#050505;color:#fff;font-family:Consolas,monospace"><div id="cmdOutput">Microsoft Windows [Version 10.0.26100]<br>(c) Microsoft Corporation. All rights reserved.<br><br>C:\Users\Administrator&gt;</div><input id="cmdInput" class="cmdInput" autocomplete="off"></div>
+</div>
+
+<!-- Task Manager -->
+<div class="window" id="taskmgr" style="left:200px;top:90px;width:700px;height:470px">
+ <div class="titlebar" onmousedown="dragStart(event,'taskmgr')"><div class="titleIcon">📊</div><div class="title">Task Manager</div><div class="controls"><button class="control" onclick="minimize('taskmgr')">─</button><button class="control" onclick="maximize('taskmgr')">□</button><button class="control close" onclick="closeApp('taskmgr')">✕</button></div></div>
+ <div class="body" style="padding:20px;overflow:auto"><h2>Task Manager</h2><div class="card">🖥️ Desktop Window Manager <span style="float:right">1.2%</span></div><div class="card">🎮 Gaming Hub <span style="float:right">2.4%</span></div><div class="card">🌐 Browser <span style="float:right">3.1%</span></div><div class="card">⚙️ Settings <span style="float:right">0.3%</span></div></div>
+</div>
+
+<!-- Recycle -->
+<div class="window" id="recycle" style="left:260px;top:120px;width:600px;height:400px">
+ <div class="titlebar" onmousedown="dragStart(event,'recycle')"><div class="titleIcon">🗑️</div><div class="title">Recycle Bin</div><div class="controls"><button class="control" onclick="minimize('recycle')">─</button><button class="control" onclick="maximize('recycle')">□</button><button class="control close" onclick="closeApp('recycle')">✕</button></div></div>
+ <div class="body" style="display:flex;align-items:center;justify-content:center;flex-direction:column"><div style="font-size:70px">🗑️</div><div>The Recycle Bin is empty.</div></div>
+</div>
+
+<div id="notification"><b id="notificationTitle">Windows</b><span id="notificationText">Notification</span></div>
+
+<div id="context">
+ <div class="contextItem" onclick="refreshDesktop()">🔄 &nbsp; Refresh</div>
+ <div class="contextItem" onclick="openApp('gaming')">🎮 &nbsp; Gaming Hub</div>
+ <div class="contextItem" onclick="openApp('settings')">⚙️ &nbsp; Personalize</div>
+ <div class="contextItem" onclick="openApp('browser')">🌐 &nbsp; Open Browser</div>
+ <div class="contextItem" onclick="openApp('explorer')">📁 &nbsp; Open File Explorer</div>
+</div>
+
+<div id="lockScreen">
+ <div>
+  <div style="font-size:75px;font-weight:200" id="lockClock">12:00</div>
+  <div style="font-size:20px;margin-bottom:30px" id="lockDate"></div>
+  <button class="loginButton" style="width:180px" onclick="showLogin()">Sign in</button>
+ </div>
+</div>
+
+<!-- Startup password screen -->
+<div id="loginScreen">
+ <div class="loginBox">
+  <div class="loginLogo">⊞</div>
+  <div class="loginUser">Administrator</div>
+  <div class="loginEdition">Windows 11 Gaming Edition</div>
+  <input id="startupPassword" type="password" placeholder="Password" autocomplete="off">
+  <button class="loginButton" onclick="unlockWindows()">Sign in</button>
+  <div id="loginError">Incorrect password</div>
+  <div class="loginHint">🔒 Lock screen password</div>
+ </div>
+</div>
+
+ <div id="taskbar">
+  <div class="task-left">
+    <button class="win10-start-btn" title="Start" onclick="toggleStart()">⊞</button>
+    <input id="taskSearch" class="task-search" placeholder="Type here to search" onkeydown="if(event.key==='Enter'){searchAll(this.value)}">
+  </div>
+  <div class="task-center" id="taskApps">
+    <button class="task-app" title="File Explorer" onclick="openApp('explorer')"><span class="task-icon">📁</span><span class="task-label">Explorer</span></button>
+    <button class="task-app" title="Browser" onclick="openApp('browser')"><span class="task-icon">🌐</span><span class="task-label">Browser</span></button>
+    <button class="task-app" title="Gaming Hub" onclick="openApp('gamingHub')"><span class="task-icon">🎮</span><span class="task-label">Gaming</span></button>
+    <button class="task-app" title="Notepad" onclick="openApp('notepad')"><span class="task-icon">📝</span><span class="task-label">Notepad</span></button>
+    <button class="task-app" title="Calculator" onclick="openApp('calculator')"><span class="task-icon">🧮</span><span class="task-label">Calculator</span></button>
+    <button class="task-app" title="Paint" onclick="openApp('paint')"><span class="task-icon">🎨</span><span class="task-label">Paint</span></button>
+    <button class="task-app" title="Terminal" onclick="openApp('terminal')"><span class="task-icon">⌨️</span><span class="task-label">Terminal</span></button>
+    <button class="task-app" title="Task Manager" onclick="openApp('taskManager')"><span class="task-icon">📊</span><span class="task-label">Task Manager</span></button>
+    <button class="task-app" title="Settings" onclick="openApp('settings')"><span class="task-icon">⚙️</span><span class="task-label">Settings</span></button>
+    <button class="task-app" title="Recycle Bin" onclick="openApp('recycle')"><span class="task-icon">🗑️</span><span class="task-label">Recycle Bin</span></button>
+  </div>
+  <div class="task-right">
+    <button title="Show desktop" onclick="showDesktop()">▭</button>
+    <button title="Action Center" onclick="toggleAction()">🔔</button>
+    <button title="Network" onclick="openApp('settings');settingsPage('network')">📶</button>
+    <button title="Sound" onclick="notify('Sound','Volume controls opened.')">🔊</button>
+    <button title="Power" onclick="notify('Power','Power options opened.')">🔋</button>
+    <span id="clock" class="task-clock"></span>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let z=100,dragging=null,calcExpression="",paintTool="pen",drawing=false,lastX=0,lastY=0;
+let gameTimer=null,gameCleanup=null;
+const STARTUP_PASSWORD="Gaming123!";
+
+function closeMenus(){
+ $("start").classList.remove("open");$("searchPanel").classList.remove("open");$("actionCenter").classList.remove("open");$("context").style.display="none";
+}
+function openApp(id){
+ const w=$(id);if(!w)return;closeMenus();w.classList.add("show");w.classList.remove("minimized");w.style.zIndex=++z;
+ document.querySelectorAll(".taskbtn").forEach(x=>x.classList.remove("active"));$("task-"+id)?.classList.add("active");
+ if(id==="settings")settingsPage(localStorage.getItem("settingsPage")||"system");
+ if(id==="browser")browserHome();
+ if(id==="cmd")setTimeout(()=>$("cmdInput").focus(),50);
+}
+function closeApp(id){
+ $(id)?.classList.remove("show","active-window");
+ $("task-"+id)?.classList.remove("active");
+ if(id==="gameWindow"){
+   if(gameCleanup){try{gameCleanup()}catch(e){}gameCleanup=null}
+   clearInterval(gameTimer);gameTimer=null;
+   $("gameArea").innerHTML="";$("gameUI").innerHTML="";
+ }
+}
+function minimize(id){$(id)?.classList.remove("show");$("task-"+id)?.classList.remove("active")}
+function maximize(id){const w=$(id);if(w){w.classList.toggle("max");w.style.zIndex=++z}}
+function dragStart(e,id){const w=$(id);if(!w||w.classList.contains("max")||e.target.closest(".controls"))return;dragging={id,x:e.clientX,y:e.clientY,left:w.offsetLeft,top:w.offsetTop};w.style.zIndex=++z;e.preventDefault()}
+document.addEventListener("mousemove",e=>{if(!dragging)return;const w=$(dragging.id);if(w){w.style.left=dragging.left+e.clientX-dragging.x+"px";w.style.top=dragging.top+e.clientY-dragging.y+"px"}});
+document.addEventListener("mouseup",()=>dragging=null);
+document.querySelectorAll(".window").forEach(w=>w.addEventListener("mousedown",()=>w.style.zIndex=++z));
+
+$("startBtn").onclick=e=>{e.stopPropagation();$("start").classList.toggle("open");$("searchPanel").classList.remove("open")};
+$("searchBtn").onclick=e=>{e.stopPropagation();$("searchPanel").classList.add("open");$("start").classList.remove("open");$("searchInput").focus()};
+$("startSearch").oninput=function(){const q=this.value.toLowerCase();document.querySelectorAll(".start-app").forEach(x=>x.style.display=x.textContent.toLowerCase().includes(q)?"block":"none")};
+$("searchInput").oninput=function(){const q=this.value.toLowerCase();document.querySelectorAll(".searchResult").forEach(x=>x.style.display=x.dataset.search.includes(q)?"flex":"none")};
+document.addEventListener("click",e=>{if(!e.target.closest("#start")&&!e.target.closest("#startBtn")&&!e.target.closest("#searchPanel")&&!e.target.closest("#searchBtn"))closeMenus()});
+
+const settingsPages={
+ system:["System",["🖥️ Display — brightness, scale and resolution.","🔊 Sound — speakers, microphone and volume.","🔔 Notifications — app notification controls.","ℹ️ About — Windows 11 Gaming Edition."]],
+ devices:["Bluetooth & devices",["🖨️ Printers & scanners","🖱️ Mouse","⌨️ Keyboard","📱 Bluetooth devices"]],
+ network:["Network & Internet",["📶 Wi-Fi — Connected","🌐 Ethernet — Disconnected","✈️ Airplane mode — Off"]],
+ gaming:["Gaming",["🎮 Game Mode — On","🕹️ Game Bar — Enabled","📹 Captures — Ready","⚡ Performance — Balanced"]],
+ personalization:["Personalization",["🖼️ Background — Windows Gaming","🎨 Colors — Accent color","🪟 Themes — Gaming Dark"]],
+ apps:["Apps",["📦 Installed apps","🔗 Default apps","🧩 Optional features"]],
+ accounts:["Accounts",["👤 Administrator","🔐 Sign-in options","☁️ Backup"]],
+ privacy:["Privacy",["📍 Location","📷 Camera","🎙️ Microphone","🛡️ Security"]],
+ update:["Windows Update",["✅ Your system is up to date.","🔄 Check for updates"]]
+};
+function settingsPage(page){
+ const d=settingsPages[page]||settingsPages.system;
+ document.querySelectorAll(".settingTab").forEach(t=>t.classList.toggle("active",t.dataset.page===page));
+ const box=$("settingsContent"); box.innerHTML="<h1>"+d[0]+"</h1>";
+ d[1].forEach((x,i)=>{
+  const card=document.createElement("div"); card.className="card"; card.innerHTML="<b>"+x+"</b>";
+  if(page==="personalization"&&i===0){const b=document.createElement("button");b.textContent="Change wallpaper";b.onclick=changeWallpaper;card.appendChild(document.createElement("br"));card.appendChild(b)}
+  if(page==="update"&&i===1){const b=document.createElement("button");b.textContent="Check for updates";b.onclick=()=>notify("Windows Update","You are up to date.");card.appendChild(document.createElement("br"));card.appendChild(b)}
+  box.appendChild(card);
+ });
+ localStorage.setItem("settingsPage",page)
+}
+document.querySelectorAll(".settingTab").forEach(t=>t.onclick=()=>settingsPage(t.dataset.page));
+
+function updateClock(){const n=new Date();$("clock").innerHTML=n.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})+"<br>"+n.toLocaleDateString();$("lockClock").textContent=n.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});$("lockDate").textContent=n.toLocaleDateString([],{weekday:"long",month:"long",day:"numeric"})}
+updateClock();setInterval(updateClock,1000);
+let nt;function notify(t,x){$("notificationTitle").textContent=t;$("notificationText").textContent=x;$("notification").style.display="block";clearTimeout(nt);nt=setTimeout(()=>$("notification").style.display="none",3500)}
+function toggleActionCenter(){$("actionCenter").classList.toggle("open")}
+
+$("desktop").addEventListener("contextmenu",e=>{e.preventDefault();const m=$("context");m.style.display="block";m.style.left=Math.min(e.clientX,innerWidth-245)+"px";m.style.top=Math.min(e.clientY,innerHeight-250)+"px"});
+document.addEventListener("contextmenu",e=>{if(!e.target.closest("#desktop"))$("context").style.display="none"});
+function refreshDesktop(){$("context").style.display="none";notify("Windows","Desktop refreshed.")}
+
+function calcInput(v){if(calcExpression==="Error")calcExpression="";calcExpression+=v;$("calcDisplay").textContent=calcExpression||"0"}
+function calcClear(){calcExpression="";$("calcDisplay").textContent="0"}
+function calcResult(){try{if(!/^[0-9+*/(). -]+$/.test(calcExpression))throw 0;calcExpression=String(Function('"use strict";return ('+calcExpression+')')())}catch{calcExpression="Error"}$("calcDisplay").textContent=calcExpression}
+
+const saved=localStorage.getItem("win11_note");if(saved!==null)$("notepadText").value=saved;
+$("notepadText").oninput=e=>localStorage.setItem("win11_note",e.target.value);
+
+function changeWallpaper(){const a=["radial-gradient(circle at 65% 40%,#176ca5,transparent 32%),linear-gradient(135deg,#020811,#082d50)","linear-gradient(135deg,#25004b,#006bb6,#03152b)","linear-gradient(135deg,#102000,#116b3b,#021a12)","linear-gradient(135deg,#320000,#9a1717,#180000)"];$("desktop").style.background=a[Math.floor(Math.random()*a.length)]}
+
+const canvas=$("paintCanvas"),ctx=canvas.getContext("2d");
+canvas.onmousedown=e=>{drawing=true;const r=canvas.getBoundingClientRect();lastX=e.clientX-r.left;lastY=e.clientY-r.top};
+canvas.onmousemove=e=>{if(!drawing)return;const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;ctx.beginPath();ctx.moveTo(lastX,lastY);ctx.lineTo(x,y);ctx.lineWidth=+$("paintSize").value;ctx.lineCap="round";ctx.strokeStyle=paintTool==="eraser"?"#fff":$("paintColor").value;ctx.stroke();lastX=x;lastY=y};
+window.onmouseup=()=>drawing=false;function clearPaint(){ctx.clearRect(0,0,canvas.width,canvas.height)}
+
+document.addEventListener("keydown",e=>{
+ if(e.key==="Escape"){closeMenus();document.querySelectorAll(".window.show").forEach(w=>w.classList.remove("show"))}
+});
+$("cmdInput").onkeydown=e=>{if(e.key!=="Enter")return;const c=e.target.value.trim(),l=c.toLowerCase(),o=$("cmdOutput");o.innerHTML+="<br>C:\\Users\\Administrator&gt;"+c+"<br>";if(l==="cls")o.innerHTML="";else if(l==="dir")o.innerHTML+="<br>&lt;DIR&gt; Users<br>&lt;DIR&gt; Windows<br>&lt;DIR&gt; Program Files<br>README.txt<br>";else if(l==="ver")o.innerHTML+="<br>Microsoft Windows [Version 10.0.26100]<br>";else if(l==="whoami")o.innerHTML+="<br>administrator<br>";else if(l==="help")o.innerHTML+="<br>DIR CLS VER WHOAMI HELP DATE TIME<br>";else if(l==="date")o.innerHTML+="<br>"+new Date().toLocaleDateString()+"<br>";else if(l==="time")o.innerHTML+="<br>"+new Date().toLocaleTimeString()+"<br>";else if(c)o.innerHTML+="<br>'"+c+"' is not recognized as an internal or external command.<br>";e.target.value="";o.scrollTop=o.scrollHeight};
+
+let browserHistory=[],browserIndex=-1;
+function browserHome(){$("browserUrl").value="";$("browserTab").textContent="New tab";$("browserContent").innerHTML='<div class="browser-home"><h1>Web Browser</h1><p>Windows 11 Gaming Edition</p><input id="browserSearch" placeholder="Search the web or enter a URL"><div style="margin-top:20px"><button onclick="navigateBrowser(\'https://www.youtube.com\')">▶️ YouTube</button> <button onclick="navigateBrowser(\'https://www.google.com/search?q=browser+games\')">🎮 Gaming</button></div></div>';$("browserSearch")?.addEventListener("keydown",e=>{if(e.key==="Enter")navigateBrowser(e.target.value)})}
+function navigateBrowser(url){url=(url||$("browserUrl").value).trim();if(!url)return;if(!/^https?:\/\//i.test(url))url="https://www.google.com/search?q="+encodeURIComponent(url);browserHistory=browserHistory.slice(0,browserIndex+1);browserHistory.push(url);browserIndex++;loadBrowser()}
+function loadBrowser(){
+ const u=browserHistory[browserIndex]; if(!u)return;
+ $("browserUrl").value=u;
+ try{$("browserTab").textContent=new URL(u).hostname}catch{$("browserTab").textContent="Browser"}
+ $("browserContent").innerHTML=`<iframe src="${u}" referrerpolicy="no-referrer" title="Web content"></iframe>`;
+}
+function browserBack(){if(browserIndex>0){browserIndex--;loadBrowser()}}function browserForward(){if(browserIndex<browserHistory.length-1){browserIndex++;loadBrowser()}}function browserReload(){if(browserIndex>=0)loadBrowser()}
+
+function saveProxy(){localStorage.setItem("proxyHost",$("proxyHost").value);localStorage.setItem("proxyPort",$("proxyPort").value);notify("Proxy","Settings saved.")}function connectProxy(){$("proxyStatus").className="proxyStatus ok";$("proxyStatus").textContent="● Configured — "+$("proxyHost").value+":"+$("proxyPort").value;notify("Proxy","Configuration enabled.")}function disconnectProxy(){$("proxyStatus").className="proxyStatus";$("proxyStatus").textContent="● Disconnected"}
+
+function launchGame(type){
+ openApp("gameWindow");
+ if(gameCleanup){try{gameCleanup()}catch(e){}gameCleanup=null}
+ clearInterval(gameTimer);gameTimer=null;
+ $("gameArea").innerHTML="";$("gameUI").innerHTML="";
+ const games={snake:["Snake",startSnake],"2048":["2048",start2048],mines:["Minesweeper",startMines],ttt:["Tic-Tac-Toe",startTTT],breakout:["Breakout",startBreakout],reaction:["Reaction",startReaction],pong:["Pong",startPong],shooter:["Space Shooter",startShooter]};
+ const g=games[type];
+ if(!g){notify("Gaming Hub","That game is unavailable.");return}
+ $("gameTitle").textContent=g[0];$("gameName").textContent=g[0];$("gameScore").textContent="Score: 0";
+ g[1]();
+}
+
+function startSnake(){const c=document.createElement("canvas");c.width=500;c.height=400;$("gameArea").appendChild(c);const x=c.getContext("2d"),s=20,C=25,R=20;let snake=[{x:12,y:10}],d={x:1,y:0},f={x:5,y:5},score=0,run=true;function spawn(){f={x:Math.floor(Math.random()*C),y:Math.floor(Math.random()*R)}}function draw(){x.fillStyle="#071018";x.fillRect(0,0,c.width,c.height);x.fillStyle="#49bfff";snake.forEach(p=>x.fillRect(p.x*s,p.y*s,s-2,s-2));x.fillStyle="#ff4d6d";x.fillRect(f.x*s,f.y*s,s-2,s-2)}function tick(){if(!run)return;let h={x:snake[0].x+d.x,y:snake[0].y+d.y};if(h.x<0||h.y<0||h.x>=C||h.y>=R||snake.some(p=>p.x===h.x&&p.y===h.y)){run=false;notify("Game Over","Snake score: "+score);return}snake.unshift(h);if(h.x===f.x&&h.y===f.y){score++;$("gameScore").textContent="Score: "+score;spawn()}else snake.pop();draw()}const key=e=>{if(e.key==="ArrowUp"&&d.y!==1)d={x:0,y:-1};if(e.key==="ArrowDown"&&d.y!==-1)d={x:0,y:1};if(e.key==="ArrowLeft"&&d.x!==1)d={x:-1,y:0};if(e.key==="ArrowRight"&&d.x!==-1)d={x:1,y:0}};document.addEventListener("keydown",key);gameTimer=setInterval(tick,110);draw();gameCleanup=()=>document.removeEventListener("keydown",key);$("gameUI").textContent="Use the arrow keys."}
+
+function start2048(){const b=document.createElement("div");b.style.cssText="display:grid;grid-template-columns:repeat(4,80px);gap:7px;background:#777;padding:7px";$("gameArea").appendChild(b);let a=Array(16).fill(0),score=0;function add(){let e=a.map((v,i)=>v?null:i).filter(v=>v!==null);if(e.length)a[e[Math.floor(Math.random()*e.length)]]=Math.random()<.9?2:4}function draw(){b.innerHTML="";a.forEach(v=>{let d=document.createElement("div");d.style.cssText="width:80px;height:80px;background:"+(v?"#ddd":"#aaa")+";display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:bold;color:#222";d.textContent=v||"";b.appendChild(d)})}function move(dir){let old=a.join(),rows=[];for(let r=0;r<4;r++){let row=a.slice(r*4,r*4+4);if(dir==="up"||dir==="down")row=[a[r],a[r+4],a[r+8],a[r+12]];if(dir==="right"||dir==="down")row.reverse();row=row.filter(Boolean);for(let i=0;i<row.length-1;i++)if(row[i]===row[i+1]){row[i]*=2;score+=row[i];row.splice(i+1,1)}while(row.length<4)row.push(0);if(dir==="right"||dir==="down")row.reverse();rows.push(row)}if(dir==="up"||dir==="down"){let n=Array(16);for(let r=0;r<4;r++)for(let q=0;q<4;q++)n[q*4+r]=rows[r][q];a=n}else a=rows.flat();if(a.join()!==old){add();$("gameScore").textContent="Score: "+score;draw()}}const key=e=>{const m={ArrowUp:"up",ArrowDown:"down",ArrowLeft:"left",ArrowRight:"right"};if(m[e.key]){e.preventDefault();move(m[e.key])}};document.addEventListener("keydown",key);add();add();draw();gameCleanup=()=>document.removeEventListener("keydown",key);$("gameUI").textContent="Use arrow keys."}
+
+function startMines(){const g=document.createElement("div");g.style.cssText="display:grid;grid-template-columns:repeat(8,35px);gap:2px";$("gameArea").appendChild(g);let mines=new Set();while(mines.size<10)mines.add(Math.floor(Math.random()*64));for(let i=0;i<64;i++){let b=document.createElement("button");b.style.cssText="width:35px;height:35px";b.onclick=()=>{if(mines.has(i)){b.textContent="💣";notify("Minesweeper","Boom!");return}let n=0;for(let y=-1;y<=1;y++)for(let q=-1;q<=1;q++){let k=i+y*8+q;if(k>=0&&k<64&&Math.abs(k%8-i%8)<=1&&mines.has(k))n++}b.textContent=n||"·"};g.appendChild(b)}$("gameUI").textContent="Click squares. Avoid the mines."}
+
+function startTTT(){const g=document.createElement("div");g.style.cssText="display:grid;grid-template-columns:repeat(3,90px);gap:5px";$("gameArea").appendChild(g);let a=Array(9).fill(""),over=false;function win(){return[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]].some(r=>a[r[0]]&&a[r[0]]===a[r[1]]&&a[r[1]]===a[r[2]])}function draw(){g.innerHTML="";a.forEach((v,i)=>{let b=document.createElement("button");b.style.cssText="width:90px;height:90px;font-size:35px";b.textContent=v;b.onclick=()=>{if(over||a[i])return;a[i]="X";draw();if(win()){over=true;notify("Tic-Tac-Toe","You win!");return}let e=a.map((v,i)=>v?null:i).filter(i=>i!==null);if(!e.length)return;let q=e[Math.floor(Math.random()*e.length)];a[q]="O";draw();if(win()){over=true;notify("Tic-Tac-Toe","Computer wins!")} };g.appendChild(b)})}draw();$("gameUI").textContent="You are X."}
+
+function startBreakout(){const c=document.createElement("canvas");c.width=560;c.height=360;$("gameArea").appendChild(c);const x=c.getContext("2d");let px=240,ball={x:280,y:300,dx:3,dy:-3},score=0,blocks=[];for(let r=0;r<4;r++)for(let q=0;q<9;q++)blocks.push({x:15+q*60,y:25+r*22,w:52,h:15,on:true});function draw(){x.fillStyle="#05070b";x.fillRect(0,0,560,360);x.fillStyle="#49bfff";x.fillRect(px,340,80,10);x.fillStyle="#fff";x.beginPath();x.arc(ball.x,ball.y,7,0,Math.PI*2);x.fill();x.fillStyle="#ff5577";blocks.forEach(b=>{if(b.on)x.fillRect(b.x,b.y,b.w,b.h)})}function tick(){ball.x+=ball.dx;ball.y+=ball.dy;if(ball.x<7||ball.x>553)ball.dx*=-1;if(ball.y<7)ball.dy*=-1;if(ball.y>330&&ball.x>px&&ball.x<px+80)ball.dy=-Math.abs(ball.dy);for(const b of blocks)if(b.on&&ball.x>b.x&&ball.x<b.x+b.w&&ball.y>b.y&&ball.y<b.y+b.h){b.on=false;ball.dy*=-1;score++;$("gameScore").textContent="Score: "+score;break}if(ball.y>370){notify("Breakout","Game over!");clearInterval(gameTimer)}draw()}const key=e=>{if(e.key==="ArrowLeft")px=Math.max(0,px-30);if(e.key==="ArrowRight")px=Math.min(480,px+30)};document.addEventListener("keydown",key);gameTimer=setInterval(tick,16);draw();gameCleanup=()=>document.removeEventListener("keydown",key);$("gameUI").textContent="Use ← and →."}
+
+function startReaction(){
+ const b=document.createElement("button");
+ b.textContent="WAIT...";
+ b.style.cssText="width:250px;height:150px;font-size:28px";
+ $("gameArea").appendChild(b);
+ let start=0,ready=false,finished=false;
+ let timer=setTimeout(()=>{ready=true;b.textContent="CLICK!";start=performance.now()},Math.random()*2500+1000);
+ b.onclick=()=>{
+   if(finished)return;
+   if(!ready){clearTimeout(timer);finished=true;b.textContent="Too early — close and restart";notify("Reaction","Too early!");return}
+   const ms=Math.round(performance.now()-start);
+   $("gameScore").textContent="Score: "+ms+" ms";
+   b.textContent=ms+" ms — click to play again";
+   ready=false; finished=true;
+ };
+ gameCleanup=()=>{clearTimeout(timer);finished=true};
+ $("gameUI").textContent="Wait for CLICK, then react.";
+}
+
+
+function hubTab(tab){document.querySelectorAll(".hubpage").forEach(x=>x.classList.remove("active"));$("hub-"+tab)?.classList.add("active")}
+function launchPortal(name){notify("Game Launcher",name+" launched in the Roblox-style hub.")}
+function setPerf(mode){$("perfText").textContent="Current mode: "+mode;notify("Gaming Mode",mode+" enabled.")}
+setInterval(()=>{if($("gpuStat")){let g=45+Math.floor(Math.random()*35),c=20+Math.floor(Math.random()*35),t=52+Math.floor(Math.random()*14);$("gpuStat").textContent=g+"%";$("cpuStat").textContent=c+"%";$("tempStat").textContent=t+"°C";$("gpuBar").style.width=g+"%";$("cpuBar").style.width=c+"%" }},1500);
+
+function startPong(){
+ const c=document.createElement("canvas");c.width=600;c.height=360;$("gameArea").appendChild(c);const x=c.getContext("2d");
+ let py=140,ay=140,b={x:300,y:180,dx:4,dy:3},score=0,run=true;
+ const key=e=>{if(e.key==="ArrowUp")py=Math.max(0,py-25);if(e.key==="ArrowDown")py=Math.min(280,py+25)};
+ document.addEventListener("keydown",key);
+ function tick(){if(!run)return;b.x+=b.dx;b.y+=b.dy;if(b.y<6||b.y>354)b.dy*=-1;let ai=b.y-40;ay+=Math.max(-3,Math.min(3,ai-ay));if(b.x<28&&b.y>py&&b.y<py+80)b.dx=Math.abs(b.dx);if(b.x>572&&b.y>ay&&b.y<ay+80)b.dx=-Math.abs(b.dx);if(b.x<0){run=false;notify("Pong","Game over!")}if(b.x>600){score++;$("gameScore").textContent="Score: "+score;b={x:300,y:180,dx:-4,dy:3}}x.fillStyle="#05070b";x.fillRect(0,0,600,360);x.fillStyle="#fff";x.fillRect(15,py,10,80);x.fillRect(575,ay,10,80);x.beginPath();x.arc(b.x,b.y,7,0,7);x.fill()}gameTimer=setInterval(tick,16);gameCleanup=()=>document.removeEventListener("keydown",key);$("gameUI").textContent="Use ↑ and ↓."}
+
+function startShooter(){
+ const c=document.createElement("canvas");c.width=600;c.height=360;$("gameArea").appendChild(c);const x=c.getContext("2d");
+ let ship=280,shots=[],enemies=[],score=0,run=true,spawn=0;
+ const key=e=>{if(e.key==="ArrowLeft")ship=Math.max(15,ship-25);if(e.key==="ArrowRight")ship=Math.min(555,ship+25);if(e.key===" ")shots.push({x:ship,y:315})};
+ document.addEventListener("keydown",key);
+ function tick(){if(!run)return;spawn++;if(spawn%30===0)enemies.push({x:20+Math.random()*560,y:15});shots.forEach(s=>s.y-=7);enemies.forEach(e=>e.y+=2);for(const s of shots)for(const e of enemies)if(Math.hypot(s.x-e.x,s.y-e.y)<18){e.dead=true;s.dead=true;score++;$("gameScore").textContent="Score: "+score}shots=shots.filter(s=>!s.dead&&s.y>0);enemies=enemies.filter(e=>!e.dead&&e.y<360);if(enemies.some(e=>e.y>320)){run=false;notify("Space Shooter","Game over!")}x.fillStyle="#03050a";x.fillRect(0,0,600,360);x.fillStyle="#49bfff";x.beginPath();x.moveTo(ship,300);x.lineTo(ship-18,335);x.lineTo(ship+18,335);x.fill();x.fillStyle="#fff";shots.forEach(s=>x.fillRect(s.x-2,s.y,4,10));x.fillStyle="#ff5577";enemies.forEach(e=>{x.beginPath();x.arc(e.x,e.y,12,0,7);x.fill()})}
+ gameTimer=setInterval(tick,16);gameCleanup=()=>document.removeEventListener("keydown",key);$("gameUI").textContent="← → move • Space shoot";
+}
+
+function showLogin(){$("lockScreen").style.display="none";$("loginScreen").style.display="flex";$("startupPassword").focus()}
+function unlockWindows(){if($("startupPassword").value===STARTUP_PASSWORD){$("loginError").style.display="none";$("loginScreen").style.display="none";$("desktop").style.display="block";$("taskbar").style.display="flex";$("startupPassword").value="";notify("Windows 10 Gaming","Welcome back, Administrator!")}else{$("loginError").style.display="block";$("startupPassword").value="";$("startupPassword").focus()}}
+function lockWindows(){closeMenus();document.querySelectorAll(".window").forEach(w=>w.classList.remove("show"));$("desktop").style.display="none";$("taskbar").style.display="none";$("lockScreen").style.display="flex"}
+$("startupPassword").onkeydown=e=>{if(e.key==="Enter")unlockWindows()};
+
+window.addEventListener("load",()=>{
+ settingsPage("system"); browserHome();
+ const ph=localStorage.getItem("proxyHost"),pp=localStorage.getItem("proxyPort");
+ if(ph)$("proxyHost").value=ph;if(pp)$("proxyPort").value=pp;
+ $("desktop").style.display="block";$("taskbar").style.display="flex";$("loginScreen").style.display="none";
+});
+
+<script>
+/* Mobile controls + safety layer */
+(function(){
+  const area=$("gameArea");
+  if(!area)return;
+
+  const pad=document.createElement("div");
+  pad.id="mobileGamePad"; if($("mobileGamePad"))$("mobileGamePad").remove();
+  pad.innerHTML='<button data-k="ArrowUp">▲</button><div><button data-k="ArrowLeft">◀</button><button data-k="Space">●</button><button data-k="ArrowRight">▶</button></div><button data-k="ArrowDown">▼</button>';
+  pad.style.cssText="display:flex;flex-direction:column;align-items:center;gap:5px;margin:12px auto 0;user-select:none";
+  pad.querySelectorAll("div").forEach(d=>d.style.cssText="display:flex;gap:5px");
+  pad.querySelectorAll("button").forEach(b=>{
+    b.style.cssText="width:48px;height:52px;border:1px solid #ffffff33;border-radius:6px;background:#182533;color:white;font-size:18px;touch-action:manipulation";
+    const fire=e=>{e.preventDefault();document.dispatchEvent(new KeyboardEvent("keydown",{key:b.dataset.k,bubbles:true}))};
+    b.addEventListener("pointerdown",fire);
+  });
+  area.parentElement.appendChild(pad);
+
+  const originalLaunch = window.launchGame;
+  window.launchGame = function(type){
+    originalLaunch(type);
+    pad.style.display=["snake","2048","pong","shooter","breakout"].includes(type)?"flex":"none";
+  };
+
+  window.addEventListener("error",e=>{
+    if(typeof notify==="function") notify("Windows 10 Gaming","An app hit an error and was safely stopped.");
+  });
+})();
+</script>
+
+<script>
+document.addEventListener("click",function(e){
+  const b=e.target.closest("#settingsNav button");
+  if(b){
+    const t=b.dataset.tab || (b.getAttribute("onclick")||"").match(/settingsPage\(['"]([^'"]+)/)?.[1];
+    if(t){e.preventDefault();settingsPage(t);}
+  }
+});
+</script>
+
+
+<script>
+(function(){
+  function applySettings(){
+    const dark=localStorage.getItem("theme")!=="light";
+    document.body.classList.toggle("light-theme",!dark);
+    const accent=localStorage.getItem("accent");
+    if(accent)document.documentElement.style.setProperty("--accent",accent);
+  }
+  window.setTheme=function(theme){
+    localStorage.setItem("theme",theme);
+    applySettings();
+    notify("Settings","Theme changed to "+theme+".");
+  };
+  window.setAccent=function(color){
+    localStorage.setItem("accent",color);
+    document.documentElement.style.setProperty("--accent",color);
+    notify("Settings","Accent color updated.");
+  };
+  window.resetSettings=function(){
+    localStorage.removeItem("theme");localStorage.removeItem("accent");
+    localStorage.removeItem("settingsTab");
+    localStorage.removeItem("proxyHost");localStorage.removeItem("proxyPort");
+    applySettings();settingsPage("system");
+    notify("Settings","Settings reset.");
+  };
+  applySettings();
+})();
+</script>
+
+
+<script>
+window.addEventListener("error",function(e){
+  console.error(e.error||e.message);
+  if(typeof notify==="function") notify("Windows 11","A component failed safely. Other apps are still available.");
+});
+window.addEventListener("unhandledrejection",function(e){
+  console.error(e.reason);
+  if(typeof notify==="function") notify("Windows 11","A background action failed safely.");
+});
+</script>
+
+
+<script>
+(function(){
+ const iconMap={explorer:"📁",browser:"🌐",notepad:"📝",calculator:"🧮",settings:"⚙️",gamingHub:"🎮",gameWindow:"🎮",paint:"🎨",terminal:"⌨️",taskManager:"📊",recycle:"🗑️",proxy:"🌐"};
+ function addIcons(){
+   document.querySelectorAll(".window").forEach(w=>{
+     if(w.querySelector(".titlebar .win-icon"))return;
+     const id=w.id, bar=w.querySelector(".titlebar");
+     if(bar){const s=document.createElement("span");s.className="win-icon";s.textContent=iconMap[id]||"🪟";bar.prepend(s)}
+   });
+ }
+ function clock(){
+   const e=document.getElementById("clock");if(e)e.textContent=new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+ }
+ setInterval(clock,1000);clock();
+ setTimeout(addIcons,0);
+ new MutationObserver(addIcons).observe(document.body,{childList:true,subtree:true});
+ window.showDesktop=function(){
+   document.querySelectorAll(".window.show").forEach(w=>w.classList.remove("show"));
+   if(typeof closeMenus==="function")closeMenus();
+ };
+ window.searchAll=function(q){
+   q=(q||"").trim();if(!q)return;
+   const map={explorer:"explorer",browser:"browser",gaming:"gamingHub",games:"gamingHub",settings:"settings",notepad:"notepad",calculator:"calculator",paint:"paint",terminal:"terminal"};
+   const k=q.toLowerCase();
+   const target=Object.keys(map).find(x=>k.includes(x));
+   if(target){openApp(map[target]);return}
+   if(typeof notify==="function")notify("Search","No local app matched “"+q+"”.");
+ };
+})();
+</script>
+</body>
+</html>
+
