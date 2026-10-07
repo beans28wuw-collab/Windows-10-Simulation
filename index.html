@@ -1,954 +1,321 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VMware vSphere Client - Virtual Datacenter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 10 Simulation</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             user-select: none;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body, html {
             width: 100%;
             height: 100%;
-            background-color: #11161a;
-            color: #d1d5db;
             overflow: hidden;
+            background: #0078d7 url('https://unsplash.com') no-repeat center center;
+            background-size: cover;
         }
 
-        /* Top VMware Navbar */
-        .vm-header {
-            height: 45px;
-            background-color: #1d252c;
-            border-bottom: 2px solid #0095ff;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 15px;
-            z-index: 100;
-        }
-
-        .vm-logo-area {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            font-size: 13px;
-            color: #fff;
-        }
-
-        .vm-logo-cube {
-            width: 18px;
-            height: 18px;
-            background: linear-gradient(135deg, #0095ff 0%, #0055aa 100%);
-            border: 2px solid #fff;
-            transform: rotate(45deg);
-        }
-
-        .vm-user-status {
-            font-size: 11px;
-            color: #9ca3af;
-        }
-
-        /* Main Layout Workspace */
-        .vm-main-layout {
-            display: flex;
+        /* Desktop Area */
+        .desktop {
             width: 100%;
-            height: calc(100% - 45px);
-        }
-
-        /* Left Side Navigator Drawer */
-        .vm-sidebar {
-            width: 220px;
-            background-color: #171f26;
-            border-right: 1px solid #283541;
+            height: calc(100% - 40px);
+            position: relative;
+            padding: 10px;
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
-        }
-
-        @media (max-width: 600px) {
-            .vm-sidebar { width: 60px; }
-            .sidebar-text { display: none; }
-            .sidebar-title { display: none; }
-        }
-
-        .sidebar-title {
-            padding: 12px 15px;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #6b7280;
-            font-weight: 700;
-            border-bottom: 1px solid #222d37;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 15px;
-            font-size: 13px;
-            color: #9ca3af;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .nav-item:hover {
-            background-color: #222d37;
-            color: #fff;
-        }
-
-        .nav-item.active {
-            background-color: #283541;
-            color: #0095ff;
-            font-weight: 600;
-            border-left: 3px solid #0095ff;
-        }
-
-        .vm-status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-            flex-shrink: 0;
-        }
-        .dot-off { background-color: #ef4444; box-shadow: 0 0 6px #ef4444; }
-        .dot-on { background-color: #10b981; box-shadow: 0 0 6px #10b981; }
-
-        /* Right Content Panel */
-        .vm-content-pane {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: #11161a;
-            overflow: hidden;
-        }
-
-        /* Action Controls Toolbar */
-        .vm-action-bar {
-            background-color: #171f26;
-            padding: 10px 15px;
-            border-bottom: 1px solid #283541;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            gap: 20px;
+            align-content: flex-start;
             flex-wrap: wrap;
         }
 
-        .vm-btn {
-            background-color: #222d37;
-            border: 1px solid #374151;
-            color: #e5e7eb;
-            padding: 6px 12px;
-            font-size: 12px;
-            border-radius: 3px;
-            cursor: pointer;
+        .icon {
+            width: 75px;
+            height: 75px;
             display: flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 500;
-        }
-
-        .vm-btn:hover {
-            background-color: #2d3b49;
-            color: #fff;
-        }
-
-        .btn-power-on { border-color: #059669; color: #10b981; }
-        .btn-power-on:hover { background-color: rgba(16, 185, 129, 0.15); }
-        .btn-power-off { border-color: #dc2626; color: #f87171; }
-        .btn-power-off:hover { background-color: rgba(220, 38, 38, 0.15); }
-
-        /* Console Display Window */
-        .console-container {
-            flex: 1;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            align-items: center;
-            justify-content: flex-start;
-            overflow-y: auto;
-        }
-
-        .virtual-monitor {
-            width: 100%;
-            max-width: 900px;
-            aspect-ratio: 16 / 10;
-            background-color: #000;
-            border: 4px solid #171f26;
-            border-radius: 6px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
-        }
-
-        /* Absolute Screen State Embeds */
-        .screen-state {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #fff;
-        }
-
-        .state-active { display: flex !important; }
-
-        .screen-off-msg {
-            color: #4b5563;
-            font-size: 13px;
             text-align: center;
-            padding: 20px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-radius: 2px;
+            padding: 5px;
         }
 
-        /* Bios/Boot Loader Style screen */
-        .boot-screen {
-            background-color: #000;
-            padding: 20px;
-            font-family: 'Courier New', Courier, monospace;
-            color: #38bdf8;
-            align-items: flex-start;
-            justify-content: flex-start;
+        .icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .icon-img {
+            width: 35px;
+            height: 35px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .icon-text {
+            color: white;
             font-size: 11px;
-            line-height: 1.6;
+            text-shadow: 1px 1px 2px black;
+            word-break: break-word;
         }
 
-        /* OS Simulated Desktop Frames */
-        .os-desktop {
+        /* Taskbar */
+        .taskbar {
             width: 100%;
-            height: 100%;
-            position: relative;
-            background-size: cover;
-            background-position: center;
-            overflow: hidden;
-        }
-
-        /* Taskbar Layout Core */
-        .os-taskbar {
+            height: 40px;
+            background: rgba(16, 16, 16, 0.85);
+            backdrop-filter: blur(10px);
             position: absolute;
             bottom: 0;
             left: 0;
-            width: 100%;
             display: flex;
-            align-items: center;
-            z-index: 100;
-        }
-
-        /* --- GUI APPLICATION WINDOWS --- */
-        .gui-window {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            width: 280px;
-            height: 180px;
-            background-color: #fff;
-            color: #000;
-            border-radius: 4px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
-            z-index: 50;
-        }
-
-        .gui-window.open {
-            display: flex;
-        }
-
-        .gui-titlebar {
-            height: 28px;
-            background-color: #f3f4f6;
-            border-bottom: 1px solid #d1d5db;
-            display: flex;
-            align-items: center;
             justify-content: space-between;
-            padding: 0 10px;
-            font-size: 12px;
-            font-weight: 600;
+            align-items: center;
+            z-index: 9999;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .gui-close-btn {
-            width: 16px;
-            height: 16px;
-            background-color: #ef4444;
-            color: white;
-            border-radius: 50%;
+        .taskbar-left {
+            display: flex;
+            height: 100%;
+            align-items: center;
+        }
+
+        .start-btn {
+            width: 48px;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 9px;
             cursor: pointer;
+            color: #0078d7;
+            font-size: 18px;
+            transition: background 0.1s;
         }
 
-        .gui-content {
-            flex: 1;
-            padding: 10px;
-            font-size: 12px;
-            overflow-y: auto;
-            background-color: #fff;
+        .start-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #00a3ff;
         }
 
-        /* --- OS Specific Interfaces Details --- */
-        /* WINDOWS XP */
-        .xp-desktop { background-image: url('https://unsplash.com'); }
-        .xp-taskbar { height: 30px; background: linear-gradient(to bottom, #245edb 0%, #3f8cf3 9%, #245edb 18%, #1842b5 92%, #1842b5 100%); }
-        .xp-start { height: 100%; background: linear-gradient(to bottom, #388a38 0%, #61c261 9%, #388a38 18%, #205020 92%, #205020 100%); border-top-right-radius: 8px; border-bottom-right-radius: 8px; color: #fff; font-weight: bold; font-style: italic; padding: 0 12px; display: flex; align-items: center; font-size: 13px; text-shadow: 1px 1px 1px #000; }
-        .xp-window { border: 3px solid #245edb; border-radius: 5px 5px 0 0; }
-        .xp-titlebar { background: linear-gradient(to bottom, #0058e6 0%, #248bfb 9%, #0058e6 18%, #0036a6 92%, #003197 100%); color: white; }
-
-        /* WINDOWS 7 */
-        .win7-desktop { background: radial-gradient(circle, #1e5799 0%, #153c6b 100%); }
-        .win7-taskbar { height: 36px; background: rgba(20, 40, 60, 0.6); backdrop-filter: blur(8px); border-top: 1px solid rgba(255,255,255,0.2); }
-        .win7-start { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #4ade80 0%, #1d4ed8 70%); border-radius: 50%; margin-left: 5px; cursor: pointer; border: 1px solid rgba(255,255,255,0.4); }
-        .win7-window { border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.9); backdrop-filter: blur(5px); }
-        .win7-titlebar { background: rgba(30, 87, 153, 0.4); color: white; }
-
-        /* WINDOWS 10 */
-        .win10-desktop { background-image: url('https://unsplash.com'); }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VMware vSphere Client - Virtual Datacenter</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body, html {
-            width: 100%;
+        .search-box {
             height: 100%;
-            background-color: #11161a;
-            color: #d1d5db;
-            overflow: hidden;
-        }
-
-        /* Top VMware Navbar */
-        .vm-header {
-            height: 45px;
-            background-color: #1d252c;
-            border-bottom: 2px solid #0095ff;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 15px;
-            z-index: 100;
-        }
-
-        .vm-logo-area {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            font-size: 13px;
-            color: #fff;
-        }
-
-        .vm-logo-cube {
-            width: 18px;
-            height: 18px;
-            background: linear-gradient(135deg, #0095ff 0%, #0055aa 100%);
-            border: 2px solid #fff;
-            transform: rotate(45deg);
-        }
-
-        .vm-user-status {
-            font-size: 11px;
-            color: #9ca3af;
-        }
-
-        /* Main Layout Workspace */
-        .vm-main-layout {
-            display: flex;
-            width: 100%;
-            height: calc(100% - 45px);
-        }
-
-        /* Left Side Navigator Drawer */
-        .vm-sidebar {
-            width: 220px;
-            background-color: #171f26;
-            border-right: 1px solid #283541;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
+            width: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 0 10px;
+            color: white;
+            font-size: 12px;
+            outline: none;
         }
 
         @media (max-width: 600px) {
-            .vm-sidebar { width: 60px; }
-            .sidebar-text { display: none; }
-            .sidebar-title { display: none; }
+            .search-box { display: none; }
         }
 
-        .sidebar-title {
-            padding: 12px 15px;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #6b7280;
-            font-weight: 700;
-            border-bottom: 1px solid #222d37;
-        }
-
-        .nav-item {
+        .taskbar-right {
             display: flex;
+            height: 100%;
             align-items: center;
+            padding-right: 10px;
             gap: 12px;
-            padding: 12px 15px;
-            font-size: 13px;
-            color: #9ca3af;
-            cursor: pointer;
-            transition: all 0.15s ease;
         }
 
-        .nav-item:hover {
-            background-color: #222d37;
-            color: #fff;
-        }
-
-        .nav-item.active {
-            background-color: #283541;
-            color: #0095ff;
-            font-weight: 600;
-            border-left: 3px solid #0095ff;
-        }
-
-        .vm-status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-            flex-shrink: 0;
-        }
-        .dot-off { background-color: #ef4444; box-shadow: 0 0 6px #ef4444; }
-        .dot-on { background-color: #10b981; box-shadow: 0 0 6px #10b981; }
-
-        /* Right Content Panel */
-        .vm-content-pane {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: #11161a;
-            overflow: hidden;
-        }
-
-        /* Action Controls Toolbar */
-        .vm-action-bar {
-            background-color: #171f26;
-            padding: 10px 15px;
-            border-bottom: 1px solid #283541;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .vm-btn {
-            background-color: #222d37;
-            border: 1px solid #374151;
-            color: #e5e7eb;
-            padding: 6px 12px;
-            font-size: 12px;
-            border-radius: 3px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 500;
-        }
-
-        .vm-btn:hover {
-            background-color: #2d3b49;
-            color: #fff;
-        }
-
-        .btn-power-on { border-color: #059669; color: #10b981; }
-        .btn-power-on:hover { background-color: rgba(16, 185, 129, 0.15); }
-        .btn-power-off { border-color: #dc2626; color: #f87171; }
-        .btn-power-off:hover { background-color: rgba(220, 38, 38, 0.15); }
-
-        /* Console Display Window */
-        .console-container {
-            flex: 1;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            align-items: center;
-            justify-content: flex-start;
-            overflow-y: auto;
-        }
-
-        .virtual-monitor {
-            width: 100%;
-            max-width: 900px;
-            aspect-ratio: 16 / 10;
-            background-color: #000;
-            border: 4px solid #171f26;
-            border-radius: 6px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
-        }
-
-        /* Absolute Screen State Embeds */
-        .screen-state {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-        }
-
-        .state-active { display: flex !important; }
-
-        .screen-off-msg {
-            color: #4b5563;
-            font-size: 13px;
-            text-align: center;
-            padding: 20px;
-        }
-
-        /* Bios/Boot Loader Style screen */
-        .boot-screen {
-            background-color: #000;
-            padding: 20px;
-            font-family: 'Courier New', Courier, monospace;
-            color: #38bdf8;
-            align-items: flex-start;
-            justify-content: flex-start;
-            font-size: 11px;
-            line-height: 1.6;
-        }
-
-        /* OS Simulated Desktop Frames */
-        .os-desktop {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            background-size: cover;
-            background-position: center;
-            overflow: hidden;
-        }
-
-        /* Taskbar Layout Core */
-        .os-taskbar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            z-index: 100;
-        }
-
-        /* --- GUI APPLICATION WINDOWS --- */
-        .gui-window {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            width: 280px;
-            height: 180px;
-            background-color: #fff;
-            color: #000;
-            border-radius: 4px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
-            z-index: 50;
-        }
-
-        .gui-window.open {
-            display: flex;
-        }
-
-        .gui-titlebar {
-            height: 28px;
-            background-color: #f3f4f6;
-            border-bottom: 1px solid #d1d5db;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 10px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .gui-close-btn {
-            width: 16px;
-            height: 16px;
-            background-color: #ef4444;
+        .system-tray-item {
             color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 9px;
+            font-size: 14px;
             cursor: pointer;
         }
 
-        .gui-content {
-            flex: 1;
-            padding: 10px;
-            font-size: 12px;
-            overflow-y: auto;
-            background-color: #fff;
-        }
-
-        /* --- OS Specific Interfaces Details --- */
-        /* WINDOWS XP */
-        .xp-desktop { background-image: url('https://unsplash.com'); }
-        .xp-taskbar { height: 30px; background: linear-gradient(to bottom, #245edb 0%, #3f8cf3 9%, #245edb 18%, #1842b5 92%, #1842b5 100%); }
-        .xp-start { height: 100%; background: linear-gradient(to bottom, #388a38 0%, #61c261 9%, #388a38 18%, #205020 92%, #205020 100%); border-top-right-radius: 8px; border-bottom-right-radius: 8px; color: #fff; font-weight: bold; font-style: italic; padding: 0 12px; display: flex; align-items: center; font-size: 13px; text-shadow: 1px 1px 1px #000; }
-        .xp-window { border: 3px solid #245edb; border-radius: 5px 5px 0 0; }
-        .xp-titlebar { background: linear-gradient(to bottom, #0058e6 0%, #248bfb 9%, #0058e6 18%, #0036a6 92%, #003197 100%); color: white; }
-
-        /* WINDOWS 7 */
-        .win7-desktop { background: radial-gradient(circle, #1e5799 0%, #153c6b 100%); }
-        .win7-taskbar { height: 36px; background: rgba(20, 40, 60, 0.6); backdrop-filter: blur(8px); border-top: 1px solid rgba(255,255,255,0.2); }
-        .win7-start { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #4ade80 0%, #1d4ed8 70%); border-radius: 50%; margin-left: 5px; cursor: pointer; border: 1px solid rgba(255,255,255,0.4); }
-        .win7-window { border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.9); backdrop-filter: blur(5px); }
-        .win7-titlebar { background: rgba(30, 87, 153, 0.4); color: white; }
-
-        /* WINDOWS 10 */
-        .win10-desktop { background-image: url('https://unsplash.com'); }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VMware vSphere Client - Virtual Datacenter</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body, html {
-            width: 100%;
-            height: 100%;
-            background-color: #11161a;
-            color: #d1d5db;
-            overflow: hidden;
-        }
-
-        /* Top VMware Navbar */
-        .vm-header {
-            height: 45px;
-            background-color: #1d252c;
-            border-bottom: 2px solid #0095ff;
+        .clock-container {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 15px;
-            z-index: 100;
-        }
-
-        .vm-logo-area {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            font-size: 13px;
-            color: #fff;
-        }
-
-        .vm-logo-cube {
-            width: 18px;
-            height: 18px;
-            background: linear-gradient(135deg, #0095ff 0%, #0055aa 100%);
-            border: 2px solid #fff;
-            transform: rotate(45deg);
-        }
-
-        .vm-user-status {
-            font-size: 11px;
-            color: #9ca3af;
-        }
-
-        /* Main Layout Workspace */
-        .vm-main-layout {
-            display: flex;
-            width: 100%;
-            height: calc(100% - 45px);
-        }
-
-        /* Left Side Navigator Drawer */
-        .vm-sidebar {
-            width: 220px;
-            background-color: #171f26;
-            border-right: 1px solid #283541;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-
-        @media (max-width: 600px) {
-            .vm-sidebar { width: 60px; }
-            .sidebar-text { display: none; }
-            .sidebar-title { display: none; }
-        }
-
-        .sidebar-title {
-            padding: 12px 15px;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #6b7280;
-            font-weight: 700;
-            border-bottom: 1px solid #222d37;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 15px;
-            font-size: 13px;
-            color: #9ca3af;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .nav-item:hover {
-            background-color: #222d37;
-            color: #fff;
-        }
-
-        .nav-item.active {
-            background-color: #283541;
-            color: #0095ff;
-            font-weight: 600;
-            border-left: 3px solid #0095ff;
-        }
-
-        .vm-status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-            flex-shrink: 0;
-        }
-        .dot-off { background-color: #ef4444; box-shadow: 0 0 6px #ef4444; }
-        .dot-on { background-color: #10b981; box-shadow: 0 0 6px #10b981; }
-
-        /* Right Content Panel */
-        .vm-content-pane {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: #11161a;
-            overflow: hidden;
-        }
-
-        /* Action Controls Toolbar */
-        .vm-action-bar {
-            background-color: #171f26;
-            padding: 10px 15px;
-            border-bottom: 1px solid #283541;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .vm-btn {
-            background-color: #222d37;
-            border: 1px solid #374151;
-            color: #e5e7eb;
-            padding: 6px 12px;
-            font-size: 12px;
-            border-radius: 3px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 500;
-        }
-
-        .vm-btn:hover {
-            background-color: #2d3b49;
-            color: #fff;
-        }
-
-        .btn-power-on { border-color: #059669; color: #10b981; }
-        .btn-power-on:hover { background-color: rgba(16, 185, 129, 0.15); }
-        .btn-power-off { border-color: #dc2626; color: #f87171; }
-        .btn-power-off:hover { background-color: rgba(220, 38, 38, 0.15); }
-
-        /* Console Display Window */
-        .console-container {
-            flex: 1;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            align-items: center;
-            justify-content: flex-start;
-            overflow-y: auto;
-        }
-
-        .virtual-monitor {
-            width: 100%;
-            max-width: 900px;
-            aspect-ratio: 16 / 10;
-            background-color: #000;
-            border: 4px solid #171f26;
-            border-radius: 6px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
-        }
-
-        /* Absolute Screen State Embeds */
-        .screen-state {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #fff;
-        }
-
-        .state-active { display: flex !important; }
-
-        .screen-off-msg {
-            color: #4b5563;
-            font-size: 13px;
-            text-align: center;
-            padding: 20px;
-        }
-
-        /* Bios/Boot Loader Style screen */
-        .boot-screen {
-            background-color: #000;
-            padding: 20px;
-            font-family: 'Courier New', Courier, monospace;
-            color: #38bdf8;
-            align-items: flex-start;
-            justify-content: flex-start;
-            font-size: 11px;
-            line-height: 1.6;
-        }
-
-        /* OS Simulated Desktop Frames */
-        .os-desktop {
-            width: 100%;
             height: 100%;
-            position: relative;
-            background-size: cover;
-            background-position: center;
-            overflow: hidden;
-        }
-
-        /* Taskbar Layout Core */
-        .os-taskbar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            z-index: 100;
-        }
-
-        /* --- GUI APPLICATION WINDOWS --- */
-        .gui-window {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            width: 280px;
-            height: 180px;
-            background-color: #fff;
-            color: #000;
-            border-radius: 4px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
-            z-index: 50;
-        }
-
-        .gui-window.open {
-            display: flex;
-        }
-
-        .gui-titlebar {
-            height: 28px;
-            background-color: #f3f4f6;
-            border-bottom: 1px solid #d1d5db;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 10px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .gui-close-btn {
-            width: 16px;
-            height: 16px;
-            background-color: #ef4444;
+            padding: 0 8px;
             color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 9px;
+            font-size: 11px;
+            text-align: right;
             cursor: pointer;
         }
 
-        .gui-content {
-            flex: 1;
-            padding: 10px;
-            font-size: 12px;
-            overflow-y: auto;
-            background-color: #fff;
+        .clock-container:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        /* --- OS Specific Interfaces Details --- */
-        /* WINDOWS XP */
-        .xp-desktop { background-image: url('https://unsplash.com'); }
-        .xp-taskbar { height: 30px; background: linear-gradient(to bottom, #245edb 0%, #3f8cf3 9%, #245edb 18%, #1842b5 92%, #1842b5 100%); }
-        .xp-start { height: 100%; background: linear-gradient(to bottom, #388a38 0%, #61c261 9%, #388a38 18%, #205020 92%, #205020 100%); border-top-right-radius: 8px; border-bottom-right-radius: 8px; color: #fff; font-weight: bold; font-style: italic; padding: 0 12px; display: flex; align-items: center; font-size: 13px; text-shadow: 1px 1px 1px #000; }
-        .xp-window { border: 3px solid #245edb; border-radius: 5px 5px 0 0; }
-        .xp-titlebar { background: linear-gradient(to bottom, #0058e6 0%, #248bfb 9%, #0058e6 18%, #0036a6 92%, #003197 100%); color: white; }
+        /* Start Menu */
+        .start-menu {
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            width: 320px;
+            height: 450px;
+            background: rgba(24, 24, 24, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: none;
+            display: none;
+            flex-direction: row;
+            z-index: 9998;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
 
-        /* WINDOWS 7 */
-        .win7-desktop { background: radial-gradient(circle, #1e5799 0%, #153c6b 100%); }
-        .win7-taskbar { height: 36px; background: rgba(20, 40, 60, 0.6); backdrop-filter: blur(8px); border-top: 1px solid rgba(255,255,255,0.2); }
-        .win7-start { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #4ade80 0%, #1d4ed8 70%); border-radius: 50%; margin-left: 5px; cursor: pointer; border: 1px solid rgba(255,255,255,0.4); }
-        .win7-window { border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.9); backdrop-filter: blur(5px); }
-        .win7-titlebar { background: rgba(30, 87, 153, 0.4); color: white; }
+        .start-menu.active {
+            display: flex;
+        }
 
-        /* WINDOWS 10 */
-        .win10-desktop { background-image: url('https://unsplash.com'); }
+        .start-sidebar {
+            width: 45px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 10px;
+            gap: 20px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar-icon {
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .sidebar-icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .start-apps {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            color: white;
+        }
+
+        .app-item {
+            padding: 8px 10px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .app-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Desktop Environment -->
+    <div class="desktop" id="desktop">
+        <div class="icon" onclick="alert('This PC is empty')">
+            <div class="icon-img">💻</div>
+            <div class="icon-text">This PC</div>
+        </div>
+        <div class="icon" onclick="alert('Recycle Bin is empty')">
+            <div class="icon-img">🗑️</div>
+            <div class="icon-text">Recycle Bin</div>
+        </div>
+        <div class="icon" onclick="window.open('https://google.com', '_blank')">
+            <div class="icon-img">🌐</div>
+            <div class="icon-text">Internet Browser</div>
+        </div>
+    </div>
+
+    <!-- Start Menu -->
+    <div class="start-menu" id="startMenu">
+        <div class="start-sidebar">
+            <div class="sidebar-icon">👤</div>
+            <div class="sidebar-icon">⚙️</div>
+            <div class="sidebar-icon" onclick="toggleStartMenu()">❌</div>
+        </div>
+        <div class="start-apps">
+            <div class="app-item">Calculator</div>
+            <div class="app-item">Notepad</div>
+            <div class="app-item">Paint</div>
+            <div class="app-item">Settings</div>
+        </div>
+    </div>
+
+    <!-- Taskbar -->
+    <div class="taskbar">
+        <div class="taskbar-left">
+            <div class="start-btn" onclick="toggleStartMenu()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M0 2.217L6.545 1.33v6.336H0V2.217zm0 11.566l6.545.887V8.34H0v5.443zm7.255 1.012L16 16V8.34H7.255v6.455zM7.255 1.23v6.442H16V0L7.255 1.23z"/>
+                </svg>
+            </div>
+            <input type="text" class="search-box" placeholder="Type here to search">
+        </div>
+        
+        <div class="taskbar-right">
+            <div class="system-tray-item">📶</div>
+            <div class="system-tray-item">🔋</div>
+            <div class="clock-container">
+                <span id="time-display">12:00 PM</span>
+                <span id="date-display">10/7/2026</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle Start Menu
+        function toggleStartMenu() {
+            const menu = document.getElementById('startMenu');
+            menu.classList.toggle('active');
+        }
+
+        // Close menu when clicking desktop
+        document.getElementById('desktop').addEventListener('click', function(e) {
+            if (e.target === this) {
+                document.getElementById('startMenu').classList.remove('active');
+            }
+        });
+
+        // Real-Time System Clock
+        function updateClock() {
+            const now = new Date();
+            
+            // Format Time
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; 
+            minutes = minutes < 10 ? '0'+minutes : minutes;
+            const timeStr = `${hours}:${minutes} ${ampm}`;
+            
+            // Format Date
+            const month = now.getMonth() + 1;
+            const day = now.getDate();
+            const year = now.getFullYear();
+            const dateStr = `${month}/${day}/${year}`;
+
+            document.getElementById('time-display').textContent = timeStr;
+            document.getElementById('date-display').textContent = dateStr;
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+</html>
