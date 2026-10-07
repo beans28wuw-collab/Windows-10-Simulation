@@ -3,22 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Windows 11 Gaming Web Edition</title>
+<title>Windows 10 Gaming Edition</title>
 <style>
 *{box-sizing:border-box}
-:root{--accent:#49bfff;--glass:rgba(20,24,32,.88);--text:#f7f9fc}
+:root{--accent:#0078d7;--glass:rgba(32,32,32,.96);--text:#f7f9fc}
 html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:"Segoe UI",Arial,sans-serif;background:#06111e;color:var(--text)}
 button,input,textarea{font:inherit}
 button{cursor:pointer}
-#desktop{position:fixed;inset:0 0 52px;background:radial-gradient(circle at 65% 40%,#176ca5 0,transparent 32%),radial-gradient(circle at 25% 75%,#33246d 0,transparent 30%),linear-gradient(135deg,#020811,#082d50 55%,#030a14);overflow:hidden}
+#desktop{position:fixed;inset:0 0 40px;background:radial-gradient(circle at 65% 40%,#176ca5 0,transparent 32%),radial-gradient(circle at 25% 75%,#33246d 0,transparent 30%),linear-gradient(135deg,#020811,#082d50 55%,#030a14);overflow:hidden}
 #desktop:before{content:"";position:absolute;inset:-20%;background:linear-gradient(60deg,transparent 45%,rgba(80,190,255,.11) 49%,rgba(80,190,255,.04) 52%,transparent 57%);transform:rotate(-10deg)}
 .desktop-icons{position:absolute;z-index:2;left:8px;top:8px;width:90px;display:flex;flex-direction:column;gap:3px}
 .desktop-icon{height:82px;border:1px solid transparent;border-radius:7px;text-align:center;padding:5px;font-size:12px;text-shadow:0 2px 4px #000}
 .desktop-icon:hover{background:#ffffff16;border-color:#ffffff12}
 .desktop-icon .ico{display:block;font-size:34px;line-height:45px}
-#taskbar{position:fixed;z-index:900000;left:0;right:0;bottom:0;height:52px;background:#12151cdd;backdrop-filter:blur(24px);border-top:1px solid #ffffff12;display:flex;align-items:center;padding:0 8px}
+#taskbar{position:fixed;z-index:900000;left:0;right:0;bottom:0;height:40px;background:#1f1f1f;display:flex;align-items:center;padding:0 6px;border-top:1px solid #333}
 .task-center{margin:auto;display:flex;gap:2px}
-.taskbtn{height:44px;min-width:44px;border:0;background:transparent;color:#fff;border-radius:7px}
+.taskbtn{height:38px;min-width:42px;border:0;background:transparent;color:#fff;border-radius:7px}
 .taskbtn:hover,.taskbtn.active{background:#ffffff14}
 .taskbtn.active{box-shadow:inset 0 -2px var(--accent)}
 #searchBtn{width:210px;text-align:left;padding-left:14px}
@@ -64,6 +64,29 @@ button{cursor:pointer}
 #loginScreen{z-index:10000001}
 .loginBox{width:360px;padding:35px;background:#141922dc;backdrop-filter:blur(30px);border:1px solid #ffffff20;border-radius:18px;box-shadow:0 30px 100px #000b}.loginLogo,.bootLogo{width:80px;height:80px;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:54px;border-radius:18px;background:linear-gradient(135deg,#1689d5,#735cff);box-shadow:0 10px 35px #1689d566}.loginUser{font-size:25px}.loginEdition{color:#aeb6c5;font-size:13px;margin:5px 0 25px}.loginBox input{width:100%;height:46px;padding:0 15px;text-align:center;color:#fff;background:#0006;border:1px solid #ffffff33;border-radius:8px;outline:0}.loginBox input:focus{border-color:#4cc2ff;box-shadow:0 0 0 2px #4cc2ff22}.loginButton{width:100%;height:44px;margin-top:12px;border:0;border-radius:8px;background:#1689d5;color:#fff;font-weight:600}.loginButton:hover{background:#279de9}#loginError{display:none;color:#ff6b6b;font-size:13px;margin-top:12px}.loginHint{margin-top:25px;color:#858e9d;font-size:12px}.bootLogo{width:100px;height:100px;font-size:70px}.bootText{margin-top:24px}.bootPulse{animation:pulse 1.5s infinite alternate}@keyframes pulse{to{transform:scale(1.04);opacity:.75}}
 @media(max-width:700px){#searchBtn{display:none}#start{left:5px;right:5px;transform:none;width:auto;height:calc(100% - 70px)}#searchPanel{left:5px;right:5px;transform:none;width:auto}.start-grid{grid-template-columns:repeat(2,1fr)}.window{width:94vw;height:75vh}.settingsSide{width:155px}}
+
+/* Windows 10 Gaming additions */
+.win10-start{border-radius:0!important;left:0!important;bottom:40px!important;transform:none!important;width:620px!important;height:570px!important;background:#252525!important}
+.tile{background:#0078d7;color:#fff;border-radius:0;padding:12px;min-height:78px}
+.tile:hover{filter:brightness(1.12)}
+.gamingnav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.gamingnav button{background:#202b3a;color:#fff;border:1px solid #35465d;padding:9px 12px;border-radius:4px}
+.gamingnav button:hover{background:#0078d7}
+.hubpage{display:none}.hubpage.active{display:block}
+.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}
+.stat{background:#182235;border:1px solid #30415b;border-radius:6px;padding:14px}
+.stat b{display:block;font-size:24px;color:#66c7ff}
+.progress{height:8px;background:#303947;border-radius:5px;overflow:hidden;margin-top:8px}.progress i{display:block;height:100%;background:#0078d7}
+.storegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.storecard{background:#172132;border:1px solid #33455e;padding:12px;border-radius:6px}
+.storecard .cover{height:80px;display:flex;align-items:center;justify-content:center;font-size:40px;background:#253650;margin:-12px -12px 10px}
+.badge{display:inline-block;background:#0078d7;color:#fff;padding:3px 7px;border-radius:3px;font-size:11px}
+.profile{display:flex;gap:16px;align-items:center;background:#172132;padding:16px;border-radius:7px;margin-bottom:12px}
+.avatar{width:70px;height:70px;border-radius:50%;background:#0078d7;display:flex;align-items:center;justify-content:center;font-size:34px}
+.friend{display:flex;align-items:center;gap:10px;padding:10px;border-bottom:1px solid #29364d}
+.dot{width:9px;height:9px;border-radius:50%;background:#39d353}.dot.off{background:#777}
+@media(max-width:700px){.win10-start{width:calc(100vw - 5px)!important;height:calc(100vh - 45px)!important}}
+
 </style>
 </head>
 <body>
@@ -82,7 +105,7 @@ button{cursor:pointer}
 
 <div id="start" class="panel">
  <input id="startSearch" class="start-search" placeholder="Search for apps, settings, and games">
- <div class="start-top"><b>Pinned</b><span style="color:#9da7b6">Windows 11 Gaming</span></div>
+ <div class="start-top"><b>Pinned</b><span style="color:#9da7b6">Windows 10 Gaming</span></div>
  <div class="start-grid" id="startGrid">
   <button class="start-app" onclick="openApp('gaming')"><span>🎮</span>Gaming Hub</button>
   <button class="start-app" onclick="openApp('browser')"><span>🌐</span>Web Browser</button>
@@ -113,7 +136,7 @@ button{cursor:pointer}
 
 <div id="actionCenter" class="panel">
  <h2>Quick Settings</h2>
- <div style="color:#aaa">Windows 11 Gaming Web Edition</div>
+ <div style="color:#aaa">Windows 10 Gaming Edition</div>
  <div class="quickgrid">
   <button onclick="notify('Wi-Fi','Connected')">📶 Wi-Fi<br><small>Connected</small></button>
   <button onclick="notify('Bluetooth','On')">🔵 Bluetooth<br><small>On</small></button>
@@ -156,24 +179,87 @@ button{cursor:pointer}
 
 <!-- Browser -->
 <div class="window" id="browser" style="left:90px;top:55px;width:940px;height:590px">
- <div class="titlebar" onmousedown="dragStart(event,'browser')"><div class="titleIcon">🌐</div><div class="title">Windows 11 Gaming Browser</div><div class="controls"><button class="control" onclick="minimize('browser')">─</button><button class="control" onclick="maximize('browser')">□</button><button class="control close" onclick="closeApp('browser')">✕</button></div></div>
+ <div class="titlebar" onmousedown="dragStart(event,'browser')"><div class="titleIcon">🌐</div><div class="title">Microsoft Edge-style Browser</div><div class="controls"><button class="control" onclick="minimize('browser')">─</button><button class="control" onclick="maximize('browser')">□</button><button class="control close" onclick="closeApp('browser')">✕</button></div></div>
  <div class="body"><div class="browser"><div class="browser-tabs"><div class="browser-tab" id="browserTab">New tab</div></div><div class="browser-nav"><button onclick="browserBack()">←</button><button onclick="browserForward()">→</button><button onclick="browserReload()">↻</button><button onclick="browserHome()">🏠</button><input id="browserUrl" class="address" placeholder="Search or enter address"><button onclick="navigateBrowser()">↵</button></div><div class="browser-content" id="browserContent"></div></div></div>
 </div>
 
 <!-- Gaming Hub -->
-<div class="window" id="gaming" style="left:80px;top:50px;width:980px;height:610px">
- <div class="titlebar" onmousedown="dragStart(event,'gaming')"><div class="titleIcon">🎮</div><div class="title">Gaming Hub</div><div class="controls"><button class="control" onclick="minimize('gaming')">─</button><button class="control" onclick="maximize('gaming')">□</button><button class="control close" onclick="closeApp('gaming')">✕</button></div></div>
- <div class="body"><div class="gaming"><div class="gamehero"><h1>🎮 Gaming Hub</h1><div style="color:#aeb6c5">Built-in games for your Windows 11 Gaming Web Edition.</div></div><div class="gamegrid">
-  <div class="gamecard"><div><div class="gameemoji">🐍</div><h3>Snake</h3></div><button class="playbtn" onclick="launchGame('snake')">PLAY</button></div>
-  <div class="gamecard"><div><div class="gameemoji">🔢</div><h3>2048</h3></div><button class="playbtn" onclick="launchGame('2048')">PLAY</button></div>
-  <div class="gamecard"><div><div class="gameemoji">💣</div><h3>Minesweeper</h3></div><button class="playbtn" onclick="launchGame('mines')">PLAY</button></div>
-  <div class="gamecard"><div><div class="gameemoji">❌</div><h3>Tic-Tac-Toe</h3></div><button class="playbtn" onclick="launchGame('ttt')">PLAY</button></div>
-  <div class="gamecard"><div><div class="gameemoji">🧱</div><h3>Breakout</h3></div><button class="playbtn" onclick="launchGame('breakout')">PLAY</button></div>
-  <div class="gamecard"><div><div class="gameemoji">⚡</div><h3>Reaction</h3></div><button class="playbtn" onclick="launchGame('reaction')">PLAY</button></div>
- </div></div></div>
-</div>
+<div class="window" id="gaming" style="left:60px;top:45px;width:1020px;height:640px">
+  <div class="titlebar" onmousedown="dragStart(event,'gaming')"><div class="titleIcon">🎮</div><div class="title">Xbox Game Bar / Gaming Hub</div><div class="controls"><button class="control" onclick="minimize('gaming')">─</button><button class="control" onclick="maximize('gaming')">□</button><button class="control close" onclick="closeApp('gaming')">✕</button></div></div>
+  <div class="body"><div class="gaming">
+    <div class="gamehero"><h1>🎮 Windows 10 Gaming Hub</h1><div style="color:#aeb6c5">Your games, launcher tools, performance dashboard and gaming profile.</div></div>
+    <div class="gamingnav">
+      <button onclick="hubTab('library')">🎮 Library</button><button onclick="hubTab('roblox')">🟦 Roblox Hub</button>
+      <button onclick="hubTab('geforce')">🟩 GeForce Center</button><button onclick="hubTab('store')">🛒 Game Store</button>
+      <button onclick="hubTab('profile')">👤 Profile</button><button onclick="hubTab('friends')">👥 Friends</button>
+    </div>
 
-<!-- Game window -->
+    <div id="hub-library" class="hubpage active">
+      <div class="gamegrid">
+        <div class="gamecard"><div><div class="gameemoji">🐍</div><h3>Snake</h3></div><button class="playbtn" onclick="launchGame('snake')">PLAY</button></div>
+        <div class="gamecard"><div><div class="gameemoji">🔢</div><h3>2048</h3></div><button class="playbtn" onclick="launchGame('2048')">PLAY</button></div>
+        <div class="gamecard"><div><div class="gameemoji">💣</div><h3>Minesweeper</h3></div><button class="playbtn" onclick="launchGame('mines')">PLAY</button></div>
+        <div class="gamecard"><div><div class="gameemoji">❌</div><h3>Tic-Tac-Toe</h3></div><button class="playbtn" onclick="launchGame('ttt')">PLAY</button></div>
+        <div class="gamecard"><div><div class="gameemoji">🧱</div><h3>Breakout</h3></div><button class="playbtn" onclick="launchGame('breakout')">PLAY</button></div>
+        <div class="gamecard"><div><div class="gameemoji">⚡</div><h3>Reaction</h3></div><button class="playbtn" onclick="launchGame('reaction')">PLAY</button></div>
+        <div class="gamecard"><div><div class="gameemoji">🏓</div><h3>Pong</h3></div><button class="playbtn" onclick="launchGame('pong')">PLAY</button></div>
+        <div class="gamecard"><div><div class="gameemoji">🚀</div><h3>Space Shooter</h3></div><button class="playbtn" onclick="launchGame('shooter')">PLAY</button></div>
+      </div>
+    </div>
+
+    <div id="hub-roblox" class="hubpage">
+      <div class="profile"><div class="avatar">🧱</div><div><h2 style="margin:0">Roblox-style Game Hub</h2><div style="color:#aaa">A simulated launcher for your web OS.</div></div></div>
+      <div class="storegrid">
+        <div class="storecard"><div class="cover">🏙️</div><h3>Brookhaven-style RP</h3><p>Roleplay world</p><button class="playbtn" onclick="launchPortal('Brookhaven')">Launch</button></div>
+        <div class="storecard"><div class="cover">🏁</div><h3>Racing World</h3><p>Arcade racing</p><button class="playbtn" onclick="launchPortal('Racing World')">Launch</button></div>
+        <div class="storecard"><div class="cover">🗺️</div><h3>Adventure Quest</h3><p>Explore and collect</p><button class="playbtn" onclick="launchPortal('Adventure Quest')">Launch</button></div>
+      </div>
+    </div>
+
+    <div id="hub-geforce" class="hubpage">
+      <h2>🟩 GeForce-style Performance Center</h2>
+      <div class="statgrid">
+        <div class="stat"><small>FPS</small><b id="fpsStat">144</b><span>Target</span></div>
+        <div class="stat"><small>GPU</small><b id="gpuStat">62%</b><div class="progress"><i id="gpuBar" style="width:62%"></i></div></div>
+        <div class="stat"><small>CPU</small><b id="cpuStat">34%</b><div class="progress"><i id="cpuBar" style="width:34%"></i></div></div>
+        <div class="stat"><small>RAM</small><b id="ramStat">7.2 GB</b><div class="progress"><i style="width:48%"></i></div></div>
+        <div class="stat"><small>Temperature</small><b id="tempStat">58°C</b></div>
+      </div>
+      <div class="card" style="background:#172132;color:#fff;border-color:#33455e;margin-top:12px">
+        <h3>Performance Mode</h3>
+        <button class="playbtn" onclick="setPerf('Performance')">Performance</button>
+        <button onclick="setPerf('Balanced')" style="padding:9px;margin:3px">Balanced</button>
+        <button onclick="setPerf('Battery Saver')" style="padding:9px;margin:3px">Battery Saver</button>
+        <p id="perfText">Current mode: Balanced</p>
+      </div>
+    </div>
+
+    <div id="hub-store" class="hubpage">
+      <h2>🛒 Game Store</h2>
+      <div class="storegrid">
+        <div class="storecard"><div class="cover">🎯</div><h3>Aim Trainer</h3><p>Free</p><button class="playbtn" onclick="launchGame('reaction')">Play</button></div>
+        <div class="storecard"><div class="cover">🧩</div><h3>2048</h3><p>Free</p><button class="playbtn" onclick="launchGame('2048')">Play</button></div>
+        <div class="storecard"><div class="cover">🧱</div><h3>Brick Breaker</h3><p>Free</p><button class="playbtn" onclick="launchGame('breakout')">Play</button></div>
+        <div class="storecard"><div class="cover">🚀</div><h3>Space Shooter</h3><p>Free</p><button class="playbtn" onclick="launchGame('shooter')">Play</button></div>
+      </div>
+    </div>
+
+    <div id="hub-profile" class="hubpage">
+      <div class="profile"><div class="avatar">🎮</div><div><h2 style="margin:0">Administrator</h2><div>Level 12 • Gamer</div><div><span class="badge">Windows 10 Gaming</span> <span class="badge">Achievement Hunter</span></div></div></div>
+      <div class="statgrid"><div class="stat"><small>Games Played</small><b>24</b></div><div class="stat"><small>Achievements</small><b>18</b></div><div class="stat"><small>Play Time</small><b>37h</b></div></div>
+    </div>
+
+    <div id="hub-friends" class="hubpage">
+      <h2>👥 Friends & Party</h2>
+      <div class="friend"><span class="dot"></span><b>PixelPlayer</b><span style="margin-left:auto">Playing a game</span></div>
+      <div class="friend"><span class="dot"></span><b>GameMaster</b><span style="margin-left:auto">Online</span></div>
+      <div class="friend"><span class="dot off"></span><b>BlockBuilder</b><span style="margin-left:auto">Offline</span></div>
+      <div class="card" style="margin-top:12px"><button onclick="notify('Party','Party invite sent.')">🎙️ Invite to party</button> <button onclick="notify('Chat','Gaming chat opened.')">💬 Open chat</button></div>
+    </div>
+  </div></div>
+ </div>
+
+ <!-- Game window -->
 <div class="window" id="gameWindow" style="left:190px;top:70px;width:760px;height:550px">
  <div class="titlebar" onmousedown="dragStart(event,'gameWindow')"><div class="titleIcon">🎮</div><div class="title" id="gameTitle">Game</div><div class="controls"><button class="control" onclick="minimize('gameWindow')">─</button><button class="control" onclick="maximize('gameWindow')">□</button><button class="control close" onclick="closeApp('gameWindow')">✕</button></div></div>
  <div class="body"><div class="game-screen"><div class="game-head"><b id="gameName">Game</b><span id="gameScore">Score: 0</span></div><div class="game-area" id="gameArea"></div><div class="game-ui" id="gameUI"></div></div></div>
@@ -232,21 +318,15 @@ button{cursor:pointer}
  <div class="loginBox">
   <div class="loginLogo">⊞</div>
   <div class="loginUser">Administrator</div>
-  <div class="loginEdition">Windows 11 Gaming Web Edition</div>
+  <div class="loginEdition">Windows 10 Gaming Edition</div>
   <input id="startupPassword" type="password" placeholder="Password" autocomplete="off">
   <button class="loginButton" onclick="unlockWindows()">Sign in</button>
   <div id="loginError">Incorrect password</div>
-  <div class="loginHint">🔒 Protected Startup</div>
+  <div class="loginHint">🔒 Lock screen password</div>
  </div>
 </div>
 
-<!-- Boot screen -->
-<div id="bootScreen" style="position:fixed;inset:0;z-index:10000002;display:flex;align-items:center;justify-content:center;flex-direction:column;background:radial-gradient(circle at 50% 40%,#0b6ba8,transparent 35%),linear-gradient(135deg,#020914,#062b4b,#020914);color:#fff">
- <div class="bootLogo bootPulse">⊞</div>
- <div class="bootText">Windows 11 Gaming Web Edition</div>
-</div>
-
-<div id="taskbar">
+ <div id="taskbar">
  <div class="task-center">
   <button id="startBtn" class="taskbtn">⊞</button>
   <button id="searchBtn" class="taskbtn">🔎 <span style="font-size:12px">Search</span></button>
@@ -296,7 +376,7 @@ $("searchInput").oninput=function(){const q=this.value.toLowerCase();document.qu
 document.addEventListener("click",e=>{if(!e.target.closest("#start")&&!e.target.closest("#startBtn")&&!e.target.closest("#searchPanel")&&!e.target.closest("#searchBtn"))closeMenus()});
 
 const settingsPages={
- system:["System",["🖥️ Display — brightness, scale and resolution.","🔊 Sound — speakers, microphone and volume.","🔔 Notifications — app notification controls.","ℹ️ About — Windows 11 Gaming Web Edition."]],
+ system:["System",["🖥️ Display — brightness, scale and resolution.","🔊 Sound — speakers, microphone and volume.","🔔 Notifications — app notification controls.","ℹ️ About — Windows 10 Gaming Edition."]],
  devices:["Bluetooth & devices",["🖨️ Printers & scanners","🖱️ Mouse","⌨️ Keyboard","📱 Bluetooth devices"]],
  network:["Network & Internet",["📶 Wi-Fi — Connected","🌐 Ethernet — Disconnected","✈️ Airplane mode — Off"]],
  gaming:["Gaming",["🎮 Game Mode — On","🕹️ Game Bar — Enabled","📹 Captures — Ready","⚡ Performance — Balanced"]],
@@ -340,14 +420,14 @@ window.onmouseup=()=>drawing=false;function clearPaint(){ctx.clearRect(0,0,canva
 $("cmdInput").onkeydown=e=>{if(e.key!=="Enter")return;const c=e.target.value.trim(),l=c.toLowerCase(),o=$("cmdOutput");o.innerHTML+="<br>C:\\Users\\Administrator&gt;"+c+"<br>";if(l==="cls")o.innerHTML="";else if(l==="dir")o.innerHTML+="<br>&lt;DIR&gt; Users<br>&lt;DIR&gt; Windows<br>&lt;DIR&gt; Program Files<br>README.txt<br>";else if(l==="ver")o.innerHTML+="<br>Microsoft Windows [Version 10.0.26100]<br>";else if(l==="whoami")o.innerHTML+="<br>administrator<br>";else if(l==="help")o.innerHTML+="<br>DIR CLS VER WHOAMI HELP DATE TIME<br>";else if(l==="date")o.innerHTML+="<br>"+new Date().toLocaleDateString()+"<br>";else if(l==="time")o.innerHTML+="<br>"+new Date().toLocaleTimeString()+"<br>";else if(c)o.innerHTML+="<br>'"+c+"' is not recognized as an internal or external command.<br>";e.target.value="";o.scrollTop=o.scrollHeight};
 
 let browserHistory=[],browserIndex=-1;
-function browserHome(){$("browserUrl").value="";$("browserTab").textContent="New tab";$("browserContent").innerHTML='<div class="browser-home"><h1>Web Browser</h1><p>Windows 11 Gaming Edition</p><input id="browserSearch" placeholder="Search the web or enter a URL"><div style="margin-top:20px"><button onclick="navigateBrowser(\\'https://www.youtube.com\\')">▶️ YouTube</button> <button onclick="navigateBrowser(\\'https://www.google.com/search?q=browser+games\\')">🎮 Gaming</button></div></div>';$("browserSearch")?.addEventListener("keydown",e=>{if(e.key==="Enter")navigateBrowser(e.target.value)})}
+function browserHome(){$("browserUrl").value="";$("browserTab").textContent="New tab";$("browserContent").innerHTML='<div class="browser-home"><h1>Web Browser</h1><p>Windows 10 Gaming Edition</p><input id="browserSearch" placeholder="Search the web or enter a URL"><div style="margin-top:20px"><button onclick="navigateBrowser(\\'https://www.youtube.com\\')">▶️ YouTube</button> <button onclick="navigateBrowser(\\'https://www.google.com/search?q=browser+games\\')">🎮 Gaming</button></div></div>';$("browserSearch")?.addEventListener("keydown",e=>{if(e.key==="Enter")navigateBrowser(e.target.value)})}
 function navigateBrowser(url){url=(url||$("browserUrl").value).trim();if(!url)return;if(!/^https?:\\/\\//i.test(url))url="https://www.google.com/search?q="+encodeURIComponent(url);browserHistory=browserHistory.slice(0,browserIndex+1);browserHistory.push(url);browserIndex++;loadBrowser()}
 function loadBrowser(){const u=browserHistory[browserIndex];$("browserUrl").value=u;$("browserTab").textContent=new URL(u).hostname;$("browserContent").innerHTML=`<iframe src="${u}" referrerpolicy="no-referrer"></iframe>`}
 function browserBack(){if(browserIndex>0){browserIndex--;loadBrowser()}}function browserForward(){if(browserIndex<browserHistory.length-1){browserIndex++;loadBrowser()}}function browserReload(){if(browserIndex>=0)loadBrowser()}
 
 function saveProxy(){localStorage.setItem("proxyHost",$("proxyHost").value);localStorage.setItem("proxyPort",$("proxyPort").value);notify("Proxy","Settings saved.")}function connectProxy(){$("proxyStatus").className="proxyStatus ok";$("proxyStatus").textContent="● Configured — "+$("proxyHost").value+":"+$("proxyPort").value;notify("Proxy","Configuration enabled.")}function disconnectProxy(){$("proxyStatus").className="proxyStatus";$("proxyStatus").textContent="● Disconnected"}
 
-function launchGame(type){openApp("gameWindow");if(gameCleanup)gameCleanup();clearInterval(gameTimer);$("gameArea").innerHTML="";$("gameUI").innerHTML="";const n={snake:"Snake","2048":"2048",mines:"Minesweeper",ttt:"Tic-Tac-Toe",breakout:"Breakout",reaction:"Reaction"}[type];$("gameTitle").textContent=n;$("gameName").textContent=n;$("gameScore").textContent="Score: 0";({snake:startSnake,"2048":start2048,mines:startMines,ttt:startTTT,breakout:startBreakout,reaction:startReaction}[type])()}
+function launchGame(type){openApp("gameWindow");if(gameCleanup)gameCleanup();clearInterval(gameTimer);$("gameArea").innerHTML="";$("gameUI").innerHTML="";const n={snake:"Snake","2048":"2048",mines:"Minesweeper",ttt:"Tic-Tac-Toe",breakout:"Breakout",reaction:"Reaction"}[type];$("gameTitle").textContent=n;$("gameName").textContent=n;$("gameScore").textContent="Score: 0";({snake:startSnake,"2048":start2048,mines:startMines,ttt:startTTT,breakout:startBreakout,reaction:startReaction,pong:startPong,shooter:startShooter}[type])()}
 
 function startSnake(){const c=document.createElement("canvas");c.width=500;c.height=400;$("gameArea").appendChild(c);const x=c.getContext("2d"),s=20,C=25,R=20;let snake=[{x:12,y:10}],d={x:1,y:0},f={x:5,y:5},score=0,run=true;function spawn(){f={x:Math.floor(Math.random()*C),y:Math.floor(Math.random()*R)}}function draw(){x.fillStyle="#071018";x.fillRect(0,0,c.width,c.height);x.fillStyle="#49bfff";snake.forEach(p=>x.fillRect(p.x*s,p.y*s,s-2,s-2));x.fillStyle="#ff4d6d";x.fillRect(f.x*s,f.y*s,s-2,s-2)}function tick(){if(!run)return;let h={x:snake[0].x+d.x,y:snake[0].y+d.y};if(h.x<0||h.y<0||h.x>=C||h.y>=R||snake.some(p=>p.x===h.x&&p.y===h.y)){run=false;notify("Game Over","Snake score: "+score);return}snake.unshift(h);if(h.x===f.x&&h.y===f.y){score++;$("gameScore").textContent="Score: "+score;spawn()}else snake.pop();draw()}const key=e=>{if(e.key==="ArrowUp"&&d.y!==1)d={x:0,y:-1};if(e.key==="ArrowDown"&&d.y!==-1)d={x:0,y:1};if(e.key==="ArrowLeft"&&d.x!==1)d={x:-1,y:0};if(e.key==="ArrowRight"&&d.x!==-1)d={x:1,y:0}};document.addEventListener("keydown",key);gameTimer=setInterval(tick,110);draw();gameCleanup=()=>document.removeEventListener("keydown",key);$("gameUI").textContent="Use the arrow keys."}
 
@@ -361,12 +441,39 @@ function startBreakout(){const c=document.createElement("canvas");c.width=560;c.
 
 function startReaction(){const b=document.createElement("button");b.textContent="WAIT...";b.style.cssText="width:250px;height:150px;font-size:28px";$("gameArea").appendChild(b);let start=0,ready=false,t=setTimeout(()=>{ready=true;b.textContent="CLICK!";start=performance.now()},Math.random()*2500+1000);b.onclick=()=>{if(!ready){clearTimeout(t);b.textContent="Too early — restart";return}const ms=Math.round(performance.now()-start);$("gameScore").textContent="Score: "+ms+" ms";b.textContent=ms+" ms — Click to retry";ready=false;startReaction()};$("gameUI").textContent="Wait for CLICK, then react."}
 
+
+function hubTab(tab){document.querySelectorAll(".hubpage").forEach(x=>x.classList.remove("active"));$("hub-"+tab)?.classList.add("active")}
+function launchPortal(name){notify("Game Launcher",name+" launched in the Roblox-style hub.")}
+function setPerf(mode){$("perfText").textContent="Current mode: "+mode;notify("Gaming Mode",mode+" enabled.")}
+setInterval(()=>{if($("gpuStat")){let g=45+Math.floor(Math.random()*35),c=20+Math.floor(Math.random()*35),t=52+Math.floor(Math.random()*14);$("gpuStat").textContent=g+"%";$("cpuStat").textContent=c+"%";$("tempStat").textContent=t+"°C";$("gpuBar").style.width=g+"%";$("cpuBar").style.width=c+"%" }},1500);
+
+function startPong(){
+ const c=document.createElement("canvas");c.width=600;c.height=360;$("gameArea").appendChild(c);const x=c.getContext("2d");
+ let py=140,ay=140,b={x:300,y:180,dx:4,dy:3},score=0,run=true;
+ const key=e=>{if(e.key==="ArrowUp")py=Math.max(0,py-25);if(e.key==="ArrowDown")py=Math.min(280,py+25)};
+ document.addEventListener("keydown",key);
+ function tick(){if(!run)return;b.x+=b.dx;b.y+=b.dy;if(b.y<6||b.y>354)b.dy*=-1;let ai=b.y-40;ay+=Math.max(-3,Math.min(3,ai-ay));if(b.x<28&&b.y>py&&b.y<py+80)b.dx=Math.abs(b.dx);if(b.x>572&&b.y>ay&&b.y<ay+80)b.dx=-Math.abs(b.dx);if(b.x<0){run=false;notify("Pong","Game over!")}if(b.x>600){score++;$("gameScore").textContent="Score: "+score;b={x:300,y:180,dx:-4,dy:3}}x.fillStyle="#05070b";x.fillRect(0,0,600,360);x.fillStyle="#fff";x.fillRect(15,py,10,80);x.fillRect(575,ay,10,80);x.beginPath();x.arc(b.x,b.y,7,0,7);x.fill()}gameTimer=setInterval(tick,16);gameCleanup=()=>document.removeEventListener("keydown",key);$("gameUI").textContent="Use ↑ and ↓."}
+
+function startShooter(){
+ const c=document.createElement("canvas");c.width=600;c.height=360;$("gameArea").appendChild(c);const x=c.getContext("2d");
+ let ship=280,shots=[],enemies=[],score=0,run=true,spawn=0;
+ const key=e=>{if(e.key==="ArrowLeft")ship=Math.max(15,ship-25);if(e.key==="ArrowRight")ship=Math.min(555,ship+25);if(e.key===" ")shots.push({x:ship,y:315})};
+ document.addEventListener("keydown",key);
+ function tick(){if(!run)return;spawn++;if(spawn%30===0)enemies.push({x:20+Math.random()*560,y:15});shots.forEach(s=>s.y-=7);enemies.forEach(e=>e.y+=2);for(const s of shots)for(const e of enemies)if(Math.hypot(s.x-e.x,s.y-e.y)<18){e.dead=true;s.dead=true;score++;$("gameScore").textContent="Score: "+score}shots=shots.filter(s=>!s.dead&&s.y>0);enemies=enemies.filter(e=>!e.dead&&e.y<360);if(enemies.some(e=>e.y>320)){run=false;notify("Space Shooter","Game over!")}x.fillStyle="#03050a";x.fillRect(0,0,600,360);x.fillStyle="#49bfff";x.beginPath();x.moveTo(ship,300);x.lineTo(ship-18,335);x.lineTo(ship+18,335);x.fill();x.fillStyle="#fff";shots.forEach(s=>x.fillRect(s.x-2,s.y,4,10));x.fillStyle="#ff5577";enemies.forEach(e=>{x.beginPath();x.arc(e.x,e.y,12,0,7);x.fill()})}
+ gameTimer=setInterval(tick,16);gameCleanup=()=>document.removeEventListener("keydown",key);$("gameUI").textContent="← → move • Space shoot";
+}
+
 function showLogin(){$("lockScreen").style.display="none";$("loginScreen").style.display="flex";$("startupPassword").focus()}
-function unlockWindows(){if($("startupPassword").value===STARTUP_PASSWORD){$("loginError").style.display="none";$("loginScreen").style.display="none";$("desktop").style.display="block";$("taskbar").style.display="flex";$("startupPassword").value="";notify("Windows 11 Gaming","Welcome back, Administrator!")}else{$("loginError").style.display="block";$("startupPassword").value="";$("startupPassword").focus()}}
+function unlockWindows(){if($("startupPassword").value===STARTUP_PASSWORD){$("loginError").style.display="none";$("loginScreen").style.display="none";$("desktop").style.display="block";$("taskbar").style.display="flex";$("startupPassword").value="";notify("Windows 10 Gaming","Welcome back, Administrator!")}else{$("loginError").style.display="block";$("startupPassword").value="";$("startupPassword").focus()}}
 function lockWindows(){closeMenus();document.querySelectorAll(".window").forEach(w=>w.classList.remove("show"));$("desktop").style.display="none";$("taskbar").style.display="none";$("lockScreen").style.display="flex"}
 $("startupPassword").onkeydown=e=>{if(e.key==="Enter")unlockWindows()};
 
-window.addEventListener("load",()=>{settingsPage("system");browserHome();const ph=localStorage.getItem("proxyHost"),pp=localStorage.getItem("proxyPort");if(ph)$("proxyHost").value=ph;if(pp)$("proxyPort").value=pp;setTimeout(()=>{$("bootScreen").style.opacity="0";$("bootScreen").style.transition="opacity .6s";setTimeout(()=>{$("bootScreen").style.display="none";$("loginScreen").style.display="flex";$("startupPassword").focus()},650)},1800)});
+window.addEventListener("load",()=>{
+ settingsPage("system"); browserHome();
+ const ph=localStorage.getItem("proxyHost"),pp=localStorage.getItem("proxyPort");
+ if(ph)$("proxyHost").value=ph;if(pp)$("proxyPort").value=pp;
+ $("desktop").style.display="block";$("taskbar").style.display="flex";$("loginScreen").style.display="none";
+});
 </script>
 </body>
-</html>
+ </html>
