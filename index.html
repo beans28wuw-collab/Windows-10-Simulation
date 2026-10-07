@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Windows 10 Professional - Ultimate Simulation</title>
+    <title>Windows 10 Pro</title>
     <style>
         * {
             box-sizing: border-box;
@@ -21,172 +21,16 @@
             background-color: #000;
         }
 
-        /* --- STAGE 1: REALISTIC PC BOOT SCREEN --- */
-        #pc-boot-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            color: #fff;
-            font-family: monospace;
-            padding: 20px;
-            font-size: 14px;
-            line-height: 1.6;
-            z-index: 110000;
-        }
-
-        /* --- STAGE 2: WINDOWS 10 LOADING SCREEN --- */
-        #win10-loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 100000;
-        }
-
-        .win10-logo {
-            width: 110px;
-            height: 110px;
-            color: #0078d7;
-            margin-bottom: 80px;
-        }
-
-        /* Windows 10 Dot Ring Loading Animation */
-        .dot-ring {
-            position: relative;
-            width: 50px;
-            height: 50px;
-        }
-
-        .dot-ring .dot {
-            position: absolute;
-            width: 5px;
-            height: 5px;
-            background: #fff;
-            border-radius: 50%;
-            opacity: 0;
-            animation: moveDot 3.5s infinite cubic-bezier(0.1, 0.6, 0.9, 0.4);
-            transform-origin: 25px 25px;
-        }
-
-        .dot-ring .dot:nth-child(1) { animation-delay: 0s; }
-        .dot-ring .dot:nth-child(2) { animation-delay: 0.15s; }
-        .dot-ring .dot:nth-child(3) { animation-delay: 0.3s; }
-        .dot-ring .dot:nth-child(4) { animation-delay: 0.45s; }
-        .dot-ring .dot:nth-child(5) { animation-delay: 0.6s; }
-
-        @keyframes moveDot {
-            0% { transform: rotate(0deg); opacity: 0; }
-            5% { opacity: 1; }
-            70% { transform: rotate(720deg); opacity: 1; }
-            75% { opacity: 0; transform: rotate(720deg); }
-            100% { transform: rotate(720deg); opacity: 0; }
-        }
-
-        /* --- STAGE 3: WINDOWS 10 SIGN-IN LOCK SCREEN --- */
-        #win10-lock-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('https://unsplash.com') no-repeat center center;
-            background-size: cover;
-            display: none;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 50px;
-            color: white;
-            z-index: 90000;
-            transition: transform 0.5s cubic-bezier(0.1, 0.8, 0.2, 1);
-        }
-
-        .lock-time-container {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .lock-time {
-            font-size: 80px;
-            font-weight: 100;
-            line-height: 1;
-        }
-
-        .lock-date {
-            font-size: 24px;
-            font-weight: 300;
-        }
-
-        /* Sign in overlay container inside lockscreen state */
-        #signin-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.45);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-        }
-
-        .user-avatar {
-            width: 120px;
-            height: 120px;
-            background-color: rgba(255,255,255,0.2);
-            border-radius: 50%;
-            font-size: 64px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .user-name {
-            font-size: 28px;
-            font-weight: 300;
-            margin-bottom: 25px;
-        }
-
-        .signin-btn {
-            background-color: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            color: #fff;
-            padding: 8px 32px;
-            font-size: 15px;
-            cursor: pointer;
-            outline: none;
-        }
-
-        .signin-btn:hover {
-            background-color: rgba(255, 255, 255, 0.25);
-            border-color: rgba(255, 255, 255, 0.6);
-        }
-
-        /* --- STAGE 4: MAIN DESKTOP ENVIRONMENT --- */
+        /* --- DESKTOP CORES SHELL --- */
         #desktop-shell {
             width: 100%;
             height: 100%;
             position: relative;
             background: #0078d7 url('https://unsplash.com') no-repeat center center;
             background-size: cover;
-            display: none;
         }
 
-        /* Grid Icons Arrangement */
+        /* Desktop Grid Icons Container Layout */
         .desktop-icons-container {
             position: absolute;
             top: 0;
@@ -242,23 +86,23 @@
         /* --- THE ADVANCED WINDOWING ENGINE --- */
         .window-instance {
             position: absolute;
-            width: 450px;
-            height: 320px;
+            width: 500px;
+            height: 360px;
             background-color: #fff;
-            border: 1px solid #0078d7;
+            border: 1px solid #707070;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             display: flex;
             flex-direction: column;
             z-index: 50;
             border-radius: 2px;
-            min-width: 250px;
-            min-height: 150px;
+            min-width: 300px;
+            min-height: 200px;
         }
 
         @media (max-width: 600px) {
             .window-instance {
-                width: 90% !important;
-                height: 65% !important;
+                width: 95% !important;
+                height: 70% !important;
             }
         }
 
@@ -319,17 +163,7 @@
         }
 
         /* --- APPLICATION RUNTIMES --- */
-        .runtime-notepad-pane {
-            width: 100%;
-            height: 100%;
-            border: none;
-            outline: none;
-            padding: 10px;
-            font-family: 'Consolas', Menlo, monospace;
-            font-size: 13px;
-            resize: none;
-        }
-
+        /* Command Prompt */
         .runtime-cmd-pane {
             width: 100%;
             height: 100%;
@@ -343,3 +177,167 @@
         .cmd-output-history { margin-bottom: 4px; line-height: 1.4; white-space: pre-wrap; }
         .cmd-interactive-line { display: flex; align-items: center; width: 100%; }
         .cmd-shell-input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-family: 'Consolas', monospace;
+            font-size: 12px;
+            flex: 1;
+        }
+
+        /* File Explorer */
+        .runtime-explorer-pane {
+            display: flex;
+            height: 100%;
+        }
+        .explorer-tree-sidebar {
+            width: 130px;
+            background-color: #f0f0f0;
+            border-right: 1px solid #dfdfdf;
+            padding: 10px 5px;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .sidebar-node-item { padding: 4px 6px; cursor: pointer; border-radius: 3px; }
+        .sidebar-node-item:hover { background-color: #e0e0e0; }
+        .explorer-grid-view {
+            flex: 1;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 20px;
+            align-content: flex-start;
+        }
+        .explorer-file-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        /* Edge Browser Clone Layout */
+        .runtime-browser-pane {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .browser-address-header {
+            height: 36px;
+            background-color: #f3f3f3;
+            border-bottom: 1px solid #dfdfdf;
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            gap: 8px;
+        }
+        .browser-address-bar {
+            flex: 1;
+            height: 24px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            padding: 0 12px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            color: #555;
+        }
+        .browser-viewport {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background: #f9f9f9;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Control Panel */
+        .control-panel-grid {
+            padding: 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .cp-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+        .cp-item:hover { background-color: #f2f2f2; border-color: #e5e5e5; }
+
+        /* Recycle Bin Empty view */
+        .bin-empty-view {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #555;
+            font-size: 13px;
+        }
+
+        /* --- PLATFORM TASKBAR SYSTEM --- */
+        .os-taskbar-shelf {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background-color: rgba(16, 16, 16, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10000;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .taskbar-left-cluster, .taskbar-right-cluster, .active-apps-tray {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+        .active-apps-tray { flex: 1; margin: 0 10px; overflow-x: auto; gap: 4px; }
+
+        .taskbar-trigger-node {
+            width: 48px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #fff;
+        }
+        .taskbar-trigger-node:hover { background-color: rgba(255, 255, 255, 0.1); }
+        .taskbar-trigger-node.active-state-node {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #0078d7;
+        }
+
+        .search-box-mockup {
+            width: 150px;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.12);
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            color: #ccc;
+            font-size: 12px;
+        }
+        @media (max-width: 540px) { .search-box-mockup { display: none; } }
+
+        .app-tray-tab {
+            height: 100%;
+            width: 110px;
