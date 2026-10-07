@@ -137,7 +137,7 @@ button,input{font:inherit}button{border:0;color:inherit}
 <div id="taskbar">
 <button class="tbbtn" onclick="toggleStart()"><span class="startlogo">⊞</span></button>
 <input class="search" id="taskSearch" placeholder="Type here to search" onfocus="openSearchPanel()" oninput="liveSearch(this.value)" onkeydown="if(event.key==='Enter')doSearch(this.value)">
-<div class="taskapps">
+<div class="taskapps"><button class="taskapp" id="tb-addapp" title="Add an app" onclick="openAddApp()">＋</button>
 <button class="taskapp" id="tb-explorer" onclick="openApp('explorer')">📁</button>
 <button class="taskapp" id="tb-browser" onclick="openApp('browser')">🌐</button>
 <button class="taskapp" id="tb-settings" onclick="openApp('settings')">⚙️</button>
@@ -200,10 +200,12 @@ button,input{font:inherit}button{border:0;color:inherit}
 
 <div class="window" id="weather"><div class="titlebar"><span class="titletext">☀️ Weather</span><div class="wincontrols"><button onclick="minimize('weather')">—</button><button onclick="maximize('weather')">□</button><button class="close" onclick="closeApp('weather')">✕</button></div></div><div class="content"><div style="padding:30px;color:#222"><h1 style="font-weight:400">☀️ Weather</h1><h2>Windows Web Forecast</h2><div class="setting-card">Today <b style="float:right">☀️ 72°F</b><br><small>Clear skies</small></div><div class="setting-card">Tomorrow <b style="float:right">⛅ 74°F</b><br><small>Partly cloudy</small></div><button onclick="showToast('Weather refreshed')" style="padding:8px;color:#222">Refresh</button></div></div></div>
 <div class="toast" id="toast"></div>
+<div class="dialogOverlay" id="addAppDialog"><div class="dialog" style="max-width:430px"><h3>＋ Add an app</h3><p>Add a website/app to this Windows desktop.</p><input id="appName" placeholder="App name" style="width:100%;box-sizing:border-box;padding:9px;margin:5px 0"><input id="appUrl" placeholder="https://example.com" style="width:100%;box-sizing:border-box;padding:9px;margin:5px 0"><input id="appIcon" placeholder="Icon emoji (optional)" value="🌐" style="width:100%;box-sizing:border-box;padding:9px;margin:5px 0"><label style="display:block;margin:8px 0;color:#333"><input id="appPin" type="checkbox" checked> Pin to taskbar</label><div style="text-align:right;margin-top:14px"><button onclick="closeAddApp()">Cancel</button> <button onclick="installCustomApp()">Add app</button></div><hr><div id="customAppLibrary" style="max-height:150px;overflow:auto"></div></div></div>
 <script>
 const apps=['explorer','browser','settings','notes','calc','taskmgr','runbox','recycle','calendar','paint','media','photos','terminal','weather'];let z=100;let calcExpr='';
 const $=id=>document.getElementById(id);
 function showToast(s){$('toast').textContent=s;$('toast').style.display='block';clearTimeout(showToast.t);showToast.t=setTimeout(()=>$('toast').style.display='none',1800)}
+function toast(title,msg){showToast(msg?title+': '+msg:title)}
 function toggleStart(){let s=$('startMenu');s.style.display=s.style.display==='block'?'none':'block'}
 function appId(id){const m={edge:'browser',notepad:'notes',run:'runbox'};return m[id]||id}
 function openWin(id){return openApp(appId(id))}
@@ -366,7 +368,8 @@ const PIN_KEY='win10.pins', NOTEY='win10.notifications';
 let pins;
 try{pins=JSON.parse(localStorage.getItem(PIN_KEY)||'["explorer","edge","settings","notepad","calc","taskmgr","calendar","paint","media","terminal"]')}catch(e){pins=["explorer","browser","settings","notes","calc","taskmgr","calendar","paint","media","terminal"]}
 function savePins(){localStorage.setItem(PIN_KEY,JSON.stringify(pins))}
-function pinnedApps(){return pins.map(id=>document.getElementById('tb-'+id)).filter(Boolean)}
+function pinDomId(id){return appId(id)}
+function pinnedApps(){return pins.map(id=>document.getElementById('tb-'+pinDomId(id))).filter(Boolean)}
 function rebuildPins(){
   const bar=document.querySelector('.taskbar'); if(!bar)return;
   const search=bar.querySelector('.search'), start=bar.querySelector('.winlogo')?.parentElement;
@@ -375,11 +378,11 @@ function rebuildPins(){
   [...bar.querySelectorAll('.taskapp[data-pin]')].forEach(x=>x.remove());
   let ref=bar.querySelector('.taskapps'); if(!ref)return;
   pins.forEach((id,i)=>{
-    const old=document.getElementById('tb-'+id);
+    const domId=pinDomId(id); const old=document.getElementById('tb-'+domId);
     if(!old)return;
-    const b=old.cloneNode(true); b.id='tb-'+id; b.className='taskapp'; b.dataset.pin=id;
+    const b=old.cloneNode(true); b.id='tb-'+domId; b.className='taskapp'; b.dataset.pin=id;
     b.draggable=true; b.title=(old.title||id)+' — right-click for jump list';
-    b.onclick=()=>openWin(id);
+    b.onclick=()=>openWin(domId);
     b.oncontextmenu=e=>{e.preventDefault();showJumpList(e,id)};
     b.ondragstart=e=>{b.classList.add('dragging');e.dataTransfer.setData('text/plain',id)};
     b.ondragend=()=>b.classList.remove('dragging');
@@ -451,7 +454,27 @@ function startMenuApps(){
   ].map(a=>`<button data-app="${a[1].toLowerCase()}" onclick="openWin('${a[2]}')">${a[0]} ${a[1]}</button>`).join('')+'</div>';
 }
 function filterStartApps(v){document.querySelectorAll('.applist button').forEach(b=>b.style.display=b.dataset.app.includes(v.toLowerCase())?'block':'none')}
-function shellInit(){pins=pins.map(appId).filter(id=>apps.includes(id));if(!pins.length)pins=['explorer','browser','settings','notes','calc','taskmgr','calendar','paint','media','terminal'];savePins();addSnapZones();rebuildPins();addBadges();startMenuApps()}
+const CUSTOM_KEY='win10.customApps';
+function getCustomApps(){try{return JSON.parse(localStorage.getItem(CUSTOM_KEY)||'[]')}catch(e){return []}}
+function saveCustomApps(a){localStorage.setItem(CUSTOM_KEY,JSON.stringify(a))}
+function normalizeURL(u){u=u.trim();if(!/^https?:\/\//i.test(u))u='https://'+u;return u}
+function openAddApp(){ $('addAppDialog').style.display='flex'; renderCustomAppLibrary(); }
+function closeAddApp(){ $('addAppDialog').style.display='none'; }
+function installCustomApp(){
+  const name=$('appName').value.trim(), url=normalizeURL($('appUrl').value), icon=$('appIcon').value.trim()||'🌐';
+  if(!name||!url||!/^https?:\/\//i.test(url)){showToast('Enter an app name and valid URL');return}
+  const a=getCustomApps(); const id='custom_'+Date.now(); a.push({id,name,url,icon}); saveCustomApps(a);
+  if($('appPin').checked) pinApp(id);
+  buildCustomApps(); renderCustomAppLibrary(); $('appName').value=''; $('appUrl').value='';
+  showToast(name+' added');
+}
+function removeCustomApp(id){let a=getCustomApps().filter(x=>x.id!==id);saveCustomApps(a);pins=pins.filter(x=>x!==id);savePins();buildCustomApps();renderCustomAppLibrary();rebuildPins();showToast('App removed')}
+function launchCustomApp(id){const a=getCustomApps().find(x=>x.id===id);if(!a)return;let w=document.getElementById(a.id);if(!w){w=document.createElement('div');w.className='window';w.id=a.id;w.style.width='760px';w.style.height='520px';w.style.left='120px';w.style.top='70px';w.innerHTML=`<div class="titlebar"><span class="titletext">${esc(a.icon)} ${esc(a.name)}</span><div class="wincontrols"><button onclick="minimize('${a.id}')">—</button><button onclick="maximize('${a.id}')">□</button><button class="close" onclick="closeApp('${a.id}')">✕</button></div></div><div class="content" style="background:#fff"><iframe src="${esc(a.url)}" style="width:100%;height:100%;border:0" title="${esc(a.name)}"></iframe></div>`;document.body.appendChild(w);w.addEventListener('mousedown',()=>w.style.zIndex=++z);const bar=w.querySelector('.titlebar');let dragging=false,ox=0,oy=0;bar.addEventListener('pointerdown',e=>{if(e.target.closest('.wincontrols')||w.classList.contains('maxed'))return;dragging=true;ox=e.clientX-w.offsetLeft;oy=e.clientY-w.offsetTop;bar.setPointerCapture(e.pointerId)});bar.addEventListener('pointermove',e=>{if(dragging){w.style.left=Math.max(0,e.clientX-ox)+'px';w.style.top=Math.max(0,e.clientY-oy)+'px'}});bar.addEventListener('pointerup',()=>dragging=false)}
+  w.style.display='block';w.style.zIndex=++z;showToast(a.name+' opened');updateTaskStates();
+}
+function renderCustomAppLibrary(){const box=$('customAppLibrary');if(!box)return;const a=getCustomApps();box.innerHTML=a.length?'<b style="color:#222">Your apps</b>'+a.map(x=>`<div style="display:flex;align-items:center;gap:6px;padding:6px 0;color:#222"><span>${esc(x.icon)}</span><span style="flex:1">${esc(x.name)}</span><button onclick="launchCustomApp('${x.id}');closeAddApp()">Open</button><button onclick="removeCustomApp('${x.id}')">Remove</button></div>`).join(''):'<span style="color:#666">No custom apps yet.</span>'}
+function buildCustomApps(){const appsBox=document.querySelector('.applist');if(!appsBox)return;document.querySelectorAll('.custom-start-app').forEach(x=>x.remove());getCustomApps().forEach(a=>{const b=document.createElement('button');b.className='custom-start-app';b.dataset.app=a.name.toLowerCase();b.innerHTML=esc(a.icon)+' '+esc(a.name);b.onclick=()=>launchCustomApp(a.id);appsBox.appendChild(b)})}
+function shellInit(){const custom=getCustomApps().map(x=>x.id);pins=pins.map(appId).filter(id=>apps.includes(id)||custom.includes(id));if(!pins.length)pins=['explorer','browser','settings','notes','calc','taskmgr','calendar','paint','media','terminal'];savePins();addSnapZones();rebuildPins();addBadges();startMenuApps();buildCustomApps()}
 setTimeout(shellInit,300);
 </script>
 </body>
