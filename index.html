@@ -226,18 +226,18 @@ function fileAction(name){
   else showToast(name);
 }
 function showTrash(){if($('trashitems'))$('trashitems').innerHTML='Recycle Bin is empty.'}
-function browserHome(){ $('url').value='https://www.example.com';$('webpage').innerHTML='<h1>Windows Web Browser</h1><p>This is a working local browser interface for your Windows Web desktop.</p><div class="card"><b>Quick links</b><p><a onclick="demoPage(\\'home\\')">Home</a> · <a onclick="demoPage(\\'about\\')">About</a> · <a onclick="demoPage(\\'help\\')">Help</a></p></div><p>Type a URL or search phrase in the address bar. Network pages may be limited by browser security when running from a local HTML file.</p>'}
-function navigate(){let v=$('url').value.trim();if(!v)return;if(!/^https?:\\/\\//i.test(v)){demoPage(v);return} $('webpage').innerHTML='<h1>Loading…</h1><p>'+esc(v)+'</p><p style="font-size:13px">If this page blocks embedding, use the address bar in your normal browser.</p>'}
+function browserHome(){ $('url').value='https://www.example.com';$('webpage').innerHTML='<h1>Windows Web Browser</h1><p>This is a working local browser interface for your Windows Web desktop.</p><div class="card"><b>Quick links</b><p><a onclick="demoPage(\'home\')">Home</a> · <a onclick="demoPage(\'about\')">About</a> · <a onclick="demoPage(\'help\')">Help</a></p></div><p>Type a URL or search phrase in the address bar. Network pages may be limited by browser security when running from a local HTML file.</p>'}
+function navigate(){let v=$('url').value.trim();if(!v)return;if(!/^https?:\/\//i.test(v)){demoPage(v);return} $('webpage').innerHTML='<h1>Loading…</h1><p>'+esc(v)+'</p><p style="font-size:13px">If this page blocks embedding, use the address bar in your normal browser.</p>'}
 function demoPage(v){$('url').value=v;$('webpage').innerHTML='<h1>'+esc(v==='about'?'About Windows Web':v==='help'?'Help':'Windows Web')+'</h1><p>Everything on this desktop is running from one HTML file.</p><div class="card">Try File Explorer, Settings, Notes, Calculator, the Start menu, search, window controls and the lock screen.</div>'}
 function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 const pages={system:['System','Display, sound, notifications, storage and basic device options.'],personal:['Personalization','Customize the Windows Web experience.'],privacy:['Privacy','Control local app permissions and privacy options.'],update:['Update & Security','Windows Web is up to date.'],accounts:['Accounts','Manage the local Windows Web account.']};
-function setPage(btn,key){document.querySelectorAll('.setnav button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');let p=pages[key]||pages.system;$('setpage').innerHTML='<h1>'+p[0]+'</h1><p>'+p[1]+'</p><div class="setting-card">Wi‑Fi <span class="toggle on" onclick="this.classList.toggle(\\'on\\')"></span><br><small>Connected</small></div><div class="setting-card">Notifications <span class="toggle on" onclick="this.classList.toggle(\\'on\\')"></span><br><small>Allow notifications</small></div><div class="setting-card">Windows Web password <button style="float:right;padding:6px 12px;color:#222" onclick="changePassword()">Change</button><br><small>Used for the startup lock screen</small></div>'}
+function setPage(btn,key){document.querySelectorAll('.setnav button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');let p=pages[key]||pages.system;$('setpage').innerHTML='<h1>'+p[0]+'</h1><p>'+p[1]+'</p><div class="setting-card">Wi‑Fi <span class="toggle on" onclick="this.classList.toggle(\'on\')"></span><br><small>Connected</small></div><div class="setting-card">Notifications <span class="toggle on" onclick="this.classList.toggle(\'on\')"></span><br><small>Allow notifications</small></div><div class="setting-card">Windows Web password <button style="float:right;padding:6px 12px;color:#222" onclick="changePassword()">Change</button><br><small>Used for the startup lock screen</small></div>'}
 function changePassword(){let p=prompt('Set a new password:');if(p){localStorage.webpw=p;showToast('Password changed')}}
 function calcAdd(x){calcExpr+=x;$('calcdisplay').textContent=calcExpr}
 function calcClear(){calcExpr='';$('calcdisplay').textContent='0'}
 function calcBack(){calcExpr=calcExpr.slice(0,-1);$('calcdisplay').textContent=calcExpr||'0'}
 function calcEqual(){try{if(!/^[0-9+*/(). -]+$/.test(calcExpr))throw 0;calcExpr=String(Function('return '+calcExpr)());$('calcdisplay').textContent=calcExpr}catch(e){$('calcdisplay').textContent='Error';calcExpr=''}}
-function doSearch(v){v=v.trim();if(!v)return;toggleStart();openApp('browser');$('url').value=v;if(/^https?:\\/\\//i.test(v))navigate();else demoPage('Search: '+v)}
+function doSearch(v){v=v.trim();if(!v)return;toggleStart();openApp('browser');$('url').value=v;if(/^https?:\/\//i.test(v))navigate();else demoPage('Search: '+v)}
 $('noteText').addEventListener('input',e=>localStorage.note=e.target.value)
 function login(){let want=localStorage.webpw||'1234';if($('pw').value===want){$('login').style.display='none';sessionStorage.unlocked='1'}else $('loginerr').textContent='Wrong password'}
 function lock(){$('startMenu').style.display='none';$('login').style.display='flex';$('pw').value='';$('loginerr').textContent=''}
@@ -401,7 +401,7 @@ function showJumpList(e,id){
     notepad:[['📝 New note',"openWin('notepad');document.getElementById('note').value=''"],['📄 Open notes',"openWin('notepad')"]],
     calc:[['🧮 Calculator',"openWin('calc')"],['🧹 Clear',"openWin('calc');calc='';document.getElementById('screen').textContent='0'"]],
     taskmgr:[['📊 Processes',"openWin('taskmgr')"],['⚡ Performance',"openWin('taskmgr');toast('Task Manager','Performance')"]],
-    calendar:[['📅 Today',"openWin('calendar')"]],paint:[['🎨 New canvas',"openWin('paint');clearPaint()']],
+    calendar:[['📅 Today',"openWin('calendar')"]],paint:[['🎨 New canvas',"openWin('paint');clearPaint()"]],
     media:[['🎵 Media Player',"openWin('media')"]],terminal:[['⌨️ New terminal',"openWin('terminal')"]]
   };
   menu.innerHTML='<div class="jmhead">'+(names[id]||id)+'</div>'+((actions[id]||[['Open',`openWin('${id}')`]]).map(a=>`<button onclick="${a[1]};closeJumpList()">${a[0]}</button>`).join(''))+
