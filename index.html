@@ -389,7 +389,13 @@ const settingsPages={
 function settingsPage(page){
  const d=settingsPages[page]||settingsPages.system;
  document.querySelectorAll(".settingTab").forEach(t=>t.classList.toggle("active",t.dataset.page===page));
- $("settingsContent").innerHTML="<h1>"+d[0]+"</h1>"+d[1].map((x,i)=>`<div class="card"><b>${x}</b>${page==="personalization"&&i===0?'<br><button onclick="changeWallpaper()">Change wallpaper</button>':""}${page==="update"&&i===1?'<br><button onclick="notify(\\'Windows Update\\',\\'You are up to date.\\')">Check for updates</button>':""}</div>`).join("");
+ const box=$("settingsContent"); box.innerHTML="<h1>"+d[0]+"</h1>";
+ d[1].forEach((x,i)=>{
+  const card=document.createElement("div"); card.className="card"; card.innerHTML="<b>"+x+"</b>";
+  if(page==="personalization"&&i===0){const b=document.createElement("button");b.textContent="Change wallpaper";b.onclick=changeWallpaper;card.appendChild(document.createElement("br"));card.appendChild(b)}
+  if(page==="update"&&i===1){const b=document.createElement("button");b.textContent="Check for updates";b.onclick=()=>notify("Windows Update","You are up to date.");card.appendChild(document.createElement("br"));card.appendChild(b)}
+  box.appendChild(card);
+ });
  localStorage.setItem("settingsPage",page)
 }
 document.querySelectorAll(".settingTab").forEach(t=>t.onclick=()=>settingsPage(t.dataset.page));
@@ -420,14 +426,14 @@ window.onmouseup=()=>drawing=false;function clearPaint(){ctx.clearRect(0,0,canva
 $("cmdInput").onkeydown=e=>{if(e.key!=="Enter")return;const c=e.target.value.trim(),l=c.toLowerCase(),o=$("cmdOutput");o.innerHTML+="<br>C:\\Users\\Administrator&gt;"+c+"<br>";if(l==="cls")o.innerHTML="";else if(l==="dir")o.innerHTML+="<br>&lt;DIR&gt; Users<br>&lt;DIR&gt; Windows<br>&lt;DIR&gt; Program Files<br>README.txt<br>";else if(l==="ver")o.innerHTML+="<br>Microsoft Windows [Version 10.0.26100]<br>";else if(l==="whoami")o.innerHTML+="<br>administrator<br>";else if(l==="help")o.innerHTML+="<br>DIR CLS VER WHOAMI HELP DATE TIME<br>";else if(l==="date")o.innerHTML+="<br>"+new Date().toLocaleDateString()+"<br>";else if(l==="time")o.innerHTML+="<br>"+new Date().toLocaleTimeString()+"<br>";else if(c)o.innerHTML+="<br>'"+c+"' is not recognized as an internal or external command.<br>";e.target.value="";o.scrollTop=o.scrollHeight};
 
 let browserHistory=[],browserIndex=-1;
-function browserHome(){$("browserUrl").value="";$("browserTab").textContent="New tab";$("browserContent").innerHTML='<div class="browser-home"><h1>Web Browser</h1><p>Windows 10 Gaming Edition</p><input id="browserSearch" placeholder="Search the web or enter a URL"><div style="margin-top:20px"><button onclick="navigateBrowser(\\'https://www.youtube.com\\')">▶️ YouTube</button> <button onclick="navigateBrowser(\\'https://www.google.com/search?q=browser+games\\')">🎮 Gaming</button></div></div>';$("browserSearch")?.addEventListener("keydown",e=>{if(e.key==="Enter")navigateBrowser(e.target.value)})}
-function navigateBrowser(url){url=(url||$("browserUrl").value).trim();if(!url)return;if(!/^https?:\\/\\//i.test(url))url="https://www.google.com/search?q="+encodeURIComponent(url);browserHistory=browserHistory.slice(0,browserIndex+1);browserHistory.push(url);browserIndex++;loadBrowser()}
+function browserHome(){$("browserUrl").value="";$("browserTab").textContent="New tab";$("browserContent").innerHTML='<div class="browser-home"><h1>Web Browser</h1><p>Windows 10 Gaming Edition</p><input id="browserSearch" placeholder="Search the web or enter a URL"><div style="margin-top:20px"><button onclick="navigateBrowser(\'https://www.youtube.com\')">▶️ YouTube</button> <button onclick="navigateBrowser(\'https://www.google.com/search?q=browser+games\')">🎮 Gaming</button></div></div>';$("browserSearch")?.addEventListener("keydown",e=>{if(e.key==="Enter")navigateBrowser(e.target.value)})}
+function navigateBrowser(url){url=(url||$("browserUrl").value).trim();if(!url)return;if(!/^https?:\/\//i.test(url))url="https://www.google.com/search?q="+encodeURIComponent(url);browserHistory=browserHistory.slice(0,browserIndex+1);browserHistory.push(url);browserIndex++;loadBrowser()}
 function loadBrowser(){const u=browserHistory[browserIndex];$("browserUrl").value=u;$("browserTab").textContent=new URL(u).hostname;$("browserContent").innerHTML=`<iframe src="${u}" referrerpolicy="no-referrer"></iframe>`}
 function browserBack(){if(browserIndex>0){browserIndex--;loadBrowser()}}function browserForward(){if(browserIndex<browserHistory.length-1){browserIndex++;loadBrowser()}}function browserReload(){if(browserIndex>=0)loadBrowser()}
 
 function saveProxy(){localStorage.setItem("proxyHost",$("proxyHost").value);localStorage.setItem("proxyPort",$("proxyPort").value);notify("Proxy","Settings saved.")}function connectProxy(){$("proxyStatus").className="proxyStatus ok";$("proxyStatus").textContent="● Configured — "+$("proxyHost").value+":"+$("proxyPort").value;notify("Proxy","Configuration enabled.")}function disconnectProxy(){$("proxyStatus").className="proxyStatus";$("proxyStatus").textContent="● Disconnected"}
 
-function launchGame(type){openApp("gameWindow");if(gameCleanup)gameCleanup();clearInterval(gameTimer);$("gameArea").innerHTML="";$("gameUI").innerHTML="";const n={snake:"Snake","2048":"2048",mines:"Minesweeper",ttt:"Tic-Tac-Toe",breakout:"Breakout",reaction:"Reaction"}[type];$("gameTitle").textContent=n;$("gameName").textContent=n;$("gameScore").textContent="Score: 0";({snake:startSnake,"2048":start2048,mines:startMines,ttt:startTTT,breakout:startBreakout,reaction:startReaction,pong:startPong,shooter:startShooter}[type])()}
+function launchGame(type){openApp("gameWindow");if(gameCleanup)gameCleanup();clearInterval(gameTimer);$("gameArea").innerHTML="";$("gameUI").innerHTML="";const n={snake:"Snake","2048":"2048",mines:"Minesweeper",ttt:"Tic-Tac-Toe",breakout:"Breakout",reaction:"Reaction",pong:"Pong",shooter:"Space Shooter"}[type]||"Game";$("gameTitle").textContent=n;$("gameName").textContent=n;$("gameScore").textContent="Score: 0";({snake:startSnake,"2048":start2048,mines:startMines,ttt:startTTT,breakout:startBreakout,reaction:startReaction,pong:startPong,shooter:startShooter}[type])()}
 
 function startSnake(){const c=document.createElement("canvas");c.width=500;c.height=400;$("gameArea").appendChild(c);const x=c.getContext("2d"),s=20,C=25,R=20;let snake=[{x:12,y:10}],d={x:1,y:0},f={x:5,y:5},score=0,run=true;function spawn(){f={x:Math.floor(Math.random()*C),y:Math.floor(Math.random()*R)}}function draw(){x.fillStyle="#071018";x.fillRect(0,0,c.width,c.height);x.fillStyle="#49bfff";snake.forEach(p=>x.fillRect(p.x*s,p.y*s,s-2,s-2));x.fillStyle="#ff4d6d";x.fillRect(f.x*s,f.y*s,s-2,s-2)}function tick(){if(!run)return;let h={x:snake[0].x+d.x,y:snake[0].y+d.y};if(h.x<0||h.y<0||h.x>=C||h.y>=R||snake.some(p=>p.x===h.x&&p.y===h.y)){run=false;notify("Game Over","Snake score: "+score);return}snake.unshift(h);if(h.x===f.x&&h.y===f.y){score++;$("gameScore").textContent="Score: "+score;spawn()}else snake.pop();draw()}const key=e=>{if(e.key==="ArrowUp"&&d.y!==1)d={x:0,y:-1};if(e.key==="ArrowDown"&&d.y!==-1)d={x:0,y:1};if(e.key==="ArrowLeft"&&d.x!==1)d={x:-1,y:0};if(e.key==="ArrowRight"&&d.x!==-1)d={x:1,y:0}};document.addEventListener("keydown",key);gameTimer=setInterval(tick,110);draw();gameCleanup=()=>document.removeEventListener("keydown",key);$("gameUI").textContent="Use the arrow keys."}
 
@@ -476,4 +482,4 @@ window.addEventListener("load",()=>{
 });
 </script>
 </body>
- </html>
+</html>
