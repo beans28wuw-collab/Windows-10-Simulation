@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FigureOS Core - Operational UI Layer</title>
+    <title>FigureOS Core - Operational Mobile UI Layer</title>
     <style>
         :root {
             --bg-primary: #08080c;
@@ -33,21 +33,23 @@
             color: var(--text-main);
         }
 
-        /* Matrix HUD Matrix Layer Background Grid */
+        /* Workspace layout handles desktop and mobile stacking flows dynamically */
         .workspace-grid {
             width: 100%;
             height: calc(100% - 60px);
             position: relative;
-            padding: 25px;
+            padding: 15px;
             display: flex;
-            gap: 25px;
+            flex-direction: row;
+            gap: 20px;
             z-index: 2;
+            overflow-y: auto;
         }
 
-        /* Sidebar System Diagnostics Panel */
+        /* Responsive Sidebar Diagnostics Panel */
         .hud-diagnostics-panel {
             width: 280px;
-            height: 100%;
+            flex-shrink: 0;
             background: var(--panel-bg);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
@@ -97,13 +99,12 @@
             transition: width 0.4s ease;
         }
 
-        /* Operational App Node Matrix Grid */
+        /* Self-stretching App Shortcut Matrix Container */
         .app-matrix-container {
             flex: 1;
             display: grid;
-            grid-template-columns: repeat(auto-fill, 110px);
-            grid-template-rows: repeat(auto-fill, 110px);
-            grid-gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            grid-gap: 15px;
             align-content: flex-start;
         }
 
@@ -112,13 +113,13 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: 110px;
-            height: 110px;
+            aspect-ratio: 1;
             cursor: pointer;
-            background: rgba(255,255,255,0.01);
-            border: 1px solid rgba(255,255,255,0.03);
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
             border-radius: 6px;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 10px;
         }
 
         .matrix-app-node:hover {
@@ -129,9 +130,9 @@
         }
 
         .matrix-app-node svg {
-            width: 36px;
-            height: 36px;
-            margin-bottom: 12px;
+            width: 32px;
+            height: 32px;
+            margin-bottom: 10px;
             stroke: var(--text-main);
             transition: stroke 0.2s;
         }
@@ -146,9 +147,10 @@
             color: var(--text-main);
             text-align: center;
             letter-spacing: 0.5px;
+            word-break: break-word;
         }
 
-        /* Persistent Navigation Control Strip Dock */
+        /* Persistent Navigation Strips Button Bars */
         .control-strip-dock {
             position: fixed;
             bottom: 0;
@@ -160,12 +162,12 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 30px;
+            padding: 0 20px;
             z-index: 99999;
         }
 
         .dock-brand-zone {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 800;
             letter-spacing: 2px;
             color: var(--accent-green);
@@ -197,27 +199,21 @@
             border-color: var(--accent-cyan);
         }
 
-        .dock-node-tab.instance-active::after {
-            content: '';
-            position: absolute;
-            bottom: 4px;
-            width: 16px;
-            height: 2px;
-            background: var(--accent-cyan);
-            box-shadow: 0 0 6px var(--accent-cyan);
-        }
-
-        /* Modular Window Container Management Architecture */
+        /* Adaptive App Windows Framer Layer */
         .figure-os-window {
             position: absolute;
             background: #111116;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
             box-shadow: 0 25px 60px rgba(0,0,0,0.8);
             border-radius: 8px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
             z-index: 1000;
+            width: 90% !important;
+            height: 80% !important;
+            top: 5% !important;
+            left: 5% !important;
         }
 
         .figure-os-window.hidden-frame {
@@ -225,12 +221,12 @@
         }
 
         .window-topbar-handle {
-            height: 42px;
+            height: 44px;
             background: var(--window-header);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 18px;
+            padding: 0 14px;
             cursor: move;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
@@ -261,22 +257,22 @@
         }
 
         .ctrl-action-node {
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
             border-radius: 4px;
             background: rgba(255,255,255,0.03);
             border: 1px solid rgba(255,255,255,0.08);
-            color: var(--text-muted);
+            color: #ffffff;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 12px;
             transition: all 0.15s;
         }
 
         .ctrl-action-node:hover {
-            background: rgba(232, 17, 35, 0.9);
+            background: #e81123;
             color: #fff;
             border-color: transparent;
         }
@@ -284,7 +280,7 @@
         .window-viewport {
             flex: 1;
             width: 100%;
-            height: calc(100% - 42px);
+            height: calc(100% - 44px);
             background: #000000;
         }
 
@@ -295,47 +291,57 @@
             background: #000;
         }
 
-        /* Virtual Command Prompt Component Terminal */
+        /* Virtual Shell Prompt Terminal Layer */
         .terminal-core-viewport {
             width: 100%;
             height: 100%;
-            padding: 20px;
+            padding: 15px;
             background: #040406;
             font-family: monospace;
-            font-size: 12px;
-            line-height: 1.6;
+            font-size: 11px;
+            line-height: 1.5;
             color: #00ff66;
             overflow-y: auto;
         }
 
         .terminal-line-output {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             white-space: pre-wrap;
         }
 
         .dock-chronometer {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-muted);
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Mobile Responsive Media Query Overrides */
+        @media (max-width: 768px) {
+            .workspace-grid {
+                flex-direction: column;
+                overflow-y: auto;
+            }
+            .hud-diagnostics-panel {
+                width: 100%;
+                height: auto;
+            }
+            .app-matrix-container {
+                grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+                grid-gap: 10px;
+            }
+            .matrix-app-node {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Main OS Layout Panel Workspace Environment -->
     <div class="workspace-grid">
         
-        <!-- Sidebar Interface Matrix Layer Diagnostics -->
+        <!-- Metrics Sidebar Panel (Auto-stacks on top for Mobile Layouts) -->
         <div class="hud-diagnostics-panel">
             <div class="hud-header">FigureOS Diagnostic</div>
             
             <div class="stat-node">
                 <div class="stat-label">Neural Execution Framework</div>
-                <div class="stat-bar-container"><div class="stat-bar-fill" id="cpuStatBar" style="width: 42%;"></div></div>
-            </div>
-
-            <div class="stat-node">
-                <div class="stat-label">Buffer Cache Allocation</div>
-                <div class="stat-bar-container"><div class="stat-bar-fill" id="ramStatBar" style="width: 68%; background: linear-gradient(90deg, var(--accent-cyan), #0078d7);"></div></div>
-            </div>
-
