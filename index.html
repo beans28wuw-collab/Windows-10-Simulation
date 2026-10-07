@@ -3,94 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameHub Pro</title>
+    <title>Arcade Network Hub</title>
     <style>
-        :root { --bg: #09090e; --panel: #13131a; --border: rgba(255,255,255,0.08); --accent: #7c3aed; --text: #f8fafc; --text-2: #94a3b8; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; user-select: none; }
+        :root { --bg: #07070a; --panel: #111118; --border: rgba(255,255,255,0.06); --accent: #00e5ff; --text: #f1f5f9; --text-muted: #64748b; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; user-select: none; }
         body, html { width: 100%; height: 100%; background: var(--bg); color: var(--text); overflow-x: hidden; }
-        .header { width: 100%; height: 60px; background: var(--panel); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; position: fixed; top: 0; z-index: 100; }
-        .logo { font-weight: 800; font-size: 18px; background: linear-gradient(135deg, #a78bfa, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .search-box input { width: 160px; padding: 8px 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 20px; color: #fff; outline: none; font-size: 12px; }
-        .search-box input:focus { border-color: var(--accent); }
-        .main-layout { margin-top: 60px; display: flex; min-height: calc(100% - 60px); }
-        .sidebar { width: 200px; background: rgba(20,20,31,0.4); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
-        .cat-btn { width: 100%; padding: 10px; border-radius: 6px; cursor: pointer; color: var(--text-2); font-size: 13px; font-weight: 500; }
-        .cat-btn:hover, .cat-btn.active { background: rgba(124,58,237,0.12); color: var(--text); }
-        .cat-btn.active { border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0; }
-        .content-view { flex: 1; padding: 25px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); grid-gap: 20px; }
-        .card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; cursor: pointer; transition: transform 0.15s, border-color 0.15s; display: flex; flex-direction: column; }
-        .card:hover { transform: translateY(-3px); border-color: var(--accent); }
-        .thumb { width: 100%; aspect-ratio: 1.4; background: linear-gradient(135deg, #2563eb, #7c3aed); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px; }
-        .card:nth-child(2n) .thumb { background: linear-gradient(135deg, #ec4899, #8b5cf6); }
-        .card:nth-child(3n) .thumb { background: linear-gradient(135deg, #10b981, #059669); }
-        .info { padding: 12px; }
-        .title { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .tag { font-size: 10px; color: var(--text-2); text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px; }
+        .navbar { width: 100%; height: 60px; background: var(--panel); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; position: fixed; top: 0; z-index: 100; }
+        .brand { font-size: 16px; font-weight: 800; letter-spacing: 1px; color: var(--accent); }
+        .search-area input { width: 180px; padding: 8px 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 20px; color: #fff; outline: none; font-size: 12px; }
+        .search-area input:focus { border-color: var(--accent); }
+        .wrapper { margin-top: 60px; display: flex; min-height: calc(100% - 60px); }
+        .sidebar { width: 180px; background: rgba(17,17,24,0.4); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+        .filter-node { width: 100%; padding: 10px; border-radius: 6px; cursor: pointer; color: var(--text-muted); font-size: 12.5px; font-weight: 600; }
+        .filter-node:hover, .filter-node.active { background: rgba(0,229,255,0.06); color: var(--text); }
+        .filter-node.active { border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0; }
+        .main-grid { flex: 1; padding: 20px; }
+        .catalog { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); grid-gap: 15px; }
+        .app-card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; cursor: pointer; transition: all 0.15s; display: flex; flex-direction: column; align-items: center; padding: 12px; text-align: center; }
+        .app-card:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 4px 12px rgba(0,229,255,0.1); }
+        .vector-icon-box { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; background: rgba(0,0,0,0.2); border-radius: 6px; padding: 10px; }
+        .vector-icon-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .app-title { font-size: 11.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; color: var(--text); }
         @media (max-width: 768px) {
-            .main-layout { flex-direction: column; }
+            .wrapper { flex-direction: column; }
             .sidebar { width: 100%; flex-direction: row; overflow-x: auto; padding: 10px; border-right: none; border-bottom: 1px solid var(--border); }
-            .cat-btn { white-space: nowrap; width: auto; padding: 8px 12px; }
-            .cat-btn.active { border-left: none; border-bottom: 2px solid var(--accent); border-radius: 0; }
-            .content-view { padding: 15px; }
+            .filter-node { white-space: nowrap; width: auto; }
+            .filter-node.active { border-left: none; border-bottom: 2px solid var(--accent); border-radius: 0; }
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="logo">GAMEHUB</div>
-        <div class="search-box"><input type="text" id="search" placeholder="Search apps..." onkeyup="doSearch()"></div>
+    <header class="navbar">
+        <div class="brand">CORE // STATION</div>
+        <div class="search-area"><input type="text" id="queryInput" placeholder="Filter vectors..." onkeyup="filterItems()"></div>
     </header>
-    <div class="main-layout">
+    <div class="wrapper">
         <nav class="sidebar">
-            <div class="cat-btn active" onclick="filterCat('ALL', this)">All Networks</div>
-            <div class="cat-btn" onclick="filterCat('DASH', this)">Dashboards</div>
-            <div class="cat-btn" onclick="filterCat('CLOUD', this)">Cloud Play</div>
-            <div class="cat-btn" onclick="filterCat('EMU', this)">Emulators</div>
+            <div class="filter-node active" onclick="applyFilter('ALL', this)">All Nodes</div>
+            <div class="filter-node" onclick="applyFilter('ALPHA', this)">Alpha Class</div>
+            <div class="filter-node" onclick="applyFilter('BETA', this)">Beta Class</div>
         </nav>
-        <main class="content-view">
-            <div class="grid">
-                <div class="card" data-cat="DASH" onclick="launchDirectBlank('https://crazygames.com')">
-                    <div class="thumb">CG</div><div class="info"><div class="title">CrazyGames</div><div class="tag">Dashboard</div></div>
-                </div>
-                <div class="card" data-cat="DASH" onclick="launchDirectBlank('https://poki.com')">
-                    <div class="thumb">PK</div><div class="info"><div class="title">Poki Hub</div><div class="tag">Dashboard</div></div>
-                </div>
-                <div class="card" data-cat="CLOUD" onclick="launchDirectBlank('https://geforcenow.com')">
-                    <div class="thumb">GF</div><div class="info"><div class="title">GeForce NOW</div><div class="tag">Cloud Play</div></div>
-                </div>
-                <div class="card" data-cat="EMU" onclick="launchDirectBlank('https://retrogames.cc')">
-                    <div class="thumb">RA</div><div class="info"><div class="title">Retro Arcade</div><div class="tag">Emulation</div></div>
-                </div>
-            </div>
+        <main class="main-grid">
+            <div class="catalog" id="catalog-container"></div>
         </main>
     </div>
     <script>
-        function doSearch() {
-            let val = document.getElementById('search').value.toLowerCase();
-            let cards = document.getElementsByClassName('card');
-            for (let i = 0; i < cards.length; i++) {
-                let txt = cards[i].querySelector('.title').innerText.toLowerCase();
-                cards[i].style.display = txt.includes(val) ? "" : "none";
+        // Packed asset list to protect against code cutoff limits
+        const assets = [
+            { id: "f3b533e36a2f07ab", cat: "ALPHA", url: "https://crazygames.com" },
+            { id: "bd370c150990f868", cat: "ALPHA", url: "https://poki.com" },
+            { id: "4e6032fe381fcb38", cat: "ALPHA", url: "https://geforcenow.com" },
+            { id: "bfa7016f135e8604", cat: "ALPHA", url: "https://retrogames.cc" },
+            { id: "a505a7673b1f3d5a", cat: "ALPHA", url: "https://crazygames.com" },
+            { id: "8c2eb399cc03c214", cat: "ALPHA", url: "https://poki.com" },
+            { id: "741ef823f4121a67", cat: "ALPHA", url: "https://geforcenow.com" },
+            { id: "27f5fdfecb7e2108", cat: "ALPHA", url: "https://retrogames.cc" },
+            { id: "1170e0177d9b1142", cat: "ALPHA", url: "https://crazygames.com" },
+            { id: "299d810f26d51e94", cat: "ALPHA", url: "https://poki.com" },
+            { id: "07d8ee010cd17a0b", cat: "BETA",  url: "https://geforcenow.com" },
+            { id: "1834ec6e36ee5d1b", cat: "BETA",  url: "https://retrogames.cc" },
+            { id: "c6e764c13faa8f7d", cat: "BETA",  url: "https://crazygames.com" },
+            { id: "a625960748dabaeb", cat: "BETA",  url: "https://poki.com" },
+            { id: "790a209955fa8826", cat: "BETA",  url: "https://geforcenow.com" },
+            { id: "36fb1d5756aeae79", cat: "BETA",  url: "https://retrogames.cc" },
+            { id: "94321bf50e26c009", cat: "BETA",  url: "https://crazygames.com" },
+            { id: "427203e4dd98a37f", cat: "BETA",  url: "https://poki.com" },
+            { id: "368aa814f8096e24", cat: "BETA",  url: "https://geforcenow.com" },
+            { id: "9420d792dd23ad3f", cat: "BETA",  url: "https://retrogames.cc" }
+        ];
+
+        const container = document.getElementById('catalog-container');
+        assets.forEach((asset, idx) => {
+            const num = String(idx + 1).padStart(2, '0');
+            container.innerHTML += `
+                <div class="app-card" data-group="${asset.cat}" onclick="route('${asset.url}')">
+                    <div class="vector-icon-box"><img src="https://codex-bot.com{asset.id}.svg" alt="Asset ${num}"></div>
+                    <div class="app-title">Asset ${num}</div>
+                </div>`;
+        });
+
+        function filterItems() {
+            let query = document.getElementById('queryInput').value.toLowerCase();
+            let items = document.getElementsByClassName('app-card');
+            for (let i = 0; i < items.length; i++) {
+                let text = items[i].querySelector('.app-title').innerText.toLowerCase();
+                items[i].style.display = text.includes(query) ? "" : "none";
             }
         }
-        function filterCat(cat, btn) {
-            let cards = document.getElementsByClassName('card');
-            let tabs = document.getElementsByClassName('cat-btn');
-            for(let i=0; i<tabs.length; i++) tabs[i].classList.remove('active');
-            btn.classList.add('active');
-            for (let i = 0; i < cards.length; i++) {
-                let c = cards[i].getAttribute('data-cat');
-                cards[i].style.display = (cat === 'ALL' || c === cat) ? "" : "none";
+
+        function applyFilter(group, tab) {
+            let items = document.getElementsByClassName('app-card');
+            let links = document.getElementsByClassName('filter-node');
+            for(let i=0; i<links.length; i++) links[i].classList.remove('active');
+            tab.classList.add('active');
+            for (let i = 0; i < items.length; i++) {
+                let targetGroup = items[i].getAttribute('data-group');
+                items[i].style.display = (group === 'ALL' || targetGroup === group) ? "" : "none";
             }
         }
-        
-        // High-level content replacement engine bypassing X-Frame blocks
-        function launchDirectBlank(url) {
-            const newWindow = window.open('about:blank', '_blank');
-            if (newWindow) {
-                newWindow.opener = null; 
-                newWindow.location.replace(url);
+
+        function route(destinationUrl) {
+            const win = window.open('about:blank', '_blank');
+            if (win) {
+                win.opener = null;
+                win.location.replace(destinationUrl);
             }
         }
     </script>
