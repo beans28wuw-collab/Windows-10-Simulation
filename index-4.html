@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Windows 10 Web Desktop</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:"Segoe UI",Arial,sans-serif;background:#0879b8;color:#fff}
+button,input{font:inherit}button{border:0;color:inherit}
+#boot{position:fixed;inset:0;background:#0078d7;display:flex;align-items:center;justify-content:center;z-index:99999}
+.bootbox{text-align:center}.winlogo{width:76px;height:76px;margin:auto auto 30px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:4px;transform:skewY(-3deg)}.winlogo i{background:#fff}.bootbox .spinner{width:28px;height:28px;border:3px solid #ffffff55;border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite;margin:auto}@keyframes spin{to{transform:rotate(360deg)}}
+#login{position:fixed;inset:0;background:linear-gradient(#087bc0,#0065a3);z-index:99998;display:none;align-items:center;justify-content:center;text-align:center}.avatar{width:110px;height:110px;border-radius:50%;background:#eee;color:#777;display:flex;align-items:center;justify-content:center;font-size:54px;margin:auto}.loginbox{width:min(350px,90vw)}.loginbox h2{font-weight:400}.loginbox input{width:100%;padding:13px;border:1px solid #aaa;background:#fff;color:#222}.loginbox button{margin-top:10px;padding:11px 25px;background:#1677b9;cursor:pointer}.loginerr{height:22px;color:#ffd7d7;font-size:13px}
+#desktop{position:fixed;inset:0;background:linear-gradient(135deg,#086fa9,#155ca1 50%,#092d72);background-size:cover}
+.ctx{padding:9px 14px;cursor:pointer}.ctx:hover{background:#e5f1fb}
+
+.wallpaper-glow{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,#ffffff12,transparent 35%)}
+#desktopIcons{position:absolute;left:8px;top:8px;bottom:55px;display:flex;flex-direction:column;gap:7px}.deskicon{width:76px;text-align:center;padding:5px 3px;border-radius:3px;cursor:pointer;font-size:12px;text-shadow:1px 1px 2px #000}.deskicon:hover{background:#ffffff22}.ico{font-size:30px;height:36px}
+#taskbar{position:absolute;left:0;right:0;bottom:0;height:48px;background:#171717eF;display:flex;align-items:center;z-index:9000}.tbbtn{height:48px;min-width:48px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer}.tbbtn:hover{background:#ffffff18}.startlogo{font-size:24px}.search{height:36px;width:210px;background:#fff;color:#333;border:0;margin:0 5px;padding:0 10px}.taskapps{display:flex;height:100%;align-items:center;gap:2px}.taskapp{height:44px;min-width:46px;background:transparent;cursor:pointer;font-size:22px}.taskapp:hover,.taskapp.active{background:#ffffff16;border-bottom:2px solid #2aa9ff}.tray{margin-left:auto;height:100%;display:flex;align-items:center}.tray button{height:100%;padding:0 9px;background:transparent;cursor:pointer}.clock{font-size:12px;min-width:75px;text-align:center}
+#startMenu{position:absolute;bottom:48px;left:0;width:min(640px,100vw);height:min(570px,calc(100vh - 48px));background:#202020f5;display:none;z-index:8999;box-shadow:0 0 18px #0008}.start-inner{display:flex;height:100%}.start-left{width:65px;display:flex;flex-direction:column;justify-content:flex-end}.start-left button{height:52px;background:transparent;cursor:pointer;font-size:21px}.start-left button:hover{background:#ffffff16}.tiles{flex:1;padding:16px;overflow:auto}.tiles h3{font-weight:400;font-size:14px}.tilegrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.tile{min-height:80px;background:#0879c9;padding:9px;text-align:left;cursor:pointer}.tile:hover{filter:brightness(1.15)}.tile.wide{grid-column:span 2}
+.window{position:absolute;min-width:300px;min-height:180px;width:650px;height:430px;background:#f3f3f3;color:#222;box-shadow:0 8px 35px #0009;border:1px solid #555;display:none;z-index:100}.titlebar{height:38px;background:#fff;color:#333;display:flex;align-items:center;padding-left:12px;user-select:none}.titletext{flex:1;font-size:13px}.wincontrols{display:flex;height:100%}.wincontrols button{width:45px;background:transparent;color:#333;cursor:pointer}.wincontrols button:hover{background:#ddd}.wincontrols .close:hover{background:#e81123;color:#fff}.content{height:calc(100% - 38px);overflow:auto}.maxed{left:0!important;top:0!important;width:100%!important;height:calc(100% - 48px)!important}
+.explorer{height:100%;display:flex;flex-direction:column}.explorerbar{height:42px;background:#fafafa;border-bottom:1px solid #ddd;display:flex;align-items:center;gap:5px;padding:5px}.explorerbar button{background:transparent;color:#444;padding:7px;cursor:pointer}.path{flex:1;background:#fff;border:1px solid #ccc;padding:6px;color:#555}.explorerbody{display:flex;flex:1}.side{width:180px;border-right:1px solid #ddd;padding:8px;background:#f8f8f8}.side div{padding:8px;cursor:pointer}.side div:hover{background:#e5f1fb}.files{padding:15px;display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));align-content:start;gap:10px;flex:1}.file{padding:10px;text-align:center;cursor:pointer;border-radius:3px}.file:hover{background:#e5f1fb}.file .fi{font-size:38px}
+.browser{height:100%;display:flex;flex-direction:column}.browserbar{height:45px;background:#eee;display:flex;gap:5px;padding:6px}.browserbar button{color:#333;background:transparent;padding:5px;cursor:pointer}.url{flex:1;border:1px solid #aaa;padding:7px;color:#222}.webpage{flex:1;background:#fff;color:#222;padding:25px;overflow:auto}.webpage h1{color:#0078d4;font-weight:400}.webpage .card{border:1px solid #ddd;padding:15px;margin:12px 0}.webpage a{color:#06c;cursor:pointer}
+.settings{height:100%;display:flex;background:#fff}.setnav{width:180px;background:#f3f3f3;border-right:1px solid #ddd;padding:10px}.setnav button{display:block;width:100%;text-align:left;color:#333;background:transparent;padding:11px;cursor:pointer}.setnav button.active,.setnav button:hover{background:#ddd}.setpage{padding:25px;color:#222;flex:1;overflow:auto}.setting-card{border:1px solid #ddd;padding:15px;margin:12px 0}.toggle{float:right;width:44px;height:24px;border-radius:12px;background:#888;cursor:pointer}.toggle.on{background:#0078d7}.toggle:after{content:"";display:block;width:20px;height:20px;margin:2px;background:#fff;border-radius:50%;transition:.2s}.toggle.on:after{margin-left:22px}
+.notes{height:100%;display:flex;flex-direction:column}.notes textarea{flex:1;border:0;resize:none;padding:15px;color:#222;font-size:15px;outline:0}.notesbar{padding:6px;background:#eee;color:#333;font-size:12px}
+.calc{height:100%;background:#202020;padding:12px;display:flex;flex-direction:column}.calcdisplay{height:65px;background:#202020;color:#fff;text-align:right;font-size:34px;padding:12px;overflow:hidden}.calckeys{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;flex:1}.calckeys button{background:#333;color:#fff;font-size:18px;cursor:pointer}.calckeys button:hover{background:#444}.calckeys .op{background:#555}
+.toast{position:absolute;right:15px;bottom:62px;background:#222;color:#fff;padding:13px 17px;box-shadow:0 3px 15px #0008;display:none;z-index:10000}
+@media(max-width:700px){.search{width:130px}.window{width:94vw;height:72vh}.side{width:125px}.setnav{width:125px}.tilegrid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div id="boot"><div class="bootbox"><div class="winlogo"><i></i><i></i><i></i><i></i></div><div class="spinner"></div></div></div>
+
+<div id="login"><div class="loginbox"><div class="avatar">👤</div><h2>Windows Web</h2><input id="pw" type="password" placeholder="Password"><div class="loginerr" id="loginerr"></div><button onclick="login()">Sign in ➜</button><p style="font-size:12px;opacity:.8">Default password: <b>1234</b></p></div></div>
+
+<div id="desktop">
+<div class="wallpaper-glow"></div>
+<div id="contextMenu" style="display:none;position:absolute;z-index:20000;width:210px;background:#fff;color:#222;border:1px solid #aaa;box-shadow:0 4px 16px #0006;font-size:13px;padding:4px 0">
+<div class="ctx" onclick="openApp('explorer');hideContext()">Open File Explorer</div>
+<div class="ctx" onclick="openApp('settings');hideContext()">Personalize</div>
+<div class="ctx" onclick="refreshDesktop()">Refresh</div>
+<div class="ctx" onclick="showToast('Display settings');hideContext()">Display settings</div>
+</div>
+<div id="desktopIcons">
+  <div class="deskicon" ondblclick="openApp('explorer')"><div class="ico">📁</div>File Explorer</div>
+  <div class="deskicon" ondblclick="openApp('browser')"><div class="ico">🌐</div>Browser</div>
+  <div class="deskicon" ondblclick="openApp('settings')"><div class="ico">⚙️</div>Settings</div>
+  <div class="deskicon" ondblclick="openApp('notes')"><div class="ico">📝</div>Notes</div>
+  <div class="deskicon" ondblclick="openApp('calc')"><div class="ico">🧮</div>Calculator</div>
+</div>
+
+<div id="startMenu"><div class="start-inner"><div class="start-left">
+<button onclick="openApp('settings');toggleStart()">☰</button><button onclick="lock()">🔒</button><button onclick="shutdown()">⏻</button>
+</div><div class="tiles"><h3>START</h3><div class="tilegrid">
+<div class="tile wide" onclick="openApp('browser');toggleStart()">🌐<br>Browser</div>
+<div class="tile" onclick="openApp('explorer');toggleStart()">📁<br>Explorer</div>
+<div class="tile" onclick="openApp('settings');toggleStart()">⚙️<br>Settings</div>
+<div class="tile" onclick="openApp('notes');toggleStart()">📝<br>Notes</div>
+<div class="tile" onclick="openApp('calc');toggleStart()">🧮<br>Calculator</div>
+<div class="tile wide" onclick="showToast('Windows Web is running!')">💻<br>About this PC</div>
+<div class="tile" onclick="showToast('Shortcuts: Esc closes menus')">⌨️<br>Tips</div>
+</div></div></div></div>
+
+<div id="taskbar">
+<button class="tbbtn" onclick="toggleStart()"><span class="startlogo">⊞</span></button>
+<input class="search" id="taskSearch" placeholder="Type here to search" onkeydown="if(event.key==='Enter')doSearch(this.value)">
+<div class="taskapps">
+<button class="taskapp" id="tb-explorer" onclick="openApp('explorer')">📁</button>
+<button class="taskapp" id="tb-browser" onclick="openApp('browser')">🌐</button>
+<button class="taskapp" id="tb-settings" onclick="openApp('settings')">⚙️</button>
+<button class="taskapp" id="tb-notes" onclick="openApp('notes')">📝</button>
+<button class="taskapp" id="tb-calc" onclick="openApp('calc')">🧮</button>
+</div><div class="tray"><button onclick="showToast('No new notifications')">🔔</button><button onclick="showToast('Network connected')">📶</button><button class="clock" id="clock"></button></div>
+</div>
+
+<div class="window" id="explorer"><div class="titlebar"><span class="titletext">📁 File Explorer</span><div class="wincontrols"><button onclick="minimize('explorer')">—</button><button onclick="maximize('explorer')">□</button><button class="close" onclick="closeApp('explorer')">✕</button></div></div><div class="content"><div class="explorer"><div class="explorerbar"><button onclick="showToast('Back')">←</button><button onclick="showToast('Forward')">→</button><div class="path">This PC</div><button onclick="showToast('Search is ready')">🔍</button></div><div class="explorerbody"><div class="side"><div onclick="showFolder('Quick access')">⭐ Quick access</div><div onclick="showFolder('Desktop')">🖥️ Desktop</div><div onclick="showFolder('Documents')">📄 Documents</div><div onclick="showFolder('Downloads')">⬇️ Downloads</div><div onclick="showFolder('This PC')">💻 This PC</div></div><div class="files" id="files"></div></div></div></div></div>
+
+<div class="window" id="browser"><div class="titlebar"><span class="titletext">🌐 Browser</span><div class="wincontrols"><button onclick="minimize('browser')">—</button><button onclick="maximize('browser')">□</button><button class="close" onclick="closeApp('browser')">✕</button></div></div><div class="content"><div class="browser"><div class="browserbar"><button onclick="browserHome()">⌂</button><button onclick="showToast('Back')">←</button><input class="url" id="url" value="https://www.example.com" onkeydown="if(event.key==='Enter')navigate()"><button onclick="navigate()">↵</button></div><div class="webpage" id="webpage"></div></div></div></div>
+
+<div class="window" id="settings"><div class="titlebar"><span class="titletext">⚙️ Settings</span><div class="wincontrols"><button onclick="minimize('settings')">—</button><button onclick="maximize('settings')">□</button><button class="close" onclick="closeApp('settings')">✕</button></div></div><div class="content"><div class="settings"><div class="setnav">
+<button class="active" onclick="setPage(this,'system')">🖥️ System</button><button onclick="setPage(this,'personal')">🎨 Personalization</button><button onclick="setPage(this,'privacy')">🔒 Privacy</button><button onclick="setPage(this,'update')">🔄 Update & Security</button><button onclick="setPage(this,'accounts')">👤 Accounts</button>
+</div><div class="setpage" id="setpage"></div></div></div></div>
+
+<div class="window" id="notes"><div class="titlebar"><span class="titletext">📝 Notepad</span><div class="wincontrols"><button onclick="minimize('notes')">—</button><button onclick="maximize('notes')">□</button><button class="close" onclick="closeApp('notes')">✕</button></div></div><div class="content"><div class="notes"><textarea id="noteText" placeholder="Start typing..."></textarea><div class="notesbar">Saved automatically in this browser</div></div></div></div>
+
+<div class="window" id="calc"><div class="titlebar"><span class="titletext">🧮 Calculator</span><div class="wincontrols"><button onclick="minimize('calc')">—</button><button onclick="maximize('calc')">□</button><button class="close" onclick="closeApp('calc')">✕</button></div></div><div class="content"><div class="calc"><div class="calcdisplay" id="calcdisplay">0</div><div class="calckeys">
+<button onclick="calcClear()">C</button><button onclick="calcAdd('(')">(</button><button onclick="calcAdd(')')">)</button><button class="op" onclick="calcAdd('/')">÷</button>
+<button onclick="calcAdd('7')">7</button><button onclick="calcAdd('8')">8</button><button onclick="calcAdd('9')">9</button><button class="op" onclick="calcAdd('*')">×</button>
+<button onclick="calcAdd('4')">4</button><button onclick="calcAdd('5')">5</button><button onclick="calcAdd('6')">6</button><button class="op" onclick="calcAdd('-')">−</button>
+<button onclick="calcAdd('1')">1</button><button onclick="calcAdd('2')">2</button><button onclick="calcAdd('3')">3</button><button class="op" onclick="calcAdd('+')">+</button>
+<button onclick="calcAdd('0')">0</button><button onclick="calcAdd('.')">.</button><button onclick="calcBack()">⌫</button><button class="op" onclick="calcEqual()">=</button>
+</div></div></div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+const apps=['explorer','browser','settings','notes','calc'];let z=100;let calcExpr='';
+const $=id=>document.getElementById(id);
+function showToast(s){$('toast').textContent=s;$('toast').style.display='block';clearTimeout(showToast.t);showToast.t=setTimeout(()=>$('toast').style.display='none',1800)}
+function toggleStart(){let s=$('startMenu');s.style.display=s.style.display==='block'?'none':'block'}
+function openApp(id){let w=$(id);if(w.style.display==='block'&&w.style.zIndex==z){w.style.display='none';$('tb-'+id)?.classList.remove('active');return}w.style.display='block';w.style.zIndex=++z;$(id).classList.remove('maxed');$('tb-'+id)?.classList.add('active');if(id==='explorer')showFolder('This PC');if(id==='browser')browserHome();if(id==='settings')setPage(document.querySelector('.setnav button.active'),'system');if(id==='notes')$('noteText').value=localStorage.note||''}
+function closeApp(id){$(id).style.display='none';$('tb-'+id)?.classList.remove('active')}
+function minimize(id){$(id).style.display='none'}
+function maximize(id){$(id).classList.toggle('maxed');$(id).style.zIndex=++z}
+document.querySelectorAll('.window').forEach(w=>{w.addEventListener('mousedown',()=>w.style.zIndex=++z);let bar=w.querySelector('.titlebar');let dragging=false,ox=0,oy=0;bar.addEventListener('pointerdown',e=>{if(e.target.closest('.wincontrols')||w.classList.contains('maxed'))return;dragging=true;ox=e.clientX-w.offsetLeft;oy=e.clientY-w.offsetTop;bar.setPointerCapture(e.pointerId)});bar.addEventListener('pointermove',e=>{if(!dragging)return;w.style.left=Math.max(0,e.clientX-ox)+'px';w.style.top=Math.max(0,e.clientY-oy)+'px'});bar.addEventListener('pointerup',()=>dragging=false)});
+function showFolder(name){$('files').innerHTML=[['📁','Desktop'],['📄','Documents'],['⬇️','Downloads'],['🖼️','Pictures'],['🎵','Music'],['🎬','Videos'],['💾','Local Disk (C:)']].map(x=>`<div class="file" ondblclick="showToast('${x[1]} opened')"><div class="fi">${x[0]}</div>${x[1]}</div>`).join('');document.querySelector('#explorer .path').textContent=name}
+function browserHome(){ $('url').value='https://www.example.com';$('webpage').innerHTML='<h1>Windows Web Browser</h1><p>This is a working local browser interface for your Windows Web desktop.</p><div class="card"><b>Quick links</b><p><a onclick="demoPage(\\'home\\')">Home</a> · <a onclick="demoPage(\\'about\\')">About</a> · <a onclick="demoPage(\\'help\\')">Help</a></p></div><p>Type a URL or search phrase in the address bar. Network pages may be limited by browser security when running from a local HTML file.</p>'}
+function navigate(){let v=$('url').value.trim();if(!v)return;if(!/^https?:\\/\\//i.test(v)){demoPage(v);return} $('webpage').innerHTML='<h1>Loading…</h1><p>'+esc(v)+'</p><p style="font-size:13px">If this page blocks embedding, use the address bar in your normal browser.</p>'}
+function demoPage(v){$('url').value=v;$('webpage').innerHTML='<h1>'+esc(v==='about'?'About Windows Web':v==='help'?'Help':'Windows Web')+'</h1><p>Everything on this desktop is running from one HTML file.</p><div class="card">Try File Explorer, Settings, Notes, Calculator, the Start menu, search, window controls and the lock screen.</div>'}
+function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+const pages={system:['System','Display, sound, notifications, storage and basic device options.'],personal:['Personalization','Customize the Windows Web experience.'],privacy:['Privacy','Control local app permissions and privacy options.'],update:['Update & Security','Windows Web is up to date.'],accounts:['Accounts','Manage the local Windows Web account.']};
+function setPage(btn,key){document.querySelectorAll('.setnav button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');let p=pages[key]||pages.system;$('setpage').innerHTML='<h1>'+p[0]+'</h1><p>'+p[1]+'</p><div class="setting-card">Wi‑Fi <span class="toggle on" onclick="this.classList.toggle(\\'on\\')"></span><br><small>Connected</small></div><div class="setting-card">Notifications <span class="toggle on" onclick="this.classList.toggle(\\'on\\')"></span><br><small>Allow notifications</small></div><div class="setting-card">Windows Web password <button style="float:right;padding:6px 12px;color:#222" onclick="changePassword()">Change</button><br><small>Used for the startup lock screen</small></div>'}
+function changePassword(){let p=prompt('Set a new password:');if(p){localStorage.webpw=p;showToast('Password changed')}}
+function calcAdd(x){calcExpr+=x;$('calcdisplay').textContent=calcExpr}
+function calcClear(){calcExpr='';$('calcdisplay').textContent='0'}
+function calcBack(){calcExpr=calcExpr.slice(0,-1);$('calcdisplay').textContent=calcExpr||'0'}
+function calcEqual(){try{if(!/^[0-9+*/(). -]+$/.test(calcExpr))throw 0;calcExpr=String(Function('return '+calcExpr)());$('calcdisplay').textContent=calcExpr}catch(e){$('calcdisplay').textContent='Error';calcExpr=''}}
+function doSearch(v){v=v.trim();if(!v)return;toggleStart();openApp('browser');$('url').value=v;if(/^https?:\\/\\//i.test(v))navigate();else demoPage('Search: '+v)}
+$('noteText').addEventListener('input',e=>localStorage.note=e.target.value)
+function login(){let want=localStorage.webpw||'1234';if($('pw').value===want){$('login').style.display='none';sessionStorage.unlocked='1'}else $('loginerr').textContent='Wrong password'}
+function lock(){$('startMenu').style.display='none';$('login').style.display='flex';$('pw').value='';$('loginerr').textContent=''}
+function shutdown(){showToast('Shutting down…');setTimeout(()=>{document.body.innerHTML='<div style="background:#000;color:#fff;position:fixed;inset:0;display:flex;align-items:center;justify-content:center;font-family:Segoe UI;font-size:20px">It is now safe to close this tab.</div>'},800)}
+function tick(){let d=new Date();$('clock').innerHTML=d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})+'<br>'+d.toLocaleDateString();}setInterval(tick,1000);tick()
+setTimeout(()=>{ $('boot').style.display='none'; if(sessionStorage.unlocked!=='1')$('login').style.display='flex'},1000)
+function hideContext(){ $('contextMenu').style.display='none' }
+function refreshDesktop(){hideContext();$('desktopIcons').style.opacity='.35';setTimeout(()=>$('desktopIcons').style.opacity='1',180);showToast('Desktop refreshed')}
+$('desktop').addEventListener('contextmenu',e=>{if(e.target.closest('.window')||e.target.closest('#taskbar')||e.target.closest('#startMenu'))return;e.preventDefault();let m=$('contextMenu');m.style.display='block';m.style.left=Math.min(e.clientX,innerWidth-215)+'px';m.style.top=Math.min(e.clientY,innerHeight-180)+'px'})
+document.addEventListener('click',e=>{if(!e.target.closest('#contextMenu'))hideContext()})
+document.addEventListener('dblclick',e=>{if(e.target===document.body||e.target.id==='desktop')openApp('explorer')})
+window.addEventListener('keydown',e=>{if(e.key==='Escape'){$('startMenu').style.display='none';hideContext()}if(e.key==='Enter'&&document.activeElement===$('pw'))login();if(e.key==='Meta'&&e.key.toLowerCase()==='r'){refreshDesktop()}})
+
+</script>
+</body>
+</html>
