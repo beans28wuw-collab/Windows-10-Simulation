@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Windows 10 Pro - Unblocked Gaming Dashboard</title>
+    <title>FigureOS Core - Operational UI Layer</title>
     <style>
         :root {
-            --taskbar-bg: rgba(16, 16, 20, 0.85);
-            --desktop-bg: #111116;
-            --window-bg: #1c1c22;
-            --window-header: #121216;
-            --accent-color: #0078d7;
-            --gfn-green: #76B900;
+            --bg-primary: #08080c;
+            --panel-bg: rgba(18, 18, 26, 0.75);
+            --border-glow: rgba(0, 230, 118, 0.15);
+            --accent-green: #00e676;
+            --accent-cyan: #00e5ff;
+            --text-main: #e2e8f0;
+            --text-muted: #64748b;
+            --window-header: #0e0e14;
         }
 
         * {
@@ -26,332 +28,427 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-            background: linear-gradient(135deg, #0b0f19, #1a1a2e, #111625);
-            background-size: cover;
-            color:#000 
+            font-family: 'Courier New', Courier, monospace, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
         }
 
-        /* Desktop Grid System */
-        .desktop-area {
+        /* Matrix HUD Matrix Layer Background Grid */
+        .workspace-grid {
             width: 100%;
-            height: calc(100% - 48px);
-            padding: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, 100px);
-            grid-template-rows: repeat(auto-fill, 100px);
-            grid-gap: 20px;
-            grid-auto-flow: column;
-            align-content: flex-start;
+            height: calc(100% - 60px);
             position: relative;
-            z-index: 1;
+            padding: 25px;
+            display: flex;
+            gap: 25px;
+            z-index: 2;
         }
 
-        .desktop-shortcut {
+        /* Sidebar System Diagnostics Panel */
+        .hud-diagnostics-panel {
+            width: 280px;
+            height: 100%;
+            background: var(--panel-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+
+        .hud-header {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--accent-cyan);
+            border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+            padding-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .stat-node {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .stat-bar-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .stat-bar-fill {
+            height: 100%;
+            width: 50%;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan));
+            transition: width 0.4s ease;
+        }
+
+        /* Operational App Node Matrix Grid */
+        .app-matrix-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 110px);
+            grid-template-rows: repeat(auto-fill, 110px);
+            grid-gap: 20px;
+            align-content: flex-start;
+        }
+
+        .matrix-app-node {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: 100px;
-            height: 100px;
+            width: 110px;
+            height: 110px;
             cursor: pointer;
-            border-radius: 4px;
-            padding: 10px;
-            transition: background 0.15s ease, transform 0.1s ease;
+            background: rgba(255,255,255,0.01);
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 6px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .matrix-app-node:hover {
+            background: rgba(0, 230, 118, 0.04);
+            border-color: rgba(0, 230, 118, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 230, 118, 0.1);
+        }
+
+        .matrix-app-node svg {
+            width: 36px;
+            height: 36px;
+            margin-bottom: 12px;
+            stroke: var(--text-main);
+            transition: stroke 0.2s;
+        }
+
+        .matrix-app-node:hover svg {
+            stroke: var(--accent-green);
+            filter: drop-shadow(0 0 8px var(--accent-green));
+        }
+
+        .matrix-app-node span {
+            font-size: 11px;
+            color: var(--text-main);
             text-align: center;
+            letter-spacing: 0.5px;
         }
 
-        .desktop-shortcut:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: scale(1.02);
-        }
-
-        .desktop-shortcut svg {
-            width: 44px;
-            height: 44px;
-            margin-bottom: 8px;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
-        }
-
-        .desktop-shortcut span {
-            font-size: 12px;
-            color: #ffffff;
-            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.95);
-            word-break: break-word;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        /* Taskbar Layout */
-        .taskbar-container {
+        /* Persistent Navigation Control Strip Dock */
+        .control-strip-dock {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 48px;
-            background: var(--taskbar-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            height: 60px;
+            background: #0b0b10;
+            border-top: 1px solid rgba(255,255,255,0.05);
             display: flex;
             align-items: center;
             justify-content: space-between;
+            padding: 0 30px;
             z-index: 99999;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.5);
         }
 
-        .taskbar-left {
+        .dock-brand-zone {
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--accent-green);
+            text-shadow: 0 0 10px rgba(0, 230, 118, 0.4);
+        }
+
+        .dock-active-center {
             display: flex;
             align-items: center;
+            gap: 12px;
             height: 100%;
         }
 
-        .windows-start-trigger {
-            height: 100%;
-            width: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-
-        .windows-start-trigger:hover, .windows-start-trigger.active-state {
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .windows-start-trigger svg {
-            width: 18px;
-            height: 18px;
-            fill: #ffffff;
-            transition: fill 0.15s;
-        }
-
-        .windows-start-trigger:hover svg {
-            fill: #4da3ff;
-        }
-
-        .taskbar-dock {
-            display: flex;
-            align-items: center;
-            height: 100%;
-            gap: 4px;
-            padding-left: 8px;
-        }
-
-        .dock-shortcut-btn {
-            height: 100%;
-            width: 48px;
+        .dock-node-tab {
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
             cursor: pointer;
-            position: relative;
-            transition: background 0.15s;
+            transition: all 0.15s;
         }
 
-        .dock-shortcut-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
+        .dock-node-tab:hover {
+            background: rgba(0, 229, 255, 0.05);
+            border-color: var(--accent-cyan);
         }
 
-        .dock-shortcut-btn.app-is-running::after {
+        .dock-node-tab.instance-active::after {
             content: '';
             position: absolute;
-            bottom: 0;
-            left: 20%;
-            width: 60%;
-            height: 3px;
-            background: var(--accent-color);
-            border-radius: 2px;
+            bottom: 4px;
+            width: 16px;
+            height: 2px;
+            background: var(--accent-cyan);
+            box-shadow: 0 0 6px var(--accent-cyan);
         }
 
-        .dock-shortcut-btn.app-is-focused::after {
-            background: #ffffff !important;
-            width: 70%;
-            left: 15%;
-        }
-
-        /* Start Menu Panel */
-        .start-menu-panel {
+        /* Modular Window Container Management Architecture */
+        .figure-os-window {
             position: absolute;
-            bottom: 48px;
-            left: 0;
-            width: 620px;
-            height: 550px;
-            background: rgba(24, 24, 32, 0.96);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-bottom: none;
-            display: flex;
-            z-index: 99998;
-            transform: translateY(100%);
-            transition: transform 0.22s cubic-bezier(0.0, 0.9, 0.2, 1);
-            box-shadow: 5px -5px 30px rgba(0,0,0,0.7);
-        }
-
-        .start-menu-panel.panel-is-visible {
-            transform: translateY(0);
-        }
-
-        .start-menu-sidebar {
-            width: 50px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding-bottom: 10px;
-            background: rgba(0, 0, 0, 0.25);
-            border-right: 1px solid rgba(255,255,255,0.03);
-        }
-
-        .sidebar-node-action {
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background 0.1s;
-        }
-
-        .sidebar-node-action:hover {
-            background: rgba(255, 255, 255, 0.12);
-        }
-
-        .start-menu-apps-column {
-            flex: 1;
-            padding: 20px 10px;
-            overflow-y: auto;
-        }
-
-        .start-menu-section-heading {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--accent-color);
-            padding: 8px 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .start-menu-app-item {
-            display: flex;
-            align-items: center;
-            padding: 10px 14px;
-            cursor: pointer;
-            border-radius: 4px;
-            font-size: 13.5px;
-            transition: background 0.1s;
-        }
-
-        .start-menu-app-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .start-menu-app-item svg {
-            width: 22px;
-            height: 22px;
-            margin-right: 14px;
-        }
-
-        .start-menu-tiles-section {
-            width: 320px;
-            padding: 20px;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            grid-gap: 10px;
-            background: rgba(0, 0, 0, 0.15);
-            align-content: flex-start;
-        }
-
-        .windows-live-tile {
-            background: var(--accent-color);
-            aspect-ratio: 1.6;
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            cursor: pointer;
-            font-size: 12.5px;
-            font-weight: 400;
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
-            transition: outline 0.1s, transform 0.1s;
-        }
-
-        .windows-live-tile:hover {
-            outline: 2px solid rgba(255, 255, 255, 0.4);
-            transform: scale(0.99);
-        }
-
-        .windows-live-tile.geforce-branded-tile {
-            background: #141414;
-            border-left: 4px solid var(--gfn-green);
-        }
-
-        .windows-live-tile svg {
-            width: 30px;
-            height: 30px;
-            margin-bottom: auto;
-        }
-
-        /* Window Modals Manager */
-        .window-frame-container {
-            position: absolute;
-            background: var(--window-bg);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            box-shadow: 0 20px 45px rgba(0,0,0,0.65);
+            background: #111116;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.8);
             border-radius: 8px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
             z-index: 1000;
-            min-width: 400px;
-            min-height: 250px;
         }
 
-        .window-frame-container.hidden-state {
+        .figure-os-window.hidden-frame {
             display: none !important;
         }
 
-        .window-titlebar {
-            height: 40px;
+        .window-topbar-handle {
+            height: 42px;
             background: var(--window-header);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 16px;
+            padding: 0 18px;
             cursor: move;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        .window-metadata {
+        .window-title-metadata {
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-main);
             display: flex;
             align-items: center;
-            font-size: 13px;
-            font-weight: 400;
-            letter-spacing: 0.2px;
+            gap: 10px;
         }
 
-        .window-metadata svg {
-            width: 18px;
-            height: 18px;
-            margin-right: 10px;
+        .window-title-metadata::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 6px var(--accent-green);
         }
 
-        .window-control-cluster {
+        .window-control-actions {
             display: flex;
-            align-items: center;
-            height: 100%;
-            margin-right: -16px;
+            gap: 6px;
         }
 
-        .window-control-node {
-            width: 46px;
-            height: 40px;
+        .ctrl-action-node {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--text-muted);
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            background: transparent;
+            font-size: 11px;
+            transition: all 0.15s;
+        }
+
+        .ctrl-action-node:hover {
+            background: rgba(232, 17, 35, 0.9);
+            color: #fff;
+            border-color: transparent;
+        }
+
+        .window-viewport {
+            flex: 1;
+            width: 100%;
+            height: calc(100% - 42px);
+            background: #000000;
+        }
+
+        .window-viewport iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #000;
+        }
+
+        /* Virtual Command Prompt Component Terminal */
+        .terminal-core-viewport {
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            background: #040406;
+            font-family: monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #00ff66;
+            overflow-y: auto;
+        }
+
+        .terminal-line-output {
+            margin-bottom: 8px;
+            white-space: pre-wrap;
+        }
+
+        .dock-chronometer {
+            font-size: 12px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main OS Layout Panel Workspace Environment -->
+    <div class="workspace-grid">
+        
+        <!-- Sidebar Interface Matrix Layer Diagnostics -->
+        <div class="hud-diagnostics-panel">
+            <div class="hud-header">FigureOS Diagnostic</div>
+            
+            <div class="stat-node">
+                <div class="stat-label">Neural Execution Framework</div>
+                <div class="stat-bar-container"><div class="stat-bar-fill" id="cpuStatBar" style="width: 42%;"></div></div>
+            </div>
+
+            <div class="stat-node">
+                <div class="stat-label">Buffer Cache Allocation</div>
+                <div class="stat-bar-container"><div class="stat-bar-fill" id="ramStatBar" style="width: 68%; background: linear-gradient(90deg, var(--accent-cyan), #0078d7);"></div></div>
+            </div>
+
+Use code with caution.
+Node Kernel Identity
+NODE_CORE_v4.82.ALPHA
+
+Core Console
+GeForce NOW
+CrazyGames
+Poki Games
+
+
+System Framework
+
+✕
+
+
+FIGURE // OS
+
+
+
+
+
+00:00:00 AM
+// Allocation App Orchestration Controller Layer
+function initializeOsWindow(title, sourceLocationUrl) {
+const frameModal = document.getElementById('runtimeOsWindowElement');
+const targetContainer = document.getElementById('windowViewportWorkspaceFrameContainer');
+const displayTitleField = document.getElementById('windowTitleMetaText');
+displayTitleField.innerText = title;
+targetContainer.innerHTML = ''; // Flushes active pipeline slots clear before appending targets
+if (sourceLocationUrl === 'TERMINAL') {
+targetContainer.innerHTML = <div class="terminal-core-viewport"> <div class="terminal-line-output">== FIGURE OS LAYER [VERSION 4.82.ALPHA] ==</div> <div class="terminal-line-output">Initializing secure system diagnostics handshake... OK.</div> <div class="terminal-line-output">Neural pipelines active. Allocation space clear. Ready for incoming vectors.</div> <div class="terminal-line-output">> <span style="animation: blink 1s step-end infinite; border-left: 2px solid var(--accent-green); margin-left: 2px;"></span></div> </div>;
+} else {
+const applicationIframeElement = document.createElement('iframe');
+applicationIframeElement.src = sourceLocationUrl;
+targetContainer.appendChild(applicationIframeElement);
+}
+// Standardize framing container parameters allocation logic rules
+frameModal.classList.remove('hidden-frame');
+frameModal.style.width = "80%";
+frameModal.style.height = "78%";
+frameModal.style.top = "8%";
+frameModal.style.left = "10%";
+frameModal.style.transform = "none";
+frameModal.setAttribute('data-offset-x', '0');
+frameModal.setAttribute('data-offset-y', '0');
+}
+function shutdownActiveWindowRuntimeInstance() {
+document.getElementById('runtimeOsWindowElement').classList.add('hidden-frame');
+document.getElementById('windowViewportWorkspaceFrameContainer').innerHTML = '';
+}
+// Functional Positional API Framework Draggable Controllers Engine
+(function() {
+const dragNodeHandle = document.getElementById('windowDragTopbarHandle');
+const masterContainerWindow = document.getElementById('runtimeOsWindowElement');
+let clickAnchorX, clickAnchorY;
+let currentXOffsetPosition = 0, currentYOffsetPosition = 0;
+let executionDragActiveFlag = false;
+dragNodeHandle.addEventListener('mousedown', function(mouseEvent) {
+executionDragActiveFlag = true;
+const readStoredPositionX = parseFloat(masterContainerWindow.getAttribute('data-offset-x') || 0);
+const readStoredPositionY = parseFloat(masterContainerWindow.getAttribute('data-offset-y') || 0);
+clickAnchorX = mouseEvent.clientX - readStoredPositionX;
+clickAnchorY = mouseEvent.clientY - readStoredPositionY;
+});
+document.addEventListener('mousemove', function(mouseEvent) {
+if (executionDragActiveFlag) {
+mouseEvent.preventDefault();
+currentXOffsetPosition = mouseEvent.clientX - clickAnchorX;
+currentYOffsetPosition = mouseEvent.clientY - clickAnchorY;
+masterContainerWindow.style.transform = translate(${currentXOffsetPosition}px, ${currentYOffsetPosition}px);
+masterContainerWindow.setAttribute('data-offset-x', currentXOffsetPosition);
+masterContainerWindow.setAttribute('data-offset-y', currentYOffsetPosition);
+}
+});
+document.addEventListener('mouseup', function() {
+executionDragActiveFlag = false;
+});
+})();
+// Analytical Realtime Graph Hardware Simulation Processing Layer Engine
+function dynamicallyVaryHardwareMetricsDiagnostics() {
+const cpuFillNode = document.getElementById('cpuStatBar');
+const ramFillNode = document.getElementById('ramStatBar');
+setInterval(() => {
+const simulatedCpuValue = Math.floor(Math.random() * (55 - 28) + 28);
+const simulatedRamValue = Math.floor(Math.random() * (74 - 64) + 64);
+cpuFillNode.style.width = ${simulatedCpuValue}%;
+ramFillNode.style.width = ${simulatedRamValue}%;
+}, 2500);
+}
+// Chronometer Processing Matrix System Timer Engine
+function processSystemDockChronometerClock() {
+const systemTimeObjectInstance = new Date();
+let computationalHoursValue = systemTimeObjectInstance.getHours();
+const computationalMinutesValue = String(systemTimeObjectInstance.getMinutes()).padStart(2, '0');
+const computationalSecondsValue = String(systemTimeObjectInstance.getSeconds()).padStart(2, '0');
+const runtimeAmPmDesignatorMarker = computationalHoursValue >= 12 ? 'PM' : 'AM';
+computationalHoursValue = computationalHoursValue % 12;
+computationalHoursValue = computationalHoursValue ? computationalHoursValue : 12;
+document.getElementById('dockChronometerTimeDisplayNode').innerText =
+${computationalHoursValue}:${computationalMinutesValue}:${computationalSecondsValue} ${runtimeAmPmDesignatorMarker};
+}
+// Runtime Framework Initialization Processing Calls Array Loop Loops
+setInterval(processSystemDockChronometerClock, 1000);
+processSystemDockChronometerClock();
+dynamicallyVaryHardwareMetricsDiagnostics();
+
+
+
+<FollowUp>
+If you want to personalize this remake further, let me know:
+* Do you want to add a working **file system explorer app** to save notes and view custom system files?
+* Should we integrate a **game catalog search bar** inside the dashboard layout to dynamically load frames?
+</FollowUp>
