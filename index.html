@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Windows 10 Gaming Edition</title>
+<title>Windows 11 Gaming Edition</title>
 <style>
 *{box-sizing:border-box}
 :root{--accent:#0078d7;--glass:rgba(32,32,32,.96);--text:#f7f9fc}
@@ -16,7 +16,7 @@ button{cursor:pointer}
 .desktop-icon{height:82px;border:1px solid transparent;border-radius:7px;text-align:center;padding:5px;font-size:12px;text-shadow:0 2px 4px #000}
 .desktop-icon:hover{background:#ffffff16;border-color:#ffffff12}
 .desktop-icon .ico{display:block;font-size:34px;line-height:45px}
-#taskbar{position:fixed;z-index:900000;left:0;right:0;bottom:0;height:40px;background:#1f1f1f;display:flex;align-items:center;padding:0 6px;border-top:1px solid #333}
+#taskbar{position:fixed;z-index:900000;left:0;right:0;bottom:0;height:52px;background:#1f1f1f;display:flex;align-items:center;padding:0 6px;border-top:1px solid #333}
 .task-center{margin:auto;display:flex;gap:2px}
 .taskbtn{height:38px;min-width:42px;border:0;background:transparent;color:#fff;border-radius:7px}
 .taskbtn:hover,.taskbtn.active{background:#ffffff14}
@@ -66,7 +66,7 @@ button{cursor:pointer}
 @media(max-width:700px){#searchBtn{display:none}#start{left:5px;right:5px;transform:none;width:auto;height:calc(100% - 70px)}#searchPanel{left:5px;right:5px;transform:none;width:auto}.start-grid{grid-template-columns:repeat(2,1fr)}.window{width:94vw;height:75vh}.settingsSide{width:155px}}
 
 /* Windows 10 Gaming additions */
-.win10-start{border-radius:0!important;left:0!important;bottom:40px!important;transform:none!important;width:620px!important;height:570px!important;background:#252525!important}
+.win10-start{border-radius:0!important;left:0!important;bottom:52px!important;transform:none!important;width:620px!important;height:570px!important;background:#252525!important}
 .tile{background:#0078d7;color:#fff;border-radius:0;padding:12px;min-height:78px}
 .tile:hover{filter:brightness(1.12)}
 .gamingnav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
@@ -136,7 +136,7 @@ button{cursor:pointer}
 
 <div id="actionCenter" class="panel">
  <h2>Quick Settings</h2>
- <div style="color:#aaa">Windows 10 Gaming Edition</div>
+ <div style="color:#aaa">Windows 11 Gaming Edition</div>
  <div class="quickgrid">
   <button onclick="notify('Wi-Fi','Connected')">📶 Wi-Fi<br><small>Connected</small></button>
   <button onclick="notify('Bluetooth','On')">🔵 Bluetooth<br><small>On</small></button>
@@ -318,7 +318,7 @@ button{cursor:pointer}
  <div class="loginBox">
   <div class="loginLogo">⊞</div>
   <div class="loginUser">Administrator</div>
-  <div class="loginEdition">Windows 10 Gaming Edition</div>
+  <div class="loginEdition">Windows 11 Gaming Edition</div>
   <input id="startupPassword" type="password" placeholder="Password" autocomplete="off">
   <button class="loginButton" onclick="unlockWindows()">Sign in</button>
   <div id="loginError">Incorrect password</div>
@@ -361,7 +361,15 @@ function openApp(id){
  if(id==="browser")browserHome();
  if(id==="cmd")setTimeout(()=>$("cmdInput").focus(),50);
 }
-function closeApp(id){$(id)?.classList.remove("show","active-window");$("task-"+id)?.classList.remove("active");if(id==="gameWindow"&&gameCleanup){gameCleanup();gameCleanup=null;clearInterval(gameTimer)}}
+function closeApp(id){
+ $(id)?.classList.remove("show","active-window");
+ $("task-"+id)?.classList.remove("active");
+ if(id==="gameWindow"){
+   if(gameCleanup){try{gameCleanup()}catch(e){}gameCleanup=null}
+   clearInterval(gameTimer);gameTimer=null;
+   $("gameArea").innerHTML="";$("gameUI").innerHTML="";
+ }
+}
 function minimize(id){$(id)?.classList.remove("show");$("task-"+id)?.classList.remove("active")}
 function maximize(id){const w=$(id);if(w){w.classList.toggle("max");w.style.zIndex=++z}}
 function dragStart(e,id){const w=$(id);if(!w||w.classList.contains("max")||e.target.closest(".controls"))return;dragging={id,x:e.clientX,y:e.clientY,left:w.offsetLeft,top:w.offsetTop};w.style.zIndex=++z;e.preventDefault()}
@@ -376,7 +384,7 @@ $("searchInput").oninput=function(){const q=this.value.toLowerCase();document.qu
 document.addEventListener("click",e=>{if(!e.target.closest("#start")&&!e.target.closest("#startBtn")&&!e.target.closest("#searchPanel")&&!e.target.closest("#searchBtn"))closeMenus()});
 
 const settingsPages={
- system:["System",["🖥️ Display — brightness, scale and resolution.","🔊 Sound — speakers, microphone and volume.","🔔 Notifications — app notification controls.","ℹ️ About — Windows 10 Gaming Edition."]],
+ system:["System",["🖥️ Display — brightness, scale and resolution.","🔊 Sound — speakers, microphone and volume.","🔔 Notifications — app notification controls.","ℹ️ About — Windows 11 Gaming Edition."]],
  devices:["Bluetooth & devices",["🖨️ Printers & scanners","🖱️ Mouse","⌨️ Keyboard","📱 Bluetooth devices"]],
  network:["Network & Internet",["📶 Wi-Fi — Connected","🌐 Ethernet — Disconnected","✈️ Airplane mode — Off"]],
  gaming:["Gaming",["🎮 Game Mode — On","🕹️ Game Bar — Enabled","📹 Captures — Ready","⚡ Performance — Balanced"]],
@@ -423,17 +431,35 @@ canvas.onmousedown=e=>{drawing=true;const r=canvas.getBoundingClientRect();lastX
 canvas.onmousemove=e=>{if(!drawing)return;const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;ctx.beginPath();ctx.moveTo(lastX,lastY);ctx.lineTo(x,y);ctx.lineWidth=+$("paintSize").value;ctx.lineCap="round";ctx.strokeStyle=paintTool==="eraser"?"#fff":$("paintColor").value;ctx.stroke();lastX=x;lastY=y};
 window.onmouseup=()=>drawing=false;function clearPaint(){ctx.clearRect(0,0,canvas.width,canvas.height)}
 
+document.addEventListener("keydown",e=>{
+ if(e.key==="Escape"){closeMenus();document.querySelectorAll(".window.show").forEach(w=>w.classList.remove("show"))}
+});
 $("cmdInput").onkeydown=e=>{if(e.key!=="Enter")return;const c=e.target.value.trim(),l=c.toLowerCase(),o=$("cmdOutput");o.innerHTML+="<br>C:\\Users\\Administrator&gt;"+c+"<br>";if(l==="cls")o.innerHTML="";else if(l==="dir")o.innerHTML+="<br>&lt;DIR&gt; Users<br>&lt;DIR&gt; Windows<br>&lt;DIR&gt; Program Files<br>README.txt<br>";else if(l==="ver")o.innerHTML+="<br>Microsoft Windows [Version 10.0.26100]<br>";else if(l==="whoami")o.innerHTML+="<br>administrator<br>";else if(l==="help")o.innerHTML+="<br>DIR CLS VER WHOAMI HELP DATE TIME<br>";else if(l==="date")o.innerHTML+="<br>"+new Date().toLocaleDateString()+"<br>";else if(l==="time")o.innerHTML+="<br>"+new Date().toLocaleTimeString()+"<br>";else if(c)o.innerHTML+="<br>'"+c+"' is not recognized as an internal or external command.<br>";e.target.value="";o.scrollTop=o.scrollHeight};
 
 let browserHistory=[],browserIndex=-1;
-function browserHome(){$("browserUrl").value="";$("browserTab").textContent="New tab";$("browserContent").innerHTML='<div class="browser-home"><h1>Web Browser</h1><p>Windows 10 Gaming Edition</p><input id="browserSearch" placeholder="Search the web or enter a URL"><div style="margin-top:20px"><button onclick="navigateBrowser(\'https://www.youtube.com\')">▶️ YouTube</button> <button onclick="navigateBrowser(\'https://www.google.com/search?q=browser+games\')">🎮 Gaming</button></div></div>';$("browserSearch")?.addEventListener("keydown",e=>{if(e.key==="Enter")navigateBrowser(e.target.value)})}
+function browserHome(){$("browserUrl").value="";$("browserTab").textContent="New tab";$("browserContent").innerHTML='<div class="browser-home"><h1>Web Browser</h1><p>Windows 11 Gaming Edition</p><input id="browserSearch" placeholder="Search the web or enter a URL"><div style="margin-top:20px"><button onclick="navigateBrowser(\'https://www.youtube.com\')">▶️ YouTube</button> <button onclick="navigateBrowser(\'https://www.google.com/search?q=browser+games\')">🎮 Gaming</button></div></div>';$("browserSearch")?.addEventListener("keydown",e=>{if(e.key==="Enter")navigateBrowser(e.target.value)})}
 function navigateBrowser(url){url=(url||$("browserUrl").value).trim();if(!url)return;if(!/^https?:\/\//i.test(url))url="https://www.google.com/search?q="+encodeURIComponent(url);browserHistory=browserHistory.slice(0,browserIndex+1);browserHistory.push(url);browserIndex++;loadBrowser()}
-function loadBrowser(){const u=browserHistory[browserIndex];$("browserUrl").value=u;$("browserTab").textContent=new URL(u).hostname;$("browserContent").innerHTML=`<iframe src="${u}" referrerpolicy="no-referrer"></iframe>`}
+function loadBrowser(){
+ const u=browserHistory[browserIndex]; if(!u)return;
+ $("browserUrl").value=u;
+ try{$("browserTab").textContent=new URL(u).hostname}catch{$("browserTab").textContent="Browser"}
+ $("browserContent").innerHTML=`<iframe src="${u}" referrerpolicy="no-referrer" title="Web content"></iframe>`;
+}
 function browserBack(){if(browserIndex>0){browserIndex--;loadBrowser()}}function browserForward(){if(browserIndex<browserHistory.length-1){browserIndex++;loadBrowser()}}function browserReload(){if(browserIndex>=0)loadBrowser()}
 
 function saveProxy(){localStorage.setItem("proxyHost",$("proxyHost").value);localStorage.setItem("proxyPort",$("proxyPort").value);notify("Proxy","Settings saved.")}function connectProxy(){$("proxyStatus").className="proxyStatus ok";$("proxyStatus").textContent="● Configured — "+$("proxyHost").value+":"+$("proxyPort").value;notify("Proxy","Configuration enabled.")}function disconnectProxy(){$("proxyStatus").className="proxyStatus";$("proxyStatus").textContent="● Disconnected"}
 
-function launchGame(type){openApp("gameWindow");if(gameCleanup)gameCleanup();clearInterval(gameTimer);$("gameArea").innerHTML="";$("gameUI").innerHTML="";const n={snake:"Snake","2048":"2048",mines:"Minesweeper",ttt:"Tic-Tac-Toe",breakout:"Breakout",reaction:"Reaction",pong:"Pong",shooter:"Space Shooter"}[type]||"Game";$("gameTitle").textContent=n;$("gameName").textContent=n;$("gameScore").textContent="Score: 0";({snake:startSnake,"2048":start2048,mines:startMines,ttt:startTTT,breakout:startBreakout,reaction:startReaction,pong:startPong,shooter:startShooter}[type])()}
+function launchGame(type){
+ openApp("gameWindow");
+ if(gameCleanup){try{gameCleanup()}catch(e){}gameCleanup=null}
+ clearInterval(gameTimer);gameTimer=null;
+ $("gameArea").innerHTML="";$("gameUI").innerHTML="";
+ const games={snake:["Snake",startSnake],"2048":["2048",start2048],mines:["Minesweeper",startMines],ttt:["Tic-Tac-Toe",startTTT],breakout:["Breakout",startBreakout],reaction:["Reaction",startReaction],pong:["Pong",startPong],shooter:["Space Shooter",startShooter]};
+ const g=games[type];
+ if(!g){notify("Gaming Hub","That game is unavailable.");return}
+ $("gameTitle").textContent=g[0];$("gameName").textContent=g[0];$("gameScore").textContent="Score: 0";
+ g[1]();
+}
 
 function startSnake(){const c=document.createElement("canvas");c.width=500;c.height=400;$("gameArea").appendChild(c);const x=c.getContext("2d"),s=20,C=25,R=20;let snake=[{x:12,y:10}],d={x:1,y:0},f={x:5,y:5},score=0,run=true;function spawn(){f={x:Math.floor(Math.random()*C),y:Math.floor(Math.random()*R)}}function draw(){x.fillStyle="#071018";x.fillRect(0,0,c.width,c.height);x.fillStyle="#49bfff";snake.forEach(p=>x.fillRect(p.x*s,p.y*s,s-2,s-2));x.fillStyle="#ff4d6d";x.fillRect(f.x*s,f.y*s,s-2,s-2)}function tick(){if(!run)return;let h={x:snake[0].x+d.x,y:snake[0].y+d.y};if(h.x<0||h.y<0||h.x>=C||h.y>=R||snake.some(p=>p.x===h.x&&p.y===h.y)){run=false;notify("Game Over","Snake score: "+score);return}snake.unshift(h);if(h.x===f.x&&h.y===f.y){score++;$("gameScore").textContent="Score: "+score;spawn()}else snake.pop();draw()}const key=e=>{if(e.key==="ArrowUp"&&d.y!==1)d={x:0,y:-1};if(e.key==="ArrowDown"&&d.y!==-1)d={x:0,y:1};if(e.key==="ArrowLeft"&&d.x!==1)d={x:-1,y:0};if(e.key==="ArrowRight"&&d.x!==-1)d={x:1,y:0}};document.addEventListener("keydown",key);gameTimer=setInterval(tick,110);draw();gameCleanup=()=>document.removeEventListener("keydown",key);$("gameUI").textContent="Use the arrow keys."}
 
@@ -445,7 +471,24 @@ function startTTT(){const g=document.createElement("div");g.style.cssText="displ
 
 function startBreakout(){const c=document.createElement("canvas");c.width=560;c.height=360;$("gameArea").appendChild(c);const x=c.getContext("2d");let px=240,ball={x:280,y:300,dx:3,dy:-3},score=0,blocks=[];for(let r=0;r<4;r++)for(let q=0;q<9;q++)blocks.push({x:15+q*60,y:25+r*22,w:52,h:15,on:true});function draw(){x.fillStyle="#05070b";x.fillRect(0,0,560,360);x.fillStyle="#49bfff";x.fillRect(px,340,80,10);x.fillStyle="#fff";x.beginPath();x.arc(ball.x,ball.y,7,0,Math.PI*2);x.fill();x.fillStyle="#ff5577";blocks.forEach(b=>{if(b.on)x.fillRect(b.x,b.y,b.w,b.h)})}function tick(){ball.x+=ball.dx;ball.y+=ball.dy;if(ball.x<7||ball.x>553)ball.dx*=-1;if(ball.y<7)ball.dy*=-1;if(ball.y>330&&ball.x>px&&ball.x<px+80)ball.dy=-Math.abs(ball.dy);for(const b of blocks)if(b.on&&ball.x>b.x&&ball.x<b.x+b.w&&ball.y>b.y&&ball.y<b.y+b.h){b.on=false;ball.dy*=-1;score++;$("gameScore").textContent="Score: "+score;break}if(ball.y>370){notify("Breakout","Game over!");clearInterval(gameTimer)}draw()}const key=e=>{if(e.key==="ArrowLeft")px=Math.max(0,px-30);if(e.key==="ArrowRight")px=Math.min(480,px+30)};document.addEventListener("keydown",key);gameTimer=setInterval(tick,16);draw();gameCleanup=()=>document.removeEventListener("keydown",key);$("gameUI").textContent="Use ← and →."}
 
-function startReaction(){const b=document.createElement("button");b.textContent="WAIT...";b.style.cssText="width:250px;height:150px;font-size:28px";$("gameArea").appendChild(b);let start=0,ready=false,t=setTimeout(()=>{ready=true;b.textContent="CLICK!";start=performance.now()},Math.random()*2500+1000);b.onclick=()=>{if(!ready){clearTimeout(t);b.textContent="Too early — restart";return}const ms=Math.round(performance.now()-start);$("gameScore").textContent="Score: "+ms+" ms";b.textContent=ms+" ms — Click to retry";ready=false;startReaction()};$("gameUI").textContent="Wait for CLICK, then react."}
+function startReaction(){
+ const b=document.createElement("button");
+ b.textContent="WAIT...";
+ b.style.cssText="width:250px;height:150px;font-size:28px";
+ $("gameArea").appendChild(b);
+ let start=0,ready=false,finished=false;
+ let timer=setTimeout(()=>{ready=true;b.textContent="CLICK!";start=performance.now()},Math.random()*2500+1000);
+ b.onclick=()=>{
+   if(finished)return;
+   if(!ready){clearTimeout(timer);finished=true;b.textContent="Too early — close and restart";notify("Reaction","Too early!");return}
+   const ms=Math.round(performance.now()-start);
+   $("gameScore").textContent="Score: "+ms+" ms";
+   b.textContent=ms+" ms — click to play again";
+   ready=false; finished=true;
+ };
+ gameCleanup=()=>{clearTimeout(timer);finished=true};
+ $("gameUI").textContent="Wait for CLICK, then react.";
+}
 
 
 function hubTab(tab){document.querySelectorAll(".hubpage").forEach(x=>x.classList.remove("active"));$("hub-"+tab)?.classList.add("active")}
@@ -480,6 +523,88 @@ window.addEventListener("load",()=>{
  if(ph)$("proxyHost").value=ph;if(pp)$("proxyPort").value=pp;
  $("desktop").style.display="block";$("taskbar").style.display="flex";$("loginScreen").style.display="none";
 });
+
+<script>
+/* Mobile controls + safety layer */
+(function(){
+  const area=$("gameArea");
+  if(!area)return;
+
+  const pad=document.createElement("div");
+  pad.id="mobileGamePad"; if($("mobileGamePad"))$("mobileGamePad").remove();
+  pad.innerHTML='<button data-k="ArrowUp">▲</button><div><button data-k="ArrowLeft">◀</button><button data-k="Space">●</button><button data-k="ArrowRight">▶</button></div><button data-k="ArrowDown">▼</button>';
+  pad.style.cssText="display:flex;flex-direction:column;align-items:center;gap:5px;margin:12px auto 0;user-select:none";
+  pad.querySelectorAll("div").forEach(d=>d.style.cssText="display:flex;gap:5px");
+  pad.querySelectorAll("button").forEach(b=>{
+    b.style.cssText="width:48px;height:52px;border:1px solid #ffffff33;border-radius:6px;background:#182533;color:white;font-size:18px;touch-action:manipulation";
+    const fire=e=>{e.preventDefault();document.dispatchEvent(new KeyboardEvent("keydown",{key:b.dataset.k,bubbles:true}))};
+    b.addEventListener("pointerdown",fire);
+  });
+  area.parentElement.appendChild(pad);
+
+  const originalLaunch = window.launchGame;
+  window.launchGame = function(type){
+    originalLaunch(type);
+    pad.style.display=["snake","2048","pong","shooter","breakout"].includes(type)?"flex":"none";
+  };
+
+  window.addEventListener("error",e=>{
+    if(typeof notify==="function") notify("Windows 10 Gaming","An app hit an error and was safely stopped.");
+  });
+})();
 </script>
+
+<script>
+document.addEventListener("click",function(e){
+  const b=e.target.closest("#settingsNav button");
+  if(b){
+    const t=b.dataset.tab || (b.getAttribute("onclick")||"").match(/settingsPage\(['"]([^'"]+)/)?.[1];
+    if(t){e.preventDefault();settingsPage(t);}
+  }
+});
+</script>
+
+
+<script>
+(function(){
+  function applySettings(){
+    const dark=localStorage.getItem("theme")!=="light";
+    document.body.classList.toggle("light-theme",!dark);
+    const accent=localStorage.getItem("accent");
+    if(accent)document.documentElement.style.setProperty("--accent",accent);
+  }
+  window.setTheme=function(theme){
+    localStorage.setItem("theme",theme);
+    applySettings();
+    notify("Settings","Theme changed to "+theme+".");
+  };
+  window.setAccent=function(color){
+    localStorage.setItem("accent",color);
+    document.documentElement.style.setProperty("--accent",color);
+    notify("Settings","Accent color updated.");
+  };
+  window.resetSettings=function(){
+    localStorage.removeItem("theme");localStorage.removeItem("accent");
+    localStorage.removeItem("settingsTab");
+    localStorage.removeItem("proxyHost");localStorage.removeItem("proxyPort");
+    applySettings();settingsPage("system");
+    notify("Settings","Settings reset.");
+  };
+  applySettings();
+})();
+</script>
+
+
+<script>
+window.addEventListener("error",function(e){
+  console.error(e.error||e.message);
+  if(typeof notify==="function") notify("Windows 11","A component failed safely. Other apps are still available.");
+});
+window.addEventListener("unhandledrejection",function(e){
+  console.error(e.reason);
+  if(typeof notify==="function") notify("Windows 11","A background action failed safely.");
+});
+</script>
+
 </body>
 </html>
