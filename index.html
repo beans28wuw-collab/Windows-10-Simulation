@@ -88,6 +88,65 @@ button{cursor:pointer}
 @media(max-width:700px){.win10-start{width:calc(100vw - 5px)!important;height:calc(100vh - 45px)!important}}
 
 </style>
+
+<style id="win10-taskbar">
+#taskbar{
+  height:40px!important;
+  min-height:40px!important;
+  bottom:0!important;
+  left:0!important;
+  right:0!important;
+  border-radius:0!important;
+  background:#202020f5!important;
+  backdrop-filter:blur(12px);
+  display:flex!important;
+  align-items:center;
+  padding:0 6px!important;
+  gap:2px!important;
+  z-index:9999!important;
+}
+#taskbar .task-left,#taskbar .task-center{display:flex;align-items:center;gap:2px}
+#taskbar .task-center{margin:0!important;flex:0 0 auto!important}
+#taskbar .task-right{margin-left:auto!important}
+#taskbar button,.task-btn{
+  height:36px!important;
+  min-width:38px;
+  border:0!important;
+  border-radius:2px!important;
+  background:transparent!important;
+  color:#fff!important;
+  padding:0 9px!important;
+  font-size:14px!important;
+  transition:background .12s ease,transform .08s ease;
+}
+#taskbar button:hover,.task-btn:hover{background:#ffffff18!important}
+#taskbar button:active,.task-btn:active{transform:scale(.96)}
+.task-icon{font-size:18px;line-height:1}
+.task-label{margin-left:6px;vertical-align:middle}
+.win10-start-btn{font-size:20px!important;width:42px!important;padding:0!important}
+.task-search{
+  width:210px!important;height:32px!important;margin:0 4px!important;
+  border:0!important;border-radius:0!important;
+  background:#fff!important;color:#222!important;padding:0 12px!important;
+}
+.task-app.active{background:#ffffff20!important;border-bottom:2px solid #4cc2ff!important}
+#desktop{bottom:40px!important}
+</style>
+
+<style>
+.window .titlebar .win-icon{display:inline-flex;width:24px;height:24px;align-items:center;justify-content:center;margin-right:7px;font-size:16px}
+.window .titlebar{user-select:none}
+#taskbar .task-clock{min-width:68px;text-align:center;font-size:12px;color:#fff;padding:0 5px}
+.desktop-icon{transition:transform .12s ease,background .12s ease}
+.desktop-icon:hover{transform:translateY(-1px);background:#ffffff18}
+</style>
+
+<style>
+.window,.panel,.desktop-icon,#taskbar button{will-change:transform,opacity}
+.window{transition:opacity .14s ease,transform .14s ease!important}
+*{scrollbar-width:thin}
+button,input,textarea,select{font-family:inherit}
+</style>
 </head>
 <body>
 
@@ -327,22 +386,30 @@ button{cursor:pointer}
 </div>
 
  <div id="taskbar">
- <div class="task-center">
-  <button id="startBtn" class="taskbtn">⊞</button>
-  <button id="searchBtn" class="taskbtn">🔎 <span style="font-size:12px">Search</span></button>
-  <button class="taskbtn" id="task-gaming" onclick="openApp('gaming')">🎮</button>
-  <button class="taskbtn" id="task-browser" onclick="openApp('browser')">🌐</button>
-  <button class="taskbtn" id="task-explorer" onclick="openApp('explorer')">📁</button>
-  <button class="taskbtn" id="task-settings" onclick="openApp('settings')">⚙️</button>
-  <button class="taskbtn" id="task-notepad" onclick="openApp('notepad')">📝</button>
-  <button class="taskbtn" id="task-calculator" onclick="openApp('calculator')">🧮</button>
-  <button class="taskbtn" id="task-paint" onclick="openApp('paint')">🎨</button>
-  <button class="taskbtn" id="task-cmd" onclick="openApp('cmd')">⌨️</button>
-  <button class="taskbtn" id="task-taskmgr" onclick="openApp('taskmgr')">📊</button>
- </div>
- <button class="taskbtn" onclick="toggleActionCenter()" style="position:absolute;right:88px">🔔</button>
- <button class="taskbtn" onclick="lockWindows()" style="position:absolute;right:50px">🔒</button>
- <div id="clock"></div>
+  <div class="task-left">
+    <button class="win10-start-btn" title="Start" onclick="toggleStart()">⊞</button>
+    <input id="taskSearch" class="task-search" placeholder="Type here to search" onkeydown="if(event.key==='Enter'){searchAll(this.value)}">
+  </div>
+  <div class="task-center" id="taskApps">
+    <button class="task-app" title="File Explorer" onclick="openApp('explorer')"><span class="task-icon">📁</span><span class="task-label">Explorer</span></button>
+    <button class="task-app" title="Browser" onclick="openApp('browser')"><span class="task-icon">🌐</span><span class="task-label">Browser</span></button>
+    <button class="task-app" title="Gaming Hub" onclick="openApp('gamingHub')"><span class="task-icon">🎮</span><span class="task-label">Gaming</span></button>
+    <button class="task-app" title="Notepad" onclick="openApp('notepad')"><span class="task-icon">📝</span><span class="task-label">Notepad</span></button>
+    <button class="task-app" title="Calculator" onclick="openApp('calculator')"><span class="task-icon">🧮</span><span class="task-label">Calculator</span></button>
+    <button class="task-app" title="Paint" onclick="openApp('paint')"><span class="task-icon">🎨</span><span class="task-label">Paint</span></button>
+    <button class="task-app" title="Terminal" onclick="openApp('terminal')"><span class="task-icon">⌨️</span><span class="task-label">Terminal</span></button>
+    <button class="task-app" title="Task Manager" onclick="openApp('taskManager')"><span class="task-icon">📊</span><span class="task-label">Task Manager</span></button>
+    <button class="task-app" title="Settings" onclick="openApp('settings')"><span class="task-icon">⚙️</span><span class="task-label">Settings</span></button>
+    <button class="task-app" title="Recycle Bin" onclick="openApp('recycle')"><span class="task-icon">🗑️</span><span class="task-label">Recycle Bin</span></button>
+  </div>
+  <div class="task-right">
+    <button title="Show desktop" onclick="showDesktop()">▭</button>
+    <button title="Action Center" onclick="toggleAction()">🔔</button>
+    <button title="Network" onclick="openApp('settings');settingsPage('network')">📶</button>
+    <button title="Sound" onclick="notify('Sound','Volume controls opened.')">🔊</button>
+    <button title="Power" onclick="notify('Power','Power options opened.')">🔋</button>
+    <span id="clock" class="task-clock"></span>
+  </div>
 </div>
 
 <script>
@@ -606,5 +673,36 @@ window.addEventListener("unhandledrejection",function(e){
 });
 </script>
 
+
+<script>
+(function(){
+ const iconMap={explorer:"📁",browser:"🌐",notepad:"📝",calculator:"🧮",settings:"⚙️",gamingHub:"🎮",gameWindow:"🎮",paint:"🎨",terminal:"⌨️",taskManager:"📊",recycle:"🗑️",proxy:"🌐"};
+ function addIcons(){
+   document.querySelectorAll(".window").forEach(w=>{
+     if(w.querySelector(".titlebar .win-icon"))return;
+     const id=w.id, bar=w.querySelector(".titlebar");
+     if(bar){const s=document.createElement("span");s.className="win-icon";s.textContent=iconMap[id]||"🪟";bar.prepend(s)}
+   });
+ }
+ function clock(){
+   const e=document.getElementById("clock");if(e)e.textContent=new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+ }
+ setInterval(clock,1000);clock();
+ setTimeout(addIcons,0);
+ new MutationObserver(addIcons).observe(document.body,{childList:true,subtree:true});
+ window.showDesktop=function(){
+   document.querySelectorAll(".window.show").forEach(w=>w.classList.remove("show"));
+   if(typeof closeMenus==="function")closeMenus();
+ };
+ window.searchAll=function(q){
+   q=(q||"").trim();if(!q)return;
+   const map={explorer:"explorer",browser:"browser",gaming:"gamingHub",games:"gamingHub",settings:"settings",notepad:"notepad",calculator:"calculator",paint:"paint",terminal:"terminal"};
+   const k=q.toLowerCase();
+   const target=Object.keys(map).find(x=>k.includes(x));
+   if(target){openApp(map[target]);return}
+   if(typeof notify==="function")notify("Search","No local app matched “"+q+"”.");
+ };
+})();
+</script>
 </body>
 </html>
