@@ -205,10 +205,12 @@ const apps=['explorer','browser','settings','notes','calc','taskmgr','runbox','r
 const $=id=>document.getElementById(id);
 function showToast(s){$('toast').textContent=s;$('toast').style.display='block';clearTimeout(showToast.t);showToast.t=setTimeout(()=>$('toast').style.display='none',1800)}
 function toggleStart(){let s=$('startMenu');s.style.display=s.style.display==='block'?'none':'block'}
-function openApp(id){let w=$(id);if(w.style.display==='block'&&w.style.zIndex==z){w.style.display='none';w.dataset.wasopen='1';updateTaskStates();return}w.style.display='block';delete w.dataset.wasopen;w.style.zIndex=++z;$(id).classList.remove('maxed');$('tb-'+id)?.classList.add('active');if(id==='explorer')showFolder('This PC');if(id==='browser')browserHome();if(id==='settings')setPage(document.querySelector('.setnav button.active'),'system');if(id==='notes')$('noteText').value=localStorage.note||'';updateTaskStates();if(id==='taskmgr')tmPage(null,'processes');if(id==='recycle')showTrash();if(id==='calendar')setupCalendar();if(id==='paint')setupPaint();if(id==='terminal')setupTerminal()}
-function closeApp(id){$(id).style.display='none';delete $(id).dataset.wasopen;updateTaskStates();}
-function minimize(id){$(id).style.display='none';$(id).dataset.wasopen='1';updateTaskStates()}
-function maximize(id){$(id).classList.toggle('maxed');$(id).style.zIndex=++z}
+function appId(id){const m={edge:'browser',notepad:'notes',run:'runbox'};return m[id]||id}
+function openWin(id){return openApp(appId(id))}
+function openApp(id){id=appId(id);let w=$(id);if(w.style.display==='block'&&w.style.zIndex==z){w.style.display='none';w.dataset.wasopen='1';updateTaskStates();return}w.style.display='block';delete w.dataset.wasopen;w.style.zIndex=++z;$(id).classList.remove('maxed');$('tb-'+id)?.classList.add('active');if(id==='explorer')showFolder('This PC');if(id==='browser')browserHome();if(id==='settings')setPage(document.querySelector('.setnav button.active'),'system');if(id==='notes')$('noteText').value=localStorage.note||'';updateTaskStates();if(id==='taskmgr')tmPage(null,'processes');if(id==='recycle')showTrash();if(id==='calendar')setupCalendar();if(id==='paint')setupPaint();if(id==='terminal')setupTerminal()}
+function closeApp(id){id=appId(id);if(!$(id))return;$(id).style.display='none';delete $(id).dataset.wasopen;updateTaskStates();}
+function minimize(id){id=appId(id);if(!$(id))return;$(id).style.display='none';$(id).dataset.wasopen='1';updateTaskStates()}
+function maximize(id){id=appId(id);if(!$(id))return;$(id).classList.toggle('maxed');$(id).style.zIndex=++z}
 document.querySelectorAll('.window').forEach(w=>{w.addEventListener('mousedown',()=>w.style.zIndex=++z);let bar=w.querySelector('.titlebar');let dragging=false,ox=0,oy=0;bar.addEventListener('pointerdown',e=>{if(e.target.closest('.wincontrols')||w.classList.contains('maxed'))return;dragging=true;ox=e.clientX-w.offsetLeft;oy=e.clientY-w.offsetTop;bar.setPointerCapture(e.pointerId)});bar.addEventListener('pointermove',e=>{if(!dragging)return;w.style.left=Math.max(0,e.clientX-ox)+'px';w.style.top=Math.max(0,e.clientY-oy)+'px'});bar.addEventListener('pointerup',()=>dragging=false)});
 function showFolder(name){
   const files=[
@@ -362,20 +364,20 @@ window.addEventListener('keydown',e=>{
 /* ===== ADVANCED TASKBAR / SHELL ===== */
 const PIN_KEY='win10.pins', NOTEY='win10.notifications';
 let pins;
-try{pins=JSON.parse(localStorage.getItem(PIN_KEY)||'["explorer","edge","settings","notepad","calc","taskmgr","calendar","paint","media","terminal"]')}catch(e){pins=["explorer","edge","settings","notepad","calc","taskmgr","calendar","paint","media","terminal"]}
+try{pins=JSON.parse(localStorage.getItem(PIN_KEY)||'["explorer","edge","settings","notepad","calc","taskmgr","calendar","paint","media","terminal"]')}catch(e){pins=["explorer","browser","settings","notes","calc","taskmgr","calendar","paint","media","terminal"]}
 function savePins(){localStorage.setItem(PIN_KEY,JSON.stringify(pins))}
-function pinnedApps(){return pins.map(id=>document.getElementById('t-'+id)).filter(Boolean)}
+function pinnedApps(){return pins.map(id=>document.getElementById('tb-'+id)).filter(Boolean)}
 function rebuildPins(){
   const bar=document.querySelector('.taskbar'); if(!bar)return;
   const search=bar.querySelector('.search'), start=bar.querySelector('.winlogo')?.parentElement;
   const virtual=bar.querySelector('[onclick*="toggleVirtual"]'), show=bar.querySelector('[onclick*="showDesktop"]');
   if(!search||!start)return;
-  [...bar.querySelectorAll('.tb[data-pin]')].forEach(x=>x.remove());
-  let ref=virtual||show||bar.querySelector('.tray');
+  [...bar.querySelectorAll('.taskapp[data-pin]')].forEach(x=>x.remove());
+  let ref=bar.querySelector('.taskapps'); if(!ref)return;
   pins.forEach((id,i)=>{
-    const old=document.getElementById('t-'+id);
+    const old=document.getElementById('tb-'+id);
     if(!old)return;
-    const b=old.cloneNode(true); b.id='t-'+id; b.className='tb'; b.dataset.pin=id;
+    const b=old.cloneNode(true); b.id='tb-'+id; b.className='taskapp'; b.dataset.pin=id;
     b.draggable=true; b.title=(old.title||id)+' — right-click for jump list';
     b.onclick=()=>openWin(id);
     b.oncontextmenu=e=>{e.preventDefault();showJumpList(e,id)};
@@ -415,16 +417,16 @@ document.addEventListener('click',e=>{if(!e.target.closest('.jumpmenu'))closeJum
 
 function showThumbs(id){
   closeThumbs();
-  const apps=pins.filter(x=>document.getElementById(x)?.classList.contains('visible'));
+  const apps=pins.filter(x=>document.getElementById(appId(x))?.style.display==='block');
   if(!apps.length)return;
   const panel=document.createElement('div');panel.className='thumbpreview';panel.id='thumbpreview';
   apps.forEach(a=>{const w=document.getElementById(a),d=document.createElement('div');d.className='thumb';d.innerHTML=`<div class="mini">${w.outerHTML}</div><label>${w.querySelector('.tt')?.textContent||a}</label>`;d.onclick=()=>{openWin(a);closeThumbs()};panel.appendChild(d)});
-  document.body.appendChild(panel);const b=document.getElementById('t-'+id);const r=b?.getBoundingClientRect();if(r){panel.style.left=Math.min(innerWidth-panel.offsetWidth-5,Math.max(5,r.left))+'px';panel.style.bottom='43px'}
+  document.body.appendChild(panel);const b=document.getElementById('tb-'+appId(id));const r=b?.getBoundingClientRect();if(r){panel.style.left=Math.min(innerWidth-panel.offsetWidth-5,Math.max(5,r.left))+'px';panel.style.bottom='43px'}
 }
 function closeThumbs(){document.getElementById('thumbpreview')?.remove()}
 function addBadges(){
   const counts={edge:2,notepad:1,terminal:3};
-  Object.entries(counts).forEach(([id,n])=>{const b=document.getElementById('t-'+id);if(b&&!b.querySelector('.badge'))b.insertAdjacentHTML('beforeend',`<span class="badge">${n}</span>`)});
+  Object.entries(counts).forEach(([id,n])=>{const b=document.getElementById('tb-'+appId(id));if(b&&!b.querySelector('.badge'))b.insertAdjacentHTML('beforeend',`<span class="badge">${n}</span>`)});
 }
 function clearBadges(id){document.querySelector(`#t-${id} .badge`)?.remove()}
 document.addEventListener('mouseover',e=>{const b=e.target.closest('.tb[data-pin]');if(b){clearTimeout(window._thumbTimer);window._thumbTimer=setTimeout(()=>showThumbs(b.dataset.pin),450)}})
@@ -449,8 +451,8 @@ function startMenuApps(){
   ].map(a=>`<button data-app="${a[1].toLowerCase()}" onclick="openWin('${a[2]}')">${a[0]} ${a[1]}</button>`).join('')+'</div>';
 }
 function filterStartApps(v){document.querySelectorAll('.applist button').forEach(b=>b.style.display=b.dataset.app.includes(v.toLowerCase())?'block':'none')}
-function shellInit(){addSnapZones();rebuildPins();addBadges();startMenuApps()}
+function shellInit(){pins=pins.map(appId).filter(id=>apps.includes(id));if(!pins.length)pins=['explorer','browser','settings','notes','calc','taskmgr','calendar','paint','media','terminal'];savePins();addSnapZones();rebuildPins();addBadges();startMenuApps()}
 setTimeout(shellInit,300);
 </script>
 </body>
-  </html>
+</html>
