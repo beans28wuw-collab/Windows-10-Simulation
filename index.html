@@ -207,7 +207,24 @@ button,input,textarea,select{font-family:inherit}
 <!-- Explorer -->
 <div class="window" id="explorer" style="left:120px;top:70px">
  <div class="titlebar" onmousedown="dragStart(event,'explorer')"><div class="titleIcon">📁</div><div class="title">File Explorer</div><div class="controls"><button class="control" onclick="minimize('explorer')">─</button><button class="control" onclick="maximize('explorer')">□</button><button class="control close" onclick="closeApp('explorer')">✕</button></div></div>
- <div class="body"><div class="explorer"><div class="toolbar"><button>←</button><button>→</button><button>↑</button><input class="address" value="This PC"><button>🔍</button></div><div class="explorer-main"><div class="side"><div>⭐ Quick access</div><div>📁 Desktop</div><div>📥 Downloads</div><div>📄 Documents</div><div>🖼️ Pictures</div><div>🎵 Music</div><div>🎬 Videos</div><div>💻 This PC</div><div>💾 Local Disk (C:)</div></div><div class="files"><div class="file"><span class="fileIcon">💾</span>Local Disk (C:)</div><div class="file"><span class="fileIcon">📁</span>Documents</div><div class="file"><span class="fileIcon">📁</span>Downloads</div><div class="file"><span class="fileIcon">📁</span>Pictures</div><div class="file"><span class="fileIcon">📁</span>Music</div><div class="file"><span class="fileIcon">📁</span>Videos</div><div class="file"><span class="fileIcon">📄</span>README.txt</div></div></div></div></div>
+ <div class="body"><div class="explorer"><div class="toolbar">
+<button onclick="explorerBack()">←</button><button onclick="explorerForward()">→</button><button onclick="explorerUp()">↑</button>
+<input id="explorerAddress" class="address" value="This PC" onkeydown="if(event.key==='Enter')explorerOpen(this.value)">
+<button onclick="explorerOpen($('explorerAddress').value)">🔍</button>
+</div><div class="explorer-main">
+  <div class="side" id="explorerSide">
+    <div onclick="explorerOpen('Quick access')">⭐ Quick access</div>
+    <div onclick="explorerOpen('Desktop')">📁 Desktop</div>
+    <div onclick="explorerOpen('Downloads')">📥 Downloads</div>
+    <div onclick="explorerOpen('Documents')">📄 Documents</div>
+    <div onclick="explorerOpen('Pictures')">🖼️ Pictures</div>
+    <div onclick="explorerOpen('Music')">🎵 Music</div>
+    <div onclick="explorerOpen('Videos')">🎬 Videos</div>
+    <div onclick="explorerOpen('This PC')">💻 This PC</div>
+    <div onclick="explorerOpen('Local Disk (C:)')">💾 Local Disk (C:)</div>
+  </div>
+  <div class="files" id="explorerFiles"></div>
+</div><div class="files"><div class="file"><span class="fileIcon">💾</span>Local Disk (C:)</div><div class="file"><span class="fileIcon">📁</span>Documents</div><div class="file"><span class="fileIcon">📁</span>Downloads</div><div class="file"><span class="fileIcon">📁</span>Pictures</div><div class="file"><span class="fileIcon">📁</span>Music</div><div class="file"><span class="fileIcon">📁</span>Videos</div><div class="file"><span class="fileIcon">📄</span>README.txt</div></div></div></div></div>
 </div>
 
 <!-- Notepad -->
@@ -393,12 +410,12 @@ button,input,textarea,select{font-family:inherit}
   <div class="task-center" id="taskApps">
     <button class="task-app" title="File Explorer" onclick="openApp('explorer')"><span class="task-icon">📁</span><span class="task-label">Explorer</span></button>
     <button class="task-app" title="Browser" onclick="openApp('browser')"><span class="task-icon">🌐</span><span class="task-label">Browser</span></button>
-    <button class="task-app" title="Gaming Hub" onclick="openApp('gamingHub')"><span class="task-icon">🎮</span><span class="task-label">Gaming</span></button>
+    <button class="task-app" title="Gaming Hub" onclick="openApp('gaming')"><span class="task-icon">🎮</span><span class="task-label">Gaming</span></button>
     <button class="task-app" title="Notepad" onclick="openApp('notepad')"><span class="task-icon">📝</span><span class="task-label">Notepad</span></button>
     <button class="task-app" title="Calculator" onclick="openApp('calculator')"><span class="task-icon">🧮</span><span class="task-label">Calculator</span></button>
     <button class="task-app" title="Paint" onclick="openApp('paint')"><span class="task-icon">🎨</span><span class="task-label">Paint</span></button>
     <button class="task-app" title="Terminal" onclick="openApp('terminal')"><span class="task-icon">⌨️</span><span class="task-label">Terminal</span></button>
-    <button class="task-app" title="Task Manager" onclick="openApp('taskManager')"><span class="task-icon">📊</span><span class="task-label">Task Manager</span></button>
+    <button class="task-app" title="Task Manager" onclick="openApp('taskmgr')"><span class="task-icon">📊</span><span class="task-label">Task Manager</span></button>
     <button class="task-app" title="Settings" onclick="openApp('settings')"><span class="task-icon">⚙️</span><span class="task-label">Settings</span></button>
     <button class="task-app" title="Recycle Bin" onclick="openApp('recycle')"><span class="task-icon">🗑️</span><span class="task-label">Recycle Bin</span></button>
   </div>
@@ -504,14 +521,7 @@ document.addEventListener("keydown",e=>{
 $("cmdInput").onkeydown=e=>{if(e.key!=="Enter")return;const c=e.target.value.trim(),l=c.toLowerCase(),o=$("cmdOutput");o.innerHTML+="<br>C:\\Users\\Administrator&gt;"+c+"<br>";if(l==="cls")o.innerHTML="";else if(l==="dir")o.innerHTML+="<br>&lt;DIR&gt; Users<br>&lt;DIR&gt; Windows<br>&lt;DIR&gt; Program Files<br>README.txt<br>";else if(l==="ver")o.innerHTML+="<br>Microsoft Windows [Version 10.0.26100]<br>";else if(l==="whoami")o.innerHTML+="<br>administrator<br>";else if(l==="help")o.innerHTML+="<br>DIR CLS VER WHOAMI HELP DATE TIME<br>";else if(l==="date")o.innerHTML+="<br>"+new Date().toLocaleDateString()+"<br>";else if(l==="time")o.innerHTML+="<br>"+new Date().toLocaleTimeString()+"<br>";else if(c)o.innerHTML+="<br>'"+c+"' is not recognized as an internal or external command.<br>";e.target.value="";o.scrollTop=o.scrollHeight};
 
 let browserHistory=[],browserIndex=-1;
-function browserHome(){$("browserUrl").value="";$("browserTab").textContent="New tab";$("browserContent").innerHTML='<div class="browser-home"><h1>Web Browser</h1><p>Windows 11 Gaming Edition</p><input id="browserSearch" placeholder="Search the web or enter a URL"><div style="margin-top:20px"><button onclick="navigateBrowser(\'https://www.youtube.com\')">▶️ YouTube</button> <button onclick="navigateBrowser(\'https://www.google.com/search?q=browser+games\')">🎮 Gaming</button></div></div>';$("browserSearch")?.addEventListener("keydown",e=>{if(e.key==="Enter")navigateBrowser(e.target.value)})}
-function navigateBrowser(url){url=(url||$("browserUrl").value).trim();if(!url)return;if(!/^https?:\/\//i.test(url))url="https://www.google.com/search?q="+encodeURIComponent(url);browserHistory=browserHistory.slice(0,browserIndex+1);browserHistory.push(url);browserIndex++;loadBrowser()}
-function loadBrowser(){
- const u=browserHistory[browserIndex]; if(!u)return;
- $("browserUrl").value=u;
- try{$("browserTab").textContent=new URL(u).hostname}catch{$("browserTab").textContent="Browser"}
- $("browserContent").innerHTML=`<iframe src="${u}" referrerpolicy="no-referrer" title="Web content"></iframe>`;
-}
+
 function browserBack(){if(browserIndex>0){browserIndex--;loadBrowser()}}function browserForward(){if(browserIndex<browserHistory.length-1){browserIndex++;loadBrowser()}}function browserReload(){if(browserIndex>=0)loadBrowser()}
 
 function saveProxy(){localStorage.setItem("proxyHost",$("proxyHost").value);localStorage.setItem("proxyPort",$("proxyPort").value);notify("Proxy","Settings saved.")}function connectProxy(){$("proxyStatus").className="proxyStatus ok";$("proxyStatus").textContent="● Configured — "+$("proxyHost").value+":"+$("proxyPort").value;notify("Proxy","Configuration enabled.")}function disconnectProxy(){$("proxyStatus").className="proxyStatus";$("proxyStatus").textContent="● Disconnected"}
@@ -703,6 +713,94 @@ window.addEventListener("unhandledrejection",function(e){
    if(typeof notify==="function")notify("Search","No local app matched “"+q+"”.");
  };
 })();
+</script>
+
+<script>
+(function(){
+ const FS={
+  "This PC":[["💾","Local Disk (C:)","folder"],["📁","Documents","folder"],["📥","Downloads","folder"],["🖼️","Pictures","folder"],["🎵","Music","folder"],["🎬","Videos","folder"],["🖥️","Desktop","folder"]],
+  "Quick access":[["📁","Desktop","folder"],["📥","Downloads","folder"],["📄","Documents","folder"],["🖼️","Pictures","folder"]],
+  "Desktop":[["📄","index.html","file"],["🎮","Gaming Hub","app"],["🌐","Browser","app"],["⚙️","Settings","app"]],
+  "Downloads":[["📦","Windows11Gaming.zip","file"],["📄","README.txt","file"]],
+  "Documents":[["📄","Gaming Notes.txt","file"],["📄","My Games.txt","file"]],
+  "Pictures":[["🖼️","Wallpaper.png","file"],["🖼️","Screenshot.png","file"]],
+  "Music":[["🎵","Gaming Mix.mp3","file"]],
+  "Videos":[["🎬","Gameplay.mp4","file"]],
+  "Local Disk (C:)":[["📁","Program Files","folder"],["📁","Users","folder"],["📁","Windows","folder"],["📁","Games","folder"]]
+ };
+ let path="This PC", back=[], forward=[];
+ function render(){
+  const files=$("explorerFiles"), addr=$("explorerAddress");
+  if(!files)return;
+  addr.value=path;
+  files.innerHTML="";
+  (FS[path]||[]).forEach(([icon,name,type])=>{
+   const d=document.createElement("div");d.className="file";d.tabIndex=0;
+   d.innerHTML='<span class="fileIcon">'+icon+'</span><span>'+name+'</span>';
+   d.ondblclick=()=>type==="folder"?explorerOpen(name):openExplorerItem(name,type);
+   d.onclick=()=>{document.querySelectorAll("#explorerFiles .file").forEach(x=>x.classList.remove("selected"));d.classList.add("selected")};
+   files.appendChild(d);
+  });
+ }
+ window.explorerOpen=function(p){
+  p=(p||"This PC").trim();
+  if(FS[p]){if(p!==path){back.push(path);forward=[]}path=p;render();return}
+  const hit=Object.keys(FS).find(x=>x.toLowerCase()===p.toLowerCase());
+  if(hit){if(hit!==path){back.push(path);forward=[]}path=hit;render();return}
+  notify("File Explorer","Folder not found: "+p);
+ };
+ window.explorerBack=function(){if(!back.length)return;forward.push(path);path=back.pop();render()};
+ window.explorerForward=function(){if(!forward.length)return;back.push(path);path=forward.pop();render()};
+ window.explorerUp=function(){if(path==="This PC")return;explorerOpen("This PC")};
+ window.openExplorerItem=function(name,type){
+  if(name==="Browser")openApp("browser");
+  else if(name==="Gaming Hub")openApp("gaming");
+  else if(name==="Settings")openApp("settings");
+  else if(name.endsWith(".txt"))openApp("notepad");
+  else if(name.endsWith(".html"))notify("File Explorer","index.html is available in your GitHub Pages site.");
+  else notify("File Explorer",name+" opened.");
+ };
+ window.refreshExplorer=render;
+ setTimeout(render,0);
+})();
+</script>
+
+<script>
+(function(){
+ const builtins={
+  "home":()=>'<div class="browser-home"><h1>🌐 Web Browser</h1><p>Windows 11 Gaming Edition</p><div class="quick"><button onclick="navigateBrowser(\'https://www.youtube.com\')">▶️ YouTube</button><button onclick="navigateBrowser(\'https://www.google.com\')">🔎 Google</button><button onclick="navigateBrowser(\'https://www.github.com\')">🐙 GitHub</button></div><p class="muted">Enter a web address above. Some websites block embedding in browsers inside webpages.</p></div>',
+  "blocked":u=>'<div class="browser-home"><h2>Site can’t be displayed inside this web OS</h2><p>'+u.replace(/</g,"&lt;")+'</p><button onclick="window.open(\''+u.replace(/'/g,"%27")+'\',\'_blank\')">Open in browser tab</button></div>'
+ };
+ function show(url){
+  const box=$("browserContent"); if(!box)return;
+  if(!url){box.innerHTML=builtins.home();return}
+  $("browserUrl").value=url;
+  try{$("browserTab").textContent=new URL(url).hostname}catch{$("browserTab").textContent="Page"}
+  box.innerHTML='<div class="browser-loading">Loading…</div><iframe id="webFrame" src="'+url.replace(/"/g,"&quot;")+'" title="Web page" style="width:100%;height:100%;border:0;background:white"></iframe>';
+  const f=$("webFrame");
+  f.addEventListener("load",()=>{$("browserContent").querySelector(".browser-loading")?.remove()});
+  f.addEventListener("error",()=>{box.innerHTML=builtins.blocked(url)});
+ }
+ window.browserHome=function(){browserHistory=[];browserIndex=-1;$("browserUrl").value="";$("browserTab").textContent="New tab";show("")};
+ window.navigateBrowser=function(url){
+  url=(url||$("browserUrl").value||"").trim(); if(!url)return browserHome();
+  if(!/^https?:\/\//i.test(url))url="https://www.google.com/search?q="+encodeURIComponent(url);
+  browserHistory=browserHistory.slice(0,browserIndex+1);browserHistory.push(url);browserIndex++;
+  show(url);
+ };
+ window.loadBrowser=function(){if(browserIndex>=0)show(browserHistory[browserIndex])};
+ window.browserBack=function(){if(browserIndex>0){browserIndex--;show(browserHistory[browserIndex])}};
+ window.browserForward=function(){if(browserIndex<browserHistory.length-1){browserIndex++;show(browserHistory[browserIndex])}};
+ window.browserReload=function(){if(browserIndex>=0)show(browserHistory[browserIndex]);else browserHome()};
+ setTimeout(browserHome,0);
+})();
+</script>
+
+<script>
+document.addEventListener("dblclick",e=>{
+ const icon=e.target.closest(".desktop-icon");
+ if(icon){const a=icon.getAttribute("ondblclick");if(a)try{new Function(a).call(icon)}catch(err){console.error(err)}}
+});
 </script>
 </body>
 </html>
