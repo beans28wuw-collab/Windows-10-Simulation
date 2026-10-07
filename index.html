@@ -1,114 +1,2166 @@
+Absolutely — here’s a **single-file Windows 11–style desktop** with a custom taskbar, Start menu, desktop icons, draggable windows, settings, file explorer, browser mockup, terminal, widgets, notifications, wallpaper controls, dark/light mode, and functional interactions.
+
+ Save this as `index.html` and open it in a browser.
+
+```
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcade Network Hub</title>
-    <style>
-        :root { --bg: #07070a; --panel: #111118; --border: rgba(255,255,255,0.06); --accent: #00e5ff; --text: #f1f5f9; --text-muted: #64748b; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; user-select: none; }
-        body, html { width: 100%; height: 100%; background: var(--bg); color: var(--text); overflow-x: hidden; }
-        .navbar { width: 100%; height: 60px; background: var(--panel); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; position: fixed; top: 0; z-index: 100; }
-        .brand { font-size: 16px; font-weight: 800; letter-spacing: 1px; color: var(--accent); }
-        .search-area input { width: 180px; padding: 8px 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 20px; color: #fff; outline: none; font-size: 12px; }
-        .search-area input:focus { border-color: var(--accent); }
-        .wrapper { margin-top: 60px; display: flex; min-height: calc(100% - 60px); }
-        .sidebar { width: 180px; background: rgba(17,17,24,0.4); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
-        .filter-node { width: 100%; padding: 10px; border-radius: 6px; cursor: pointer; color: var(--text-muted); font-size: 12.5px; font-weight: 600; }
-        .filter-node:hover, .filter-node.active { background: rgba(0,229,255,0.06); color: var(--text); }
-        .filter-node.active { border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0; }
-        .main-grid { flex: 1; padding: 20px; }
-        .catalog { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); grid-gap: 15px; }
-        .app-card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; cursor: pointer; transition: all 0.15s; display: flex; flex-direction: column; align-items: center; padding: 12px; text-align: center; }
-        .app-card:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 4px 12px rgba(0,229,255,0.1); }
-        .vector-icon-box { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; background: rgba(0,0,0,0.2); border-radius: 6px; padding: 10px; }
-        .vector-icon-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .app-title { font-size: 11.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; color: var(--text); }
-        @media (max-width: 768px) {
-            .wrapper { flex-direction: column; }
-            .sidebar { width: 100%; flex-direction: row; overflow-x: auto; padding: 10px; border-right: none; border-bottom: 1px solid var(--border); }
-            .filter-node { white-space: nowrap; width: auto; }
-            .filter-node.active { border-left: none; border-bottom: 2px solid var(--accent); border-radius: 0; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Windows 11 Custom Desktop</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:"Segoe UI",system-ui,sans-serif;
+    user-select:none;
+}
+
+:root{
+    --accent:#4cc2ff;
+    --accent2:#7c5cff;
+    --glass:rgba(30,30,35,.72);
+    --glass2:rgba(255,255,255,.12);
+    --text:#fff;
+    --muted:#b8b8c2;
+    --border:rgba(255,255,255,.12);
+    --shadow:0 25px 70px rgba(0,0,0,.45);
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+
+body{
+    color:var(--text);
+    background:#101014;
+}
+
+/* ================= WALLPAPER ================= */
+
+#desktop{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at 20% 25%,#234f96 0%,transparent 35%),
+      radial-gradient(circle at 80% 20%,#54257f 0%,transparent 35%),
+      radial-gradient(circle at 50% 90%,#0b5d72 0%,transparent 35%),
+      linear-gradient(135deg,#07111e,#15152d 50%,#080a12);
+    transition:.4s;
+}
+
+#desktop::before{
+    content:"";
+    position:absolute;
+    inset:-20%;
+    background:
+      radial-gradient(ellipse at center,
+      transparent 35%,
+      rgba(0,0,0,.28) 75%);
+    pointer-events:none;
+}
+
+/* ================= DESKTOP ICONS ================= */
+
+.desktop-icons{
+    position:absolute;
+    top:20px;
+    left:20px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    z-index:2;
+}
+
+.desktop-icon{
+    width:86px;
+    min-height:88px;
+    padding:8px 5px;
+    border-radius:7px;
+    text-align:center;
+    color:white;
+    font-size:12px;
+    cursor:pointer;
+    transition:.15s;
+}
+
+.desktop-icon:hover{
+    background:rgba(255,255,255,.12);
+}
+
+.desktop-icon:active{
+    background:rgba(255,255,255,.2);
+}
+
+.desktop-icon .icon{
+    font-size:34px;
+    margin-bottom:6px;
+    filter:drop-shadow(0 3px 4px rgba(0,0,0,.4));
+}
+
+/* ================= TASKBAR ================= */
+
+#taskbar{
+    position:absolute;
+    bottom:0;
+    left:0;
+    right:0;
+    height:62px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(20,20,25,.78);
+    backdrop-filter:blur(25px) saturate(150%);
+    border-top:1px solid rgba(255,255,255,.08);
+    z-index:10000;
+}
+
+.task-center{
+    height:100%;
+    display:flex;
+    align-items:center;
+    gap:4px;
+}
+
+.task-icon{
+    width:44px;
+    height:44px;
+    display:grid;
+    place-items:center;
+    border-radius:7px;
+    font-size:23px;
+    cursor:pointer;
+    transition:.15s;
+}
+
+.task-icon:hover{
+    background:rgba(255,255,255,.1);
+}
+
+.task-icon.active{
+    background:rgba(255,255,255,.14);
+}
+
+.task-icon.active::after{
+    content:"";
+    position:absolute;
+    bottom:4px;
+    width:16px;
+    height:3px;
+    border-radius:5px;
+    background:var(--accent);
+}
+
+.system-tray{
+    position:absolute;
+    right:10px;
+    height:100%;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:12px;
+}
+
+.tray{
+    padding:8px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.tray:hover{
+    background:rgba(255,255,255,.1);
+}
+
+/* ================= START MENU ================= */
+
+#startMenu{
+    position:absolute;
+    width:650px;
+    height:650px;
+    left:50%;
+    bottom:72px;
+    transform:translateX(-50%) scale(.95);
+    opacity:0;
+    pointer-events:none;
+    background:rgba(28,28,34,.91);
+    backdrop-filter:blur(40px);
+    border:1px solid var(--border);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+    padding:28px;
+    transition:.2s;
+    z-index:9000;
+}
+
+#startMenu.open{
+    opacity:1;
+    transform:translateX(-50%) scale(1);
+    pointer-events:auto;
+}
+
+.search{
+    width:100%;
+    height:43px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,.15);
+    background:rgba(255,255,255,.08);
+    color:white;
+    padding:0 16px;
+    outline:none;
+    font-size:14px;
+}
+
+.search:focus{
+    border-color:var(--accent);
+}
+
+.start-section{
+    margin-top:25px;
+}
+
+.section-head{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:15px;
+    font-size:14px;
+    font-weight:600;
+}
+
+.apps-grid{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:8px;
+}
+
+.app{
+    padding:13px 5px;
+    text-align:center;
+    border-radius:7px;
+    cursor:pointer;
+}
+
+.app:hover{
+    background:rgba(255,255,255,.09);
+}
+
+.app-icon{
+    font-size:28px;
+    margin-bottom:7px;
+}
+
+.app-name{
+    font-size:11px;
+}
+
+.recommended{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:5px;
+}
+
+.rec{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    padding:12px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.rec:hover{
+    background:rgba(255,255,255,.08);
+}
+
+.rec-icon{
+    font-size:25px;
+}
+
+.rec-title{
+    font-size:12px;
+}
+
+.rec-sub{
+    color:var(--muted);
+    font-size:10px;
+    margin-top:3px;
+}
+
+.start-bottom{
+    position:absolute;
+    bottom:0;
+    left:0;
+    right:0;
+    height:70px;
+    border-top:1px solid var(--border);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 25px;
+}
+
+.profile{
+    display:flex;
+    gap:12px;
+    align-items:center;
+}
+
+.avatar{
+    width:34px;
+    height:34px;
+    display:grid;
+    place-items:center;
+    border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+}
+
+.power{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+}
+
+.power:hover{
+    background:rgba(255,255,255,.1);
+}
+
+/* ================= WINDOWS ================= */
+
+.window{
+    position:absolute;
+    min-width:400px;
+    min-height:250px;
+    background:rgba(27,27,31,.91);
+    backdrop-filter:blur(35px);
+    border:1px solid var(--border);
+    border-radius:10px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    z-index:100;
+    animation:windowIn .18s ease;
+}
+
+@keyframes windowIn{
+    from{transform:scale(.94);opacity:0}
+    to{transform:scale(1);opacity:1}
+}
+
+.titlebar{
+    height:46px;
+    display:flex;
+    align-items:center;
+    padding-left:15px;
+    background:rgba(255,255,255,.025);
+    cursor:grab;
+}
+
+.titlebar:active{
+    cursor:grabbing;
+}
+
+.title{
+    flex:1;
+    font-size:13px;
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+.controls{
+    display:flex;
+    height:100%;
+}
+
+.control{
+    width:45px;
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+}
+
+.control:hover{
+    background:rgba(255,255,255,.1);
+}
+
+.control.close:hover{
+    background:#c42b2b;
+}
+
+.window-content{
+    height:calc(100% - 46px);
+    overflow:auto;
+}
+
+/* ================= FILE EXPLORER ================= */
+
+.explorer-layout{
+    display:flex;
+    height:100%;
+}
+
+.sidebar{
+    width:170px;
+    padding:10px;
+    background:rgba(0,0,0,.15);
+    border-right:1px solid var(--border);
+}
+
+.side-item{
+    padding:10px;
+    border-radius:6px;
+    font-size:12px;
+    cursor:pointer;
+}
+
+.side-item:hover,
+.side-item.selected{
+    background:rgba(255,255,255,.09);
+}
+
+.files{
+    flex:1;
+    padding:18px;
+}
+
+.path{
+    height:38px;
+    padding:10px;
+    background:rgba(255,255,255,.06);
+    border-radius:6px;
+    font-size:12px;
+    margin-bottom:18px;
+}
+
+.file-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(90px,1fr));
+    gap:10px;
+}
+
+.file{
+    padding:15px 8px;
+    text-align:center;
+    border-radius:7px;
+    cursor:pointer;
+}
+
+.file:hover{
+    background:rgba(255,255,255,.08);
+}
+
+.file-icon{
+    font-size:36px;
+    margin-bottom:7px;
+}
+
+.file-name{
+    font-size:11px;
+}
+
+/* ================= BROWSER ================= */
+
+.browser-bar{
+    display:flex;
+    gap:8px;
+    padding:10px;
+    border-bottom:1px solid var(--border);
+}
+
+.browser-btn{
+    width:32px;
+    height:32px;
+    border:0;
+    border-radius:6px;
+    color:white;
+    background:rgba(255,255,255,.08);
+}
+
+.address{
+    flex:1;
+    border:0;
+    outline:0;
+    border-radius:7px;
+    padding:0 13px;
+    color:white;
+    background:rgba(255,255,255,.08);
+}
+
+.browser-page{
+    padding:40px;
+    text-align:center;
+}
+
+.browser-page h1{
+    font-size:45px;
+    margin-bottom:12px;
+}
+
+.browser-search{
+    margin:25px auto;
+    max-width:550px;
+    height:48px;
+    border-radius:25px;
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.07);
+    color:white;
+    padding:0 20px;
+    outline:none;
+}
+
+/* ================= SETTINGS ================= */
+
+.settings{
+    display:flex;
+    height:100%;
+}
+
+.settings-nav{
+    width:210px;
+    padding:15px;
+    border-right:1px solid var(--border);
+}
+
+.settings-main{
+    flex:1;
+    padding:28px;
+    overflow:auto;
+}
+
+.setting-card{
+    background:rgba(255,255,255,.06);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:18px;
+    margin-bottom:12px;
+}
+
+.setting-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:8px 0;
+}
+
+.switch{
+    width:42px;
+    height:23px;
+    background:#555;
+    border-radius:20px;
+    padding:3px;
+    cursor:pointer;
+}
+
+.switch.on{
+    background:var(--accent);
+}
+
+.switch span{
+    display:block;
+    width:17px;
+    height:17px;
+    background:white;
+    border-radius:50%;
+    transition:.2s;
+}
+
+.switch.on span{
+    transform:translateX(19px);
+}
+
+/* ================= TERMINAL ================= */
+
+.terminal{
+    height:100%;
+    padding:18px;
+    background:#090b0d;
+    color:#d9e8da;
+    font-family:Consolas,monospace;
+    font-size:13px;
+}
+
+.term-output{
+    white-space:pre-wrap;
+    line-height:1.6;
+}
+
+.term-line{
+    display:flex;
+    margin-top:8px;
+}
+
+.term-prompt{
+    color:#56e67b;
+}
+
+.term-input{
+    flex:1;
+    background:transparent;
+    border:0;
+    outline:0;
+    color:white;
+    font-family:inherit;
+}
+
+/* ================= NOTIFICATION CENTER ================= */
+
+#notifications{
+    position:absolute;
+    right:15px;
+    bottom:72px;
+    width:370px;
+    background:rgba(27,27,32,.94);
+    backdrop-filter:blur(35px);
+    border:1px solid var(--border);
+    border-radius:13px;
+    padding:20px;
+    box-shadow:var(--shadow);
+    z-index:8000;
+    display:none;
+}
+
+#notifications.open{
+    display:block;
+}
+
+.notification{
+    padding:15px;
+    border-radius:9px;
+    background:rgba(255,255,255,.07);
+    margin-bottom:8px;
+}
+
+.notification b{
+    font-size:13px;
+}
+
+.notification p{
+    color:var(--muted);
+    font-size:11px;
+    margin-top:5px;
+}
+
+/* ================= QUICK SETTINGS ================= */
+
+#quickSettings{
+    position:absolute;
+    right:15px;
+    bottom:72px;
+    width:370px;
+    background:rgba(27,27,32,.94);
+    backdrop-filter:blur(35px);
+    border:1px solid var(--border);
+    border-radius:13px;
+    padding:20px;
+    box-shadow:var(--shadow);
+    z-index:8000;
+    display:none;
+}
+
+#quickSettings.open{
+    display:block;
+}
+
+.qs-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+}
+
+.qs{
+    padding:17px;
+    border-radius:9px;
+    background:rgba(255,255,255,.07);
+    cursor:pointer;
+}
+
+.qs.active{
+    background:var(--accent);
+    color:#071018;
+}
+
+.brightness{
+    width:100%;
+    margin-top:20px;
+}
+
+/* ================= CLOCK ================= */
+
+.clock-big{
+    position:absolute;
+    right:30px;
+    top:25px;
+    text-align:right;
+    text-shadow:0 3px 15px rgba(0,0,0,.5);
+}
+
+.clock-time{
+    font-size:38px;
+    font-weight:300;
+}
+
+.clock-date{
+    font-size:13px;
+    color:#ddd;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:800px){
+    #startMenu{
+        width:94vw;
+        height:75vh;
+    }
+
+    .apps-grid{
+        grid-template-columns:repeat(4,1fr);
+    }
+
+    .window{
+        left:2%!important;
+        top:5%!important;
+        width:96%!important;
+        height:82%!important;
+    }
+
+    .system-tray{
+        display:none;
+    }
+}
+</style>
 </head>
+
 <body>
-    <header class="navbar">
-        <div class="brand">CORE // STATION</div>
-        <div class="search-area"><input type="text" id="queryInput" placeholder="Filter vectors..." onkeyup="filterItems()"></div>
-    </header>
-    <div class="wrapper">
-        <nav class="sidebar">
-            <div class="filter-node active" onclick="applyFilter('ALL', this)">All Nodes</div>
-            <div class="filter-node" onclick="applyFilter('ALPHA', this)">Alpha Class</div>
-            <div class="filter-node" onclick="applyFilter('BETA', this)">Beta Class</div>
-        </nav>
-        <main class="main-grid">
-            <div class="catalog" id="catalog-container"></div>
-        </main>
+
+<div id="desktop">
+
+    <!-- CLOCK -->
+    <div class="clock-big">
+        <div class="clock-time" id="bigClock">12:00</div>
+        <div class="clock-date" id="bigDate">Wednesday, October 7</div>
     </div>
-    <script>
-        // Packed asset list to protect against code cutoff limits
-        const assets = [
-            { id: "f3b533e36a2f07ab", cat: "ALPHA", url: "https://crazygames.com" },
-            { id: "bd370c150990f868", cat: "ALPHA", url: "https://poki.com" },
-            { id: "4e6032fe381fcb38", cat: "ALPHA", url: "https://geforcenow.com" },
-            { id: "bfa7016f135e8604", cat: "ALPHA", url: "https://retrogames.cc" },
-            { id: "a505a7673b1f3d5a", cat: "ALPHA", url: "https://crazygames.com" },
-            { id: "8c2eb399cc03c214", cat: "ALPHA", url: "https://poki.com" },
-            { id: "741ef823f4121a67", cat: "ALPHA", url: "https://geforcenow.com" },
-            { id: "27f5fdfecb7e2108", cat: "ALPHA", url: "https://retrogames.cc" },
-            { id: "1170e0177d9b1142", cat: "ALPHA", url: "https://crazygames.com" },
-            { id: "299d810f26d51e94", cat: "ALPHA", url: "https://poki.com" },
-            { id: "07d8ee010cd17a0b", cat: "BETA",  url: "https://geforcenow.com" },
-            { id: "1834ec6e36ee5d1b", cat: "BETA",  url: "https://retrogames.cc" },
-            { id: "c6e764c13faa8f7d", cat: "BETA",  url: "https://crazygames.com" },
-            { id: "a625960748dabaeb", cat: "BETA",  url: "https://poki.com" },
-            { id: "790a209955fa8826", cat: "BETA",  url: "https://geforcenow.com" },
-            { id: "36fb1d5756aeae79", cat: "BETA",  url: "https://retrogames.cc" },
-            { id: "94321bf50e26c009", cat: "BETA",  url: "https://crazygames.com" },
-            { id: "427203e4dd98a37f", cat: "BETA",  url: "https://poki.com" },
-            { id: "368aa814f8096e24", cat: "BETA",  url: "https://geforcenow.com" },
-            { id: "9420d792dd23ad3f", cat: "BETA",  url: "https://retrogames.cc" }
-        ];
 
-        const container = document.getElementById('catalog-container');
-        assets.forEach((asset, idx) => {
-            const num = String(idx + 1).padStart(2, '0');
-            container.innerHTML += `
-                <div class="app-card" data-group="${asset.cat}" onclick="route('${asset.url}')">
-                    <div class="vector-icon-box"><img src="https://codex-bot.com{asset.id}.svg" alt="Asset ${num}"></div>
-                    <div class="app-title">Asset ${num}</div>
-                </div>`;
-        });
+    <!-- DESKTOP ICONS -->
+    <div class="desktop-icons">
 
-        function filterItems() {
-            let query = document.getElementById('queryInput').value.toLowerCase();
-            let items = document.getElementsByClassName('app-card');
-            for (let i = 0; i < items.length; i++) {
-                let text = items[i].querySelector('.app-title').innerText.toLowerCase();
-                items[i].style.display = text.includes(query) ? "" : "none";
+        <div class="desktop-icon" ondblclick="openApp('explorer')">
+            <div class="icon">💻</div>
+            <div>This PC</div>
+        </div>
+
+        <div class="desktop-icon" ondblclick="openApp('browser')">
+            <div class="icon">🌐</div>
+            <div>Browser</div>
+        </div>
+
+        <div class="desktop-icon" ondblclick="openApp('terminal')">
+            <div class="icon">▣</div>
+            <div>Terminal</div>
+        </div>
+
+        <div class="desktop-icon" ondblclick="openApp('settings')">
+            <div class="icon">⚙️</div>
+            <div>Settings</div>
+        </div>
+
+    </div>
+
+    <!-- WINDOWS -->
+    <div id="windows"></div>
+
+    <!-- START MENU -->
+    <div id="startMenu">
+
+        <input
+            class="search"
+            id="startSearch"
+            placeholder="Search for apps, settings, and documents..."
+            oninput="searchApps(this.value)"
+        >
+
+        <div class="start-section">
+            <div class="section-head">
+                <span>Pinned</span>
+                <span style="color:#aaa">All apps ›</span>
+            </div>
+
+            <div class="apps-grid">
+
+                <div class="app" onclick="openApp('explorer')">
+                    <div class="app-icon">📁</div>
+                    <div class="app-name">File Explorer</div>
+                </div>
+
+                <div class="app" onclick="openApp('browser')">
+                    <div class="app-icon">🌐</div>
+                    <div class="app-name">Browser</div>
+                </div>
+
+                <div class="app" onclick="openApp('settings')">
+                    <div class="app-icon">⚙️</div>
+                    <div class="app-name">Settings</div>
+                </div>
+
+                <div class="app" onclick="openApp('terminal')">
+                    <div class="app-icon">▣</div>
+                    <div class="app-name">Terminal</div>
+                </div>
+
+                <div class="app" onclick="openApp('notes')">
+                    <div class="app-icon">📝</div>
+                    <div class="app-name">Notepad</div>
+                </div>
+
+                <div class="app" onclick="openApp('photos')">
+                    <div class="app-icon">🌄</div>
+                    <div class="app-name">Photos</div>
+                </div>
+
+                <div class="app" onclick="openApp('store')">
+                    <div class="app-icon">🛍️</div>
+                    <div class="app-name">Store</div>
+                </div>
+
+                <div class="app" onclick="openApp('calculator')">
+                    <div class="app-icon">🧮</div>
+                    <div class="app-name">Calculator</div>
+                </div>
+
+                <div class="app">
+                    <div class="app-icon">🎵</div>
+                    <div class="app-name">Music</div>
+                </div>
+
+                <div class="app">
+                    <div class="app-icon">🎮</div>
+                    <div class="app-name">Gaming</div>
+                </div>
+
+                <div class="app">
+                    <div class="app-icon">📧</div>
+                    <div class="app-name">Mail</div>
+                </div>
+
+                <div class="app">
+                    <div class="app-icon">📅</div>
+                    <div class="app-name">Calendar</div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="start-section">
+            <div class="section-head">
+                <span>Recommended</span>
+                <span style="color:#aaa">More ›</span>
+            </div>
+
+            <div class="recommended">
+
+                <div class="rec">
+                    <div class="rec-icon">📄</div>
+                    <div>
+                        <div class="rec-title">Welcome.txt</div>
+                        <div class="rec-sub">Just now</div>
+                    </div>
+                </div>
+
+                <div class="rec">
+                    <div class="rec-icon">🖼️</div>
+                    <div>
+                        <div class="rec-title">Wallpaper.png</div>
+                        <div class="rec-sub">Today</div>
+                    </div>
+                </div>
+
+                <div class="rec">
+                    <div class="rec-icon">📁</div>
+                    <div>
+                        <div class="rec-title">Projects</div>
+                        <div class="rec-sub">Yesterday</div>
+                    </div>
+                </div>
+
+                <div class="rec">
+                    <div class="rec-icon">💻</div>
+                    <div>
+                        <div class="rec-title">index.html</div>
+                        <div class="rec-sub">Yesterday</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="start-bottom">
+
+            <div class="profile">
+                <div class="avatar">👤</div>
+                <span>Custom User</span>
+            </div>
+
+            <div class="power" onclick="shutdown()">⏻</div>
+
+        </div>
+
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    <div id="notifications">
+
+        <h3 style="margin-bottom:15px">Notifications</h3>
+
+        <div class="notification">
+            <b>Welcome to your custom desktop</b>
+            <p>Everything is running normally.</p>
+        </div>
+
+        <div class="notification">
+            <b>System ready</b>
+            <p>Your custom Windows-style environment is ready.</p>
+        </div>
+
+        <div class="notification">
+            <b>Tip</b>
+            <p>Right-click the desktop for more customization.</p>
+        </div>
+
+    </div>
+
+    <!-- QUICK SETTINGS -->
+    <div id="quickSettings">
+
+        <h3 style="margin-bottom:15px">Quick Settings</h3>
+
+        <div class="qs-grid">
+
+            <div class="qs active" onclick="toggleQS(this)">
+                📶 Wi-Fi
+            </div>
+
+            <div class="qs active" onclick="toggleQS(this)">
+                🔵 Bluetooth
+            </div>
+
+            <div class="qs" onclick="toggleDarkMode(this)">
+                🌙 Dark mode
+            </div>
+
+            <div class="qs" onclick="toggleQS(this)">
+                ✈️ Airplane
+            </div>
+
+        </div>
+
+        <input
+            class="brightness"
+            type="range"
+            min="10"
+            max="100"
+            value="100"
+            oninput="brightness(this.value)"
+        >
+
+    </div>
+
+    <!-- TASKBAR -->
+    <div id="taskbar">
+
+        <div class="task-center">
+
+            <div class="task-icon" onclick="toggleStart()">⊞</div>
+
+            <div class="task-icon" onclick="openApp('search')">🔎</div>
+
+            <div class="task-icon" onclick="openApp('explorer')">📁</div>
+
+            <div class="task-icon" onclick="openApp('browser')">🌐</div>
+
+            <div class="task-icon" onclick="openApp('terminal')">▣</div>
+
+            <div class="task-icon" onclick="openApp('settings')">⚙️</div>
+
+        </div>
+
+        <div class="system-tray">
+
+            <div class="tray" onclick="toggleQuickSettings()">
+                📶 🔊 🔋
+            </div>
+
+            <div class="tray" onclick="toggleNotifications()">
+                🔔
+            </div>
+
+            <div class="tray">
+                <span id="trayTime">12:00</span>
+                <br>
+                <span id="trayDate">10/7/2026</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+/* =========================================
+   WINDOW SYSTEM
+========================================= */
+
+let zIndex = 100;
+let windowCount = 0;
+
+const apps = {
+
+explorer:{
+    title:"File Explorer",
+    icon:"📁",
+    width:850,
+    height:550,
+    html:`
+        <div class="explorer-layout">
+
+            <div class="sidebar">
+
+                <div class="side-item selected">🏠 Home</div>
+                <div class="side-item">⭐ Favorites</div>
+                <div class="side-item">📁 Desktop</div>
+                <div class="side-item">📄 Documents</div>
+                <div class="side-item">⬇️ Downloads</div>
+                <div class="side-item">🖼️ Pictures</div>
+                <div class="side-item">🎵 Music</div>
+                <div class="side-item">🎬 Videos</div>
+                <br>
+                <div class="side-item">💻 This PC</div>
+                <div class="side-item">☁️ Cloud</div>
+
+            </div>
+
+            <div class="files">
+
+                <div class="path">
+                    Home
+                </div>
+
+                <div class="file-grid">
+
+                    <div class="file">
+                        <div class="file-icon">📁</div>
+                        <div class="file-name">Desktop</div>
+                    </div>
+
+                    <div class="file">
+                        <div class="file-icon">📁</div>
+                        <div class="file-name">Documents</div>
+                    </div>
+
+                    <div class="file">
+                        <div class="file-icon">📁</div>
+                        <div class="file-name">Downloads</div>
+                    </div>
+
+                    <div class="file">
+                        <div class="file-icon">📁</div>
+                        <div class="file-name">Pictures</div>
+                    </div>
+
+                    <div class="file">
+                        <div class="file-icon">📁</div>
+                        <div class="file-name">Projects</div>
+                    </div>
+
+                    <div class="file">
+                        <div class="file-icon">📄</div>
+                        <div class="file-name">Welcome.txt</div>
+                    </div>
+
+                    <div class="file">
+                        <div class="file-icon">🌐</div>
+                        <div class="file-name">index.html</div>
+                    </div>
+
+                    <div class="file">
+                        <div class="file-icon">🖼️</div>
+                        <div class="file-name">Wallpaper.png</div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    `
+},
+
+browser:{
+    title:"Custom Browser",
+    icon:"🌐",
+    width:900,
+    height:600,
+    html:`
+        <div class="browser-bar">
+
+            <button class="browser-btn">←</button>
+            <button class="browser-btn">→</button>
+            <button class="browser-btn">↻</button>
+
+            <input
+                class="address"
+                value="https://www.example.com"
+                onkeydown="if(event.key==='Enter') browserGo(this.value)"
+            >
+
+        </div>
+
+        <div class="browser-page">
+
+            <div style="font-size:70px">🌐</div>
+
+            <h1>Welcome</h1>
+
+            <p style="color:#aaa">
+                Your custom browser experience.
+            </p>
+
+            <input
+                class="browser-search"
+                placeholder="Search the web..."
+                onkeydown="if(event.key==='Enter') browserGo(this.value)"
+            >
+
+            <div style="
+                display:flex;
+                justify-content:center;
+                gap:10px;
+                flex-wrap:wrap;
+            ">
+                <button class="qs" onclick="browserGo('https://example.com')">
+                    Example
+                </button>
+
+                <button class="qs">
+                    Favorites
+                </button>
+
+                <button class="qs">
+                    History
+                </button>
+            </div>
+
+        </div>
+    `
+},
+
+settings:{
+    title:"Settings",
+    icon:"⚙️",
+    width:850,
+    height:580,
+    html:`
+        <div class="settings">
+
+            <div class="settings-nav">
+
+                <div class="side-item selected">🖥️ System</div>
+                <div class="side-item">🎨 Personalization</div>
+                <div class="side-item">📶 Network</div>
+                <div class="side-item">🔊 Sound</div>
+                <div class="side-item">🔔 Notifications</div>
+                <div class="side-item">👤 Accounts</div>
+                <div class="side-item">🔐 Privacy</div>
+                <div class="side-item">⚙️ Windows Update</div>
+
+            </div>
+
+            <div class="settings-main">
+
+                <h1 style="margin-bottom:6px">System</h1>
+                <p style="color:#aaa;margin-bottom:25px">
+                    Customize your desktop experience.
+                </p>
+
+                <div class="setting-card">
+
+                    <h3>Display</h3>
+
+                    <div class="setting-row">
+                        <span>Brightness</span>
+                        <input type="range" value="100"
+                        oninput="brightness(this.value)">
+                    </div>
+
+                    <div class="setting-row">
+                        <span>Night light</span>
+                        <div class="switch" onclick="toggleSwitch(this)">
+                            <span></span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="setting-card">
+
+                    <h3>Personalization</h3>
+
+                    <div class="setting-row">
+                        <span>Dark mode</span>
+
+                        <div
+                            class="switch on"
+                            onclick="toggleDarkMode(this)"
+                        >
+                            <span></span>
+                        </div>
+
+                    </div>
+
+                    <div class="setting-row">
+                        <span>Accent color</span>
+
+                        <input
+                            type="color"
+                            value="#4cc2ff"
+                            onchange="setAccent(this.value)"
+                        >
+                    </div>
+
+                </div>
+
+                <div class="setting-card">
+
+                    <h3>About</h3>
+
+                    <p style="color:#aaa;margin-top:8px">
+                        Custom Windows 11 Web Desktop<br>
+                        Version 1.0<br>
+                        Built entirely with HTML, CSS and JavaScript.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+    `
+},
+
+terminal:{
+    title:"Terminal",
+    icon:"▣",
+    width:750,
+    height:450,
+    html:`
+        <div class="terminal">
+
+            <div class="term-output" id="terminalOutput">
+Microsoft Windows [Version Custom 11.0]
+(c) Custom Desktop Corporation.
+
+Welcome to the custom terminal.
+
+Type "help" to see available commands.
+            </div>
+
+            <div class="term-line">
+
+                <span class="term-prompt">C:\\Users\\User&gt;&nbsp;</span>
+
+                <input
+                    class="term-input"
+                    id="terminalInput"
+                    autofocus
+                    onkeydown="terminalCommand(event)"
+                >
+
+            </div>
+
+        </div>
+    `
+},
+
+notes:{
+    title:"Notepad",
+    icon:"📝",
+    width:700,
+    height:500,
+    html:`
+        <textarea
+            style="
+                width:100%;
+                height:100%;
+                border:0;
+                outline:0;
+                resize:none;
+                background:#111;
+                color:white;
+                padding:25px;
+                font:15px Consolas,monospace;
+            "
+            placeholder="Start typing..."
+        ></textarea>
+    `
+},
+
+calculator:{
+    title:"Calculator",
+    icon:"🧮",
+    width:350,
+    height:520,
+    html:`
+        <div style="padding:15px">
+
+            <input
+                id="calcDisplay"
+                readonly
+                style="
+                    width:100%;
+                    height:70px;
+                    background:#111;
+                    color:white;
+                    border:0;
+                    border-radius:8px;
+                    font-size:28px;
+                    text-align:right;
+                    padding:10px;
+                    margin-bottom:12px;
+                "
+            >
+
+            <div style="
+                display:grid;
+                grid-template-columns:repeat(4,1fr);
+                gap:7px;
+            ">
+
+                ${[
+                    "C","⌫","%","/",
+                    "7","8","9","*",
+                    "4","5","6","-",
+                    "1","2","3","+",
+                    "0",".","=",""
+                ].map(x=>`
+                    <button
+                        onclick="calc('${x}')"
+                        style="
+                            height:58px;
+                            border:0;
+                            border-radius:7px;
+                            background:${x==="="? "var(--accent)":"rgba(255,255,255,.09)"};
+                            color:white;
+                            font-size:17px;
+                        "
+                    >${x}</button>
+                `).join("")}
+
+            </div>
+
+        </div>
+    `
+},
+
+photos:{
+    title:"Photos",
+    icon:"🌄",
+    width:800,
+    height:550,
+    html:`
+        <div style="
+            height:100%;
+            display:grid;
+            place-items:center;
+            background:
+            radial-gradient(circle,#31649a,#121525);
+        ">
+            <div style="text-align:center">
+                <div style="font-size:100px">🌄</div>
+                <h1>Your Photos</h1>
+                <p style="color:#aaa">
+                    Beautiful memories belong here.
+                </p>
+            </div>
+        </div>
+    `
+},
+
+store:{
+    title:"Microsoft Store",
+    icon:"🛍️",
+    width:800,
+    height:550,
+    html:`
+        <div style="padding:30px">
+
+            <h1>Store</h1>
+
+            <p style="color:#aaa;margin:8px 0 25px">
+                Discover apps for your custom desktop.
+            </p>
+
+            <div style="
+                display:grid;
+                grid-template-columns:repeat(3,1fr);
+                gap:12px;
+            ">
+
+                ${[
+                    ["🌐","Browser"],
+                    ["🎮","Games"],
+                    ["🎵","Music"],
+                    ["🎨","Design"],
+                    ["💻","Developer"],
+                    ["🧰","Utilities"]
+                ].map(a=>`
+                    <div class="setting-card" style="text-align:center">
+                        <div style="font-size:40px">${a[0]}</div>
+                        <h3>${a[1]}</h3>
+                        <button class="qs active" style="margin-top:10px">
+                            Get
+                        </button>
+                    </div>
+                `).join("")}
+
+            </div>
+
+        </div>
+    `
+},
+
+search:{
+    title:"Search",
+    icon:"🔎",
+    width:600,
+    height:400,
+    html:`
+        <div style="padding:40px;text-align:center">
+
+            <div style="font-size:60px">🔎</div>
+
+            <h1>Search</h1>
+
+            <input
+                class="browser-search"
+                style="width:100%"
+                placeholder="Search your desktop..."
+                autofocus
+                oninput="desktopSearch(this.value)"
+            >
+
+            <div id="searchResults" style="text-align:left"></div>
+
+        </div>
+    `
+}
+
+};
+
+/* =========================================
+   OPEN APPLICATION
+========================================= */
+
+function openApp(name){
+
+    if(name==="shutdown"){
+        shutdown();
+        return;
+    }
+
+    if(!apps[name]) return;
+
+    closePanels();
+
+    const app=apps[name];
+
+    const win=document.createElement("div");
+
+    win.className="window";
+
+    win.style.width=app.width+"px";
+    win.style.height=app.height+"px";
+
+    win.style.left=
+        Math.max(
+            20,
+            (window.innerWidth-app.width)/2 +
+            (windowCount%5)*18
+        )+"px";
+
+    win.style.top=
+        Math.max(
+            20,
+            (window.innerHeight-app.height)/2 +
+            (windowCount%5)*18
+        )+"px";
+
+    win.style.zIndex=++zIndex;
+
+    win.innerHTML=`
+
+        <div class="titlebar">
+
+            <div class="title">
+                <span>${app.icon}</span>
+                <span>${app.title}</span>
+            </div>
+
+            <div class="controls">
+
+                <div
+                    class="control"
+                    onclick="minimizeWindow(this)"
+                >−</div>
+
+                <div
+                    class="control"
+                    onclick="maximizeWindow(this)"
+                >□</div>
+
+                <div
+                    class="control close"
+                    onclick="closeWindow(this)"
+                >×</div>
+
+            </div>
+
+        </div>
+
+        <div class="window-content">
+            ${app.html}
+        </div>
+    `;
+
+    document.getElementById("windows").appendChild(win);
+
+    windowCount++;
+
+    makeDraggable(win);
+
+    win.addEventListener("mousedown",()=>{
+        win.style.zIndex=++zIndex;
+    });
+
+}
+
+/* =========================================
+   WINDOW CONTROLS
+========================================= */
+
+function closeWindow(el){
+
+    const win=el.closest(".window");
+
+    win.style.transform="scale(.95)";
+    win.style.opacity="0";
+
+    setTimeout(()=>win.remove(),150);
+}
+
+function minimizeWindow(el){
+
+    const win=el.closest(".window");
+
+    win.style.display="none";
+
+    setTimeout(()=>{
+        win.style.display="block";
+        win.style.opacity="1";
+    },1000);
+}
+
+function maximizeWindow(el){
+
+    const win=el.closest(".window");
+
+    if(win.dataset.maximized){
+
+        win.style.width=win.dataset.width;
+        win.style.height=win.dataset.height;
+        win.style.left=win.dataset.left;
+        win.style.top=win.dataset.top;
+
+        delete win.dataset.maximized;
+
+    }else{
+
+        win.dataset.width=win.style.width;
+        win.dataset.height=win.style.height;
+        win.dataset.left=win.style.left;
+        win.dataset.top=win.style.top;
+
+        win.style.left="0";
+        win.style.top="0";
+        win.style.width="100vw";
+        win.style.height="calc(100vh - 62px)";
+
+        win.dataset.maximized="true";
+    }
+}
+
+/* =========================================
+   DRAGGING
+========================================= */
+
+function makeDraggable(win){
+
+    const bar=win.querySelector(".titlebar");
+
+    let dragging=false;
+    let offsetX=0;
+    let offsetY=0;
+
+    bar.addEventListener("mousedown",e=>{
+
+        if(e.target.closest(".control")) return;
+
+        dragging=true;
+
+        offsetX=e.clientX-win.offsetLeft;
+        offsetY=e.clientY-win.offsetTop;
+
+        win.style.zIndex=++zIndex;
+    });
+
+    document.addEventListener("mousemove",e=>{
+
+        if(!dragging)return;
+
+        win.style.left=(e.clientX-offsetX)+"px";
+        win.style.top=(e.clientY-offsetY)+"px";
+
+    });
+
+    document.addEventListener("mouseup",()=>{
+        dragging=false;
+    });
+}
+
+/* =========================================
+   START MENU
+========================================= */
+
+function toggleStart(){
+
+    const menu=document.getElementById("startMenu");
+
+    menu.classList.toggle("open");
+
+    document.getElementById("notifications")
+        .classList.remove("open");
+
+    document.getElementById("quickSettings")
+        .classList.remove("open");
+}
+
+function closePanels(){
+
+    document.getElementById("startMenu")
+        .classList.remove("open");
+
+    document.getElementById("notifications")
+        .classList.remove("open");
+
+    document.getElementById("quickSettings")
+        .classList.remove("open");
+}
+
+/* =========================================
+   NOTIFICATIONS
+========================================= */
+
+function toggleNotifications(){
+
+    closePanels();
+
+    document.getElementById("notifications")
+        .classList.toggle("open");
+}
+
+function toggleQuickSettings(){
+
+    closePanels();
+
+    document.getElementById("quickSettings")
+        .classList.toggle("open");
+}
+
+/* =========================================
+   QUICK SETTINGS
+========================================= */
+
+function toggleQS(el){
+
+    el.classList.toggle("active");
+}
+
+function toggleSwitch(el){
+
+    el.classList.toggle("on");
+}
+
+function toggleDarkMode(el){
+
+    if(el) el.classList.toggle("active");
+
+    document.body.classList.toggle("light");
+
+    if(document.body.classList.contains("light")){
+
+        document.documentElement.style.setProperty(
+            "--glass",
+            "rgba(245,245,250,.82)"
+        );
+
+        document.documentElement.style.setProperty(
+            "--text",
+            "#111"
+        );
+
+        document.documentElement.style.setProperty(
+            "--muted",
+            "#555"
+        );
+
+        document.getElementById("desktop").style.background=
+            "linear-gradient(135deg,#75b7ff,#b8c9ff 50%,#dce5ff)";
+
+    }else{
+
+        document.documentElement.style.setProperty(
+            "--text",
+            "#fff"
+        );
+
+        document.documentElement.style.setProperty(
+            "--muted",
+            "#b8b8c2"
+        );
+
+        document.getElementById("desktop").style.background=
+            `
+            radial-gradient(circle at 20% 25%,#234f96 0%,transparent 35%),
+            radial-gradient(circle at 80% 20%,#54257f 0%,transparent 35%),
+            radial-gradient(circle at 50% 90%,#0b5d72 0%,transparent 35%),
+            linear-gradient(135deg,#07111e,#15152d 50%,#080a12)
+            `;
+    }
+}
+
+function setAccent(color){
+
+    document.documentElement.style.setProperty(
+        "--accent",
+        color
+    );
+}
+
+function brightness(value){
+
+    document.getElementById("desktop")
+        .style.filter=`brightness(${value}%)`;
+}
+
+/* =========================================
+   CLOCK
+========================================= */
+
+function updateClock(){
+
+    const now=new Date();
+
+    let h=now.getHours();
+
+    const ampm=h>=12?"PM":"AM";
+
+    h=h%12||12;
+
+    const m=String(now.getMinutes()).padStart(2,"0");
+
+    const time=`${h}:${m} ${ampm}`;
+
+    const date=now.toLocaleDateString(
+        undefined,
+        {
+            weekday:"long",
+            month:"long",
+            day:"numeric"
+        }
+    );
+
+    document.getElementById("bigClock")
+        .textContent=time;
+
+    document.getElementById("bigDate")
+        .textContent=date;
+
+    document.getElementById("trayTime")
+        .textContent=time;
+
+    document.getElementById("trayDate")
+        .textContent=now.toLocaleDateString();
+}
+
+updateClock();
+setInterval(updateClock,1000);
+
+/* =========================================
+   SEARCH
+========================================= */
+
+function searchApps(value){
+
+    const appsEls=document.querySelectorAll(".app");
+
+    value=value.toLowerCase();
+
+    appsEls.forEach(app=>{
+
+        const text=app.innerText.toLowerCase();
+
+        app.style.display=
+            text.includes(value)?"block":"none";
+
+    });
+}
+
+function desktopSearch(value){
+
+    const result=
+        document.getElementById("searchResults");
+
+    if(!value){
+
+        result.innerHTML="";
+
+        return;
+    }
+
+    result.innerHTML=`
+
+        <div class="setting-card">
+            🔎 Searching for <b>${escapeHTML(value)}</b>
+        </div>
+
+        <div class="setting-card">
+            📁 No local files found
+        </div>
+
+    `;
+}
+
+/* =========================================
+   BROWSER
+========================================= */
+
+function browserGo(url){
+
+    if(!url.startsWith("http")){
+
+        url=
+            "https://www.google.com/search?q="+
+            encodeURIComponent(url);
+
+    }
+
+    window.open(url,"_blank");
+}
+
+/* =========================================
+   TERMINAL
+========================================= */
+
+function terminalCommand(event){
+
+    if(event.key!=="Enter")return;
+
+    const input=event.target;
+    const command=input.value.trim();
+
+    const output=
+        document.getElementById("terminalOutput");
+
+    let response="";
+
+    switch(command.toLowerCase()){
+
+        case "help":
+
+            response=
+`Available commands:
+
+help       Show commands
+clear      Clear terminal
+time       Show current time
+date       Show current date
+apps       List applications
+about      About this desktop
+echo TEXT  Print text`;
+
+            break;
+
+        case "clear":
+
+            output.textContent="";
+            input.value="";
+            return;
+
+        case "time":
+
+            response=new Date().toLocaleTimeString();
+            break;
+
+        case "date":
+
+            response=new Date().toLocaleDateString();
+            break;
+
+        case "apps":
+
+            response=
+`File Explorer
+Browser
+Settings
+Terminal
+Notepad
+Photos
+Store
+Calculator`;
+
+            break;
+
+        case "about":
+
+            response=
+`Custom Windows 11 Web Desktop
+HTML + CSS + JavaScript
+Version 1.0`;
+
+            break;
+
+        default:
+
+            if(command.toLowerCase().startsWith("echo ")){
+
+                response=command.substring(5);
+
+            }else{
+
+                response=
+                    `'${command}' is not recognized as a command.`;
+
             }
+    }
+
+    output.textContent +=
+        `\n\nC:\\Users\\User> ${command}\n${response}`;
+
+    input.value="";
+
+    input.scrollIntoView();
+
+}
+
+/* =========================================
+   CALCULATOR
+========================================= */
+
+function calc(value){
+
+    const display=
+        document.getElementById("calcDisplay");
+
+    if(!display)return;
+
+    if(value==="C"){
+
+        display.value="";
+
+    }else if(value==="⌫"){
+
+        display.value=
+            display.value.slice(0,-1);
+
+    }else if(value==="="){
+
+        try{
+
+            display.value=
+                Function(
+                    `"use strict";return (${display.value})`
+                )();
+
+        }catch{
+
+            display.value="Error";
         }
 
-        function applyFilter(group, tab) {
-            let items = document.getElementsByClassName('app-card');
-            let links = document.getElementsByClassName('filter-node');
-            for(let i=0; i<links.length; i++) links[i].classList.remove('active');
-            tab.classList.add('active');
-            for (let i = 0; i < items.length; i++) {
-                let targetGroup = items[i].getAttribute('data-group');
-                items[i].style.display = (group === 'ALL' || targetGroup === group) ? "" : "none";
-            }
-        }
+    }else{
 
-        function route(destinationUrl) {
-            const win = window.open('about:blank', '_blank');
-            if (win) {
-                win.opener = null;
-                win.location.replace(destinationUrl);
-            }
-        }
-    </script>
+        display.value+=value;
+    }
+}
+
+/* =========================================
+   POWER
+========================================= */
+
+function shutdown(){
+
+    document.getElementById("desktop").innerHTML=`
+
+        <div style="
+            position:absolute;
+            inset:0;
+            background:#050505;
+            display:grid;
+            place-items:center;
+            text-align:center;
+        ">
+
+            <div>
+
+                <div style="
+                    font-size:80px;
+                    margin-bottom:20px;
+                ">⊞</div>
+
+                <h1>Goodbye</h1>
+
+                <p style="
+                    color:#777;
+                    margin-top:10px;
+                ">
+                    Your custom desktop has been shut down.
+                </p>
+
+                <button
+                    onclick="location.reload()"
+                    style="
+                        margin-top:25px;
+                        padding:12px 25px;
+                        border:0;
+                        border-radius:7px;
+                        background:#4cc2ff;
+                        color:#071018;
+                        font-weight:bold;
+                        cursor:pointer;
+                    "
+                >
+                    Restart
+                </button>
+
+            </div>
+
+        </div>
+    `;
+}
+
+/* =========================================
+   SECURITY / HTML ESCAPE
+========================================= */
+
+function escapeHTML(str){
+
+    return str.replace(/[&<>"']/g,m=>({
+
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+
+    }[m]));
+}
+
+/* =========================================
+   CLOSE MENUS WITH ESC
+========================================= */
+
+document.addEventListener("keydown",e=>{
+
+    if(e.key==="Escape"){
+
+        closePanels();
+
+    }
+
+});
+
+/* =========================================
+   DESKTOP RIGHT CLICK
+========================================= */
+
+document.getElementById("desktop")
+.addEventListener("contextmenu",e=>{
+
+    e.preventDefault();
+
+    const menu=document.createElement("div");
+
+    menu.style.cssText=`
+        position:absolute;
+        left:${e.clientX}px;
+        top:${e.clientY}px;
+        width:210px;
+        padding:6px;
+        background:rgba(30,30,35,.95);
+        backdrop-filter:blur(25px);
+        border:1px solid rgba(255,255,255,.12);
+        border-radius:8px;
+        box-shadow:0 20px 50px rgba(0,0,0,.5);
+        z-index:99999;
+    `;
+
+    menu.innerHTML=`
+
+        <div class="side-item"
+             onclick="openApp('settings');this.parentElement.remove()">
+            ⚙️ Personalize
+        </div>
+
+        <div class="side-item"
+             onclick="openApp('explorer');this.parentElement.remove()">
+            📁 Open File Explorer
+        </div>
+
+        <div class="side-item"
+             onclick="location.reload()">
+            🔄 Refresh
+        </div>
+
+        <div class="side-item"
+             onclick="document.body.requestFullscreen();this.parentElement.remove()">
+            ⛶ Fullscreen
+        </div>
+
+    `;
+
+    document.body.appendChild(menu);
+
+    setTimeout(()=>{
+
+        document.addEventListener(
+            "click",
+            ()=>menu.remove(),
+            {once:true}
+        );
+
+    },10);
+
+});
+
+</script>
+
 </body>
 </html>
+```
+
+ This is a **browser-based desktop simulation**, not an actual replacement for the Windows OS. It does, however, give you a surprisingly complete Windows-11-like UI in one HTML file, including draggable app windows and working controls.
