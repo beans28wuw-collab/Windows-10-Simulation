@@ -3,77 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameHub</title>
+    <title>GameHub Pro</title>
     <style>
-        :root { --bg: #0a0a10; --panel: #14141f; --border: rgba(255,255,255,0.06); --purple: #7c3aed; --text: #f8fafc; --text-2: #94a3b8; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; user-select: none; -webkit-user-select: none; }
+        :root { --bg: #09090e; --panel: #13131a; --border: rgba(255,255,255,0.08); --accent: #7c3aed; --text: #f8fafc; --text-2: #94a3b8; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; user-select: none; }
         body, html { width: 100%; height: 100%; background: var(--bg); color: var(--text); overflow-x: hidden; }
         .header { width: 100%; height: 60px; background: var(--panel); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; position: fixed; top: 0; z-index: 100; }
-        .logo { font-weight: 800; background: linear-gradient(135deg, #a78bfa, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .search-box input { width: 200px; padding: 8px 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 20px; color: #fff; outline: none; }
-        .search-box input:focus { border-color: var(--purple); }
+        .logo { font-weight: 800; font-size: 18px; background: linear-gradient(135deg, #a78bfa, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .search-box input { width: 160px; padding: 8px 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 20px; color: #fff; outline: none; font-size: 12px; }
+        .search-box input:focus { border-color: var(--accent); }
         .main-layout { margin-top: 60px; display: flex; min-height: calc(100% - 60px); }
-        .sidebar { width: 220px; background: rgba(20,20,31,0.5); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
-        .cat-btn { width: 100%; padding: 10px; border-radius: 6px; cursor: pointer; color: var(--text-2); font-size: 13px; }
-        .cat-btn:hover, .cat-btn.active { background: rgba(124,58,237,0.1); color: var(--text); }
-        .cat-btn.active { border-left: 3px solid var(--purple); border-radius: 0 6px 6px 0; }
-        .content-view { flex: 1; padding: 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); grid-gap: 20px; }
-        .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s; display: flex; flex-direction: column; }
-        .card:hover { transform: translateY(-3px); border-color: var(--purple); }
-        .thumb { width: 100%; aspect-ratio: 1.5; background: linear-gradient(135deg, #2563eb, #7c3aed); display: flex; align-items: center; justify-content: center; }
+        .sidebar { width: 200px; background: rgba(20,20,31,0.4); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .cat-btn { width: 100%; padding: 10px; border-radius: 6px; cursor: pointer; color: var(--text-2); font-size: 13px; font-weight: 500; }
+        .cat-btn:hover, .cat-btn.active { background: rgba(124,58,237,0.12); color: var(--text); }
+        .cat-btn.active { border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0; }
+        .content-view { flex: 1; padding: 25px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); grid-gap: 20px; }
+        .card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; cursor: pointer; transition: transform 0.15s, border-color 0.15s; display: flex; flex-direction: column; }
+        .card:hover { transform: translateY(-3px); border-color: var(--accent); }
+        .thumb { width: 100%; aspect-ratio: 1.4; background: linear-gradient(135deg, #2563eb, #7c3aed); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px; }
         .card:nth-child(2n) .thumb { background: linear-gradient(135deg, #ec4899, #8b5cf6); }
         .card:nth-child(3n) .thumb { background: linear-gradient(135deg, #10b981, #059669); }
         .info { padding: 12px; }
         .title { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .tag { font-size: 10px; color: var(--text-2); text-transform: uppercase; margin-top: 4px; }
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5,5,8,0.95); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .modal.hidden { display: none !important; }
-        .modal-bar { width: 100%; max-width: 1000px; display: flex; justify-content: space-between; margin-bottom: 10px; }
-        .close-btn { background: #ef4444; border: none; color: #fff; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
-        .frame-host { width: 100%; max-width: 1000px; height: 70%; background: #000; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-        .frame-host iframe { width: 100%; height: 100%; border: none; }
+        .tag { font-size: 10px; color: var(--text-2); text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px; }
         @media (max-width: 768px) {
             .main-layout { flex-direction: column; }
             .sidebar { width: 100%; flex-direction: row; overflow-x: auto; padding: 10px; border-right: none; border-bottom: 1px solid var(--border); }
-            .cat-btn { white-space: nowrap; width: auto; }
-            .cat-btn.active { border-left: none; border-bottom: 2px solid var(--purple); border-radius: 0; }
-            .frame-host { height: 55%; }
+            .cat-btn { white-space: nowrap; width: auto; padding: 8px 12px; }
+            .cat-btn.active { border-left: none; border-bottom: 2px solid var(--accent); border-radius: 0; }
+            .content-view { padding: 15px; }
         }
     </style>
 </head>
 <body>
     <header class="header">
         <div class="logo">GAMEHUB</div>
-        <div class="search-box"><input type="text" id="search" placeholder="Search..." onkeyup="doSearch()"></div>
+        <div class="search-box"><input type="text" id="search" placeholder="Search apps..." onkeyup="doSearch()"></div>
     </header>
     <div class="main-layout">
         <nav class="sidebar">
-            <div class="cat-btn active" onclick="filterCat('ALL', this)">All</div>
+            <div class="cat-btn active" onclick="filterCat('ALL', this)">All Networks</div>
             <div class="cat-btn" onclick="filterCat('DASH', this)">Dashboards</div>
-            <div class="cat-btn" onclick="filterCat('CLOUD', this)">Cloud</div>
+            <div class="cat-btn" onclick="filterCat('CLOUD', this)">Cloud Play</div>
             <div class="cat-btn" onclick="filterCat('EMU', this)">Emulators</div>
         </nav>
         <main class="content-view">
             <div class="grid">
-                <div class="card" data-cat="DASH" onclick="play('CrazyGames', 'https://crazygames.com')">
-                    <div class="thumb"></div><div class="info"><div class="title">CrazyGames</div><div class="tag">Dashboard</div></div>
+                <div class="card" data-cat="DASH" onclick="launch('https://www.crazygames.com')">
+                    <div class="thumb">CG</div><div class="info"><div class="title">CrazyGames</div><div class="tag">Dashboard</div></div>
                 </div>
-                <div class="card" data-cat="DASH" onclick="play('Poki', 'https://poki.com')">
-                    <div class="thumb"></div><div class="info"><div class="title">Poki Hub</div><div class="tag">Dashboard</div></div>
+                <div class="card" data-cat="DASH" onclick="launch('https://poki.com')">
+                    <div class="thumb">PK</div><div class="info"><div class="title">Poki Hub</div><div class="tag">Dashboard</div></div>
                 </div>
-                <div class="card" data-cat="CLOUD" onclick="play('GeForce NOW', 'https://geforcenow.com')">
-                    <div class="thumb"></div><div class="info"><div class="title">GeForce NOW</div><div class="tag">Cloud Stream</div></div>
+                <div class="card" data-cat="CLOUD" onclick="launch('https://geforcenow.com')">
+                    <div class="thumb">GF</div><div class="info"><div class="title">GeForce NOW</div><div class="tag">Cloud Play</div></div>
                 </div>
-                <div class="card" data-cat="EMU" onclick="play('Retro Arcade', 'https://retrogames.cc')">
-                    <div class="thumb"></div><div class="info"><div class="title">Retro Arcade</div><div class="tag">Emulation</div></div>
+                <div class="card" data-cat="EMU" onclick="launch('https://retrogames.cc')">
+                    <div class="thumb">RA</div><div class="info"><div class="title">Retro Arcade</div><div class="tag">Emulation</div></div>
                 </div>
             </div>
         </main>
-    </div>
-    <div id="modal" class="modal hidden">
-        <div class="modal-bar"><div id="m-title"></div><button class="close-btn" onclick="closePlay()">Close</button></div>
-        <div class="frame-host"><iframe id="view" src=""></iframe></div>
     </div>
     <script>
         function doSearch() {
@@ -94,14 +84,8 @@
                 cards[i].style.display = (cat === 'ALL' || c === cat) ? "" : "none";
             }
         }
-        function play(name, url) {
-            document.getElementById('m-title').innerText = name;
-            document.getElementById('view').src = url;
-            document.getElementById('modal').classList.remove('hidden');
-        }
-        function closePlay() {
-            document.getElementById('modal').classList.add('hidden');
-            document.getElementById('view').src = '';
+        function launch(url) {
+            window.open(url, '_blank', 'noopener,noreferrer');
         }
     </script>
 </body>
