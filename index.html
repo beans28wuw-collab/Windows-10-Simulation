@@ -7,8 +7,7 @@
 <style>
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:"Segoe UI",Arial,sans-serif;background:#0879b8;color:#fff}
 button,input{font:inherit}button{border:0;color:inherit}
-#boot{position:fixed;inset:0;background:#0078d7;display:flex;align-items:center;justify-content:center;z-index:99999}
-.bootbox{text-align:center}.winlogo{width:76px;height:76px;margin:auto auto 30px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:4px;transform:skewY(-3deg)}.winlogo i{background:#fff}.bootbox .spinner{width:28px;height:28px;border:3px solid #ffffff55;border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite;margin:auto}@keyframes spin{to{transform:rotate(360deg)}}
+}
 #login{position:fixed;inset:0;background:linear-gradient(#087bc0,#0065a3);z-index:99998;display:none;align-items:center;justify-content:center;text-align:center}.avatar{width:110px;height:110px;border-radius:50%;background:#eee;color:#777;display:flex;align-items:center;justify-content:center;font-size:54px;margin:auto}.loginbox{width:min(350px,90vw)}.loginbox h2{font-weight:400}.loginbox input{width:100%;padding:13px;border:1px solid #aaa;background:#fff;color:#222}.loginbox button{margin-top:10px;padding:11px 25px;background:#1677b9;cursor:pointer}.loginerr{height:22px;color:#ffd7d7;font-size:13px}
 #desktop{position:fixed;inset:0;background:linear-gradient(135deg,#086fa9,#155ca1 50%,#092d72);background-size:cover}
 .ctx{padding:9px 14px;cursor:pointer}.ctx:hover{background:#e5f1fb}
@@ -55,7 +54,7 @@ button,input{font:inherit}button{border:0;color:inherit}
 </style>
 </head>
 <body>
-<div id="boot"><div class="bootbox"><div class="winlogo"><i></i><i></i><i></i><i></i></div><div class="spinner"></div></div></div>
+
 
 <div id="login"><div class="loginbox"><div class="avatar">👤</div><h2>Windows Web</h2><input id="pw" type="password" placeholder="Password"><div class="loginerr" id="loginerr"></div><button onclick="login()">Sign in ➜</button><p style="font-size:12px;opacity:.8">Default password: <b>1234</b></p></div></div>
 
@@ -242,7 +241,7 @@ function login(){let want=localStorage.webpw||'1234';if($('pw').value===want){$(
 function lock(){$('startMenu').style.display='none';$('login').style.display='flex';$('pw').value='';$('loginerr').textContent=''}
 function shutdown(){showToast('Shutting down…');setTimeout(()=>{document.body.innerHTML='<div style="background:#000;color:#fff;position:fixed;inset:0;display:flex;align-items:center;justify-content:center;font-family:Segoe UI;font-size:20px">It is now safe to close this tab.</div>'},800)}
 function tick(){let d=new Date();$('clock').innerHTML=d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})+'<br>'+d.toLocaleDateString();}setInterval(tick,1000);tick()
-setTimeout(()=>{ $('boot').style.display='none'; if(sessionStorage.unlocked!=='1')$('login').style.display='flex'},1000)
+if(sessionStorage.unlocked!=='1')$('login').style.display='flex'
 
 function tmPage(btn,key){
   document.querySelectorAll('.tmnav').forEach(x=>x.style.background='transparent');
@@ -454,4 +453,4 @@ function shellInit(){addSnapZones();rebuildPins();addBadges();startMenuApps()}
 setTimeout(shellInit,300);
 </script>
 </body>
-</html>
+  </html>
