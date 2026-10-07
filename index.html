@@ -3,10 +3,290 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Windows 10 Simulation</title>
-</head>
-<body>
-    <h1>Hello World!</h1>
-    <p>Windows 10 Simulation coming soon.</p>
-</body>
-</html>
+    <title>VMware vSphere Client - Virtual Datacenter</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            background-color: #11161a;
+            color: #d1d5db;
+            overflow: hidden;
+        }
+
+        /* Top VMware Navbar */
+        .vm-header {
+            height: 45px;
+            background-color: #1d252c;
+            border-bottom: 2px solid #0095ff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 100;
+        }
+
+        .vm-logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }
+
+        .vm-logo-cube {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #0095ff 0%, #0055aa 100%);
+            border: 2px solid #fff;
+            transform: rotate(45deg);
+        }
+
+        .vm-user-status {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        /* Main Layout Workspace */
+        .vm-main-layout {
+            display: flex;
+            width: 100%;
+            height: calc(100% - 45px);
+        }
+
+        /* Left Side Navigator Drawer */
+        .vm-sidebar {
+            width: 240px;
+            background-color: #171f26;
+            border-right: 1px solid #283541;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .vm-sidebar { width: 70px; }
+            .sidebar-text { display: none; }
+        }
+
+        .sidebar-title {
+            padding: 12px 15px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #6b7280;
+            font-weight: 700;
+            border-bottom: 1px solid #222d37;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            font-size: 13px;
+            color: #9ca3af;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .nav-item:hover {
+            background-color: #222d37;
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background-color: #283541;
+            color: #0095ff;
+            font-weight: 600;
+            border-left: 3px solid #0095ff;
+        }
+
+        .vm-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot-off { background-color: #ef4444; box-shadow: 0 0 6px #ef4444; }
+        .dot-on { background-color: #10b981; box-shadow: 0 0 6px #10b981; }
+
+        /* Right Content Panel */
+        .vm-content-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #11161a;
+            overflow-y: auto;
+        }
+
+        /* Action Controls Toolbar */
+        .vm-action-bar {
+            background-color: #171f26;
+            padding: 10px 15px;
+            border-bottom: 1px solid #283541;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .vm-btn {
+            background-color: #222d37;
+            border: 1px solid #374151;
+            color: #e5e7eb;
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+
+        .vm-btn:hover {
+            background-color: #2d3b49;
+            color: #fff;
+        }
+
+        .btn-power-on { border-color: #059669; color: #10b981; }
+        .btn-power-on:hover { background-color: rgba(16, 185, 129, 0.15); }
+        .btn-power-off { border-color: #dc2626; color: #f87171; }
+        .btn-power-off:hover { background-color: rgba(220, 38, 38, 0.15); }
+
+        /* Console Display Window */
+        .console-container {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .virtual-monitor {
+            width: 100%;
+            max-width: 850px;
+            aspect-ratio: 16 / 10;
+            background-color: #000;
+            border: 4px solid #171f26;
+            border-radius: 6px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+        }
+
+        /* Absolute Screen State Embeds */
+        .screen-state {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .state-active { display: flex !important; }
+
+        .screen-off-msg {
+            color: #4b5563;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* Bios/Boot Loader Style screen */
+        .boot-screen {
+            background-color: #000;
+            padding: 20px;
+            font-family: 'Courier New', Courier, monospace;
+            color: #38bdf8;
+            align-items: flex-start;
+            justify-content: flex-start;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        /* OS Simulated Desktop Frames */
+        .os-desktop {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+        }
+
+        /* Taskbar Layout Core */
+        .os-taskbar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+        }
+
+        /* OS Specific Interfaces Details */
+        /* --- WINDOWS XP --- */
+        .xp-desktop { background-image: url('https://unsplash.com'); }
+        .xp-taskbar { height: 30px; background: linear-gradient(to bottom, #245edb 0%, #3f8cf3 9%, #245edb 18%, #1842b5 92%, #1842b5 100%); }
+        .xp-start { height: 100%; background: linear-gradient(to bottom, #388a38 0%, #61c261 9%, #388a38 18%, #205020 92%, #205020 100%); border-top-right-radius: 8px; border-bottom-right-radius: 8px; color: #fff; font-weight: bold; font-style: italic; padding: 0 15px; display: flex; align-items: center; font-size: 13px; text-shadow: 1px 1px 1px #000; box-shadow: 2px 0px 5px rgba(0,0,0,0.3); }
+
+        /* --- WINDOWS 7 --- */
+        .win7-desktop { background: radial-gradient(circle, #1e5799 0%, #153c6b 100%); }
+        .win7-taskbar { height: 36px; background: rgba(20, 40, 60, 0.6); backdrop-filter: blur(8px); border-top: 1px solid rgba(255,255,255,0.2); }
+        .win7-start { width: 40px; height: 100%; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%); border-radius: 50%; margin-left: 5px; font-size: 18px; }
+
+        /* --- WINDOWS 10 --- */
+        .win10-desktop { background-image: url('https://unsplash.com'); }
+        .win10-taskbar { height: 36px; background: rgba(16, 16, 16, 0.85); border-top: 1px solid rgba(255,255,255,0.05); }
+        .win10-start { width: 44px; height: 100%; display: flex; align-items: center; justify-content: center; color: #0078d7; font-size: 16px; }
+
+        /* --- WINDOWS 11 --- */
+        .win11-desktop { background-image: url('https://unsplash.com'); }
+        .win11-taskbar { height: 42px; background: rgba(32, 32, 32, 0.80); backdrop-filter: blur(12px); border-top: 1px solid rgba(255,255,255,0.08); justify-content: center; }
+        .win11-center-shelf { display: flex; align-items: center; gap: 6px; height: 100%; }
+        .win11-start { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background-color: transparent; border-radius: 4px; font-size: 18px; }
+        .win11-start:hover { background-color: rgba(255,255,255,0.1); }
+
+        /* Generic items config */
+        .os-app-tray { padding: 10px; display: flex; flex-direction: column; gap: 15px; }
+        .os-shortcut { width: 60px; text-align: center; color: #fff; font-size: 11px; text-shadow: 1px 1px 2px #000; cursor: pointer; }
+        .os-shortcut-icon { font-size: 24px; margin-bottom: 4px; }
+
+        /* VM Spec Table Styling */
+        .spec-card {
+            width: 100%;
+            max-width: 850px;
+            background-color: #171f26;
+            border: 1px solid #283541;
+            border-radius: 4px;
+            padding: 15px;
+        }
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+        .spec-item { display: flex; flex-direction: column; gap: 4px; }
+        .spec-label { color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: bold; }
+        .spec-val { color: #e5e7eb; }
+    </style>
