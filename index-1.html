@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Windows 10 Web Desktop</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:"Segoe UI",Arial,sans-serif;background:#0879b8;color:#fff}
+button,input{font:inherit}button{border:0;color:inherit}
+}
+#login{position:fixed;inset:0;background:linear-gradient(#087bc0,#0065a3);z-index:99998;display:none;align-items:center;justify-content:center;text-align:center}.avatar{width:110px;height:110px;border-radius:50%;background:#eee;color:#777;display:flex;align-items:center;justify-content:center;font-size:54px;margin:auto}.loginbox{width:min(350px,90vw)}.loginbox h2{font-weight:400}.loginbox input{width:100%;padding:13px;border:1px solid #aaa;background:#fff;color:#222}.loginbox button{margin-top:10px;padding:11px 25px;background:#1677b9;cursor:pointer}.loginerr{height:22px;color:#ffd7d7;font-size:13px}
+#desktop{position:fixed;inset:0;background:linear-gradient(135deg,#086fa9,#155ca1 50%,#092d72);background-size:cover}
+.ctx{padding:9px 14px;cursor:pointer}.ctx:hover{background:#e5f1fb}
+
+.wallpaper-glow{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,#ffffff12,transparent 35%)}
+#desktopIcons{position:absolute;left:8px;top:8px;bottom:55px;display:flex;flex-direction:column;gap:7px}.deskicon{width:76px;text-align:center;padding:5px 3px;border-radius:3px;cursor:pointer;font-size:12px;text-shadow:1px 1px 2px #000}.deskicon:hover{background:#ffffff22}.ico{font-size:30px;height:36px}
+#taskbar{position:absolute;left:0;right:0;bottom:0;height:48px;background:#171717eF;display:flex;align-items:center;z-index:9000}.tbbtn{height:48px;min-width:48px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer}.tbbtn:hover{background:#ffffff18}.startlogo{font-size:24px}.search{height:36px;width:210px;background:#fff;color:#333;border:0;margin:0 5px;padding:0 10px}.taskapps{display:flex;height:100%;align-items:center;gap:2px}.taskapp{height:44px;min-width:46px;background:transparent;cursor:pointer;font-size:22px}.taskapp:hover,.taskapp.active{background:#ffffff16;border-bottom:2px solid #2aa9ff}.tray{margin-left:auto;height:100%;display:flex;align-items:center}.tray button{height:100%;padding:0 9px;background:transparent;cursor:pointer}.clock{font-size:12px;min-width:75px;text-align:center}
+#startMenu{position:absolute;bottom:48px;left:0;width:min(640px,100vw);height:min(570px,calc(100vh - 48px));background:#202020f5;display:none;z-index:8999;box-shadow:0 0 18px #0008}.start-inner{display:flex;height:100%}.start-left{width:65px;display:flex;flex-direction:column;justify-content:flex-end}.start-left button{height:52px;background:transparent;cursor:pointer;font-size:21px}.start-left button:hover{background:#ffffff16}.tiles{flex:1;padding:16px;overflow:auto}.tiles h3{font-weight:400;font-size:14px}.tilegrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.tile{min-height:80px;background:#0879c9;padding:9px;text-align:left;cursor:pointer}.tile:hover{filter:brightness(1.15)}.tile.wide{grid-column:span 2}
+.window{position:absolute;min-width:300px;min-height:180px;width:650px;height:430px;background:#f3f3f3;color:#222;box-shadow:0 8px 35px #0009;border:1px solid #555;display:none;z-index:100}.titlebar{height:38px;background:#fff;color:#333;display:flex;align-items:center;padding-left:12px;user-select:none}.titletext{flex:1;font-size:13px}.wincontrols{display:flex;height:100%}.wincontrols button{width:45px;background:transparent;color:#333;cursor:pointer}.wincontrols button:hover{background:#ddd}.wincontrols .close:hover{background:#e81123;color:#fff}.content{height:calc(100% - 38px);overflow:auto}.maxed{left:0!important;top:0!important;width:100%!important;height:calc(100% - 48px)!important}
+.explorer{height:100%;display:flex;flex-direction:column}.explorerbar{height:42px;background:#fafafa;border-bottom:1px solid #ddd;display:flex;align-items:center;gap:5px;padding:5px}.explorerbar button{background:transparent;color:#444;padding:7px;cursor:pointer}.path{flex:1;background:#fff;border:1px solid #ccc;padding:6px;color:#555}.explorerbody{display:flex;flex:1}.side{width:180px;border-right:1px solid #ddd;padding:8px;background:#f8f8f8}.side div{padding:8px;cursor:pointer}.side div:hover{background:#e5f1fb}.files{padding:15px;display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));align-content:start;gap:10px;flex:1}.file{padding:10px;text-align:center;cursor:pointer;border-radius:3px}.file:hover{background:#e5f1fb}.file .fi{font-size:38px}
+.browser{height:100%;display:flex;flex-direction:column}.browserbar{height:45px;background:#eee;display:flex;gap:5px;padding:6px}.browserbar button{color:#333;background:transparent;padding:5px;cursor:pointer}.url{flex:1;border:1px solid #aaa;padding:7px;color:#222}.webpage{flex:1;background:#fff;color:#222;padding:25px;overflow:auto}.webpage h1{color:#0078d4;font-weight:400}.webpage .card{border:1px solid #ddd;padding:15px;margin:12px 0}.webpage a{color:#06c;cursor:pointer}
+.settings{height:100%;display:flex;background:#fff}.setnav{width:180px;background:#f3f3f3;border-right:1px solid #ddd;padding:10px}.setnav button{display:block;width:100%;text-align:left;color:#333;background:transparent;padding:11px;cursor:pointer}.setnav button.active,.setnav button:hover{background:#ddd}.setpage{padding:25px;color:#222;flex:1;overflow:auto}.setting-card{border:1px solid #ddd;padding:15px;margin:12px 0}.toggle{float:right;width:44px;height:24px;border-radius:12px;background:#888;cursor:pointer}.toggle.on{background:#0078d7}.toggle:after{content:"";display:block;width:20px;height:20px;margin:2px;background:#fff;border-radius:50%;transition:.2s}.toggle.on:after{margin-left:22px}
+.notes{height:100%;display:flex;flex-direction:column}.notes textarea{flex:1;border:0;resize:none;padding:15px;color:#222;font-size:15px;outline:0}.notesbar{padding:6px;background:#eee;color:#333;font-size:12px}
+.calc{height:100%;background:#202020;padding:12px;display:flex;flex-direction:column}.calcdisplay{height:65px;background:#202020;color:#fff;text-align:right;font-size:34px;padding:12px;overflow:hidden}.calckeys{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;flex:1}.calckeys button{background:#333;color:#fff;font-size:18px;cursor:pointer}.calckeys button:hover{background:#444}.calckeys .op{background:#555}
+.toast{position:absolute;right:15px;bottom:62px;background:#222;color:#fff;padding:13px 17px;box-shadow:0 3px 15px #0008;display:none;z-index:10000}
+@media(max-width:700px){.search{width:130px}.window{width:94vw;height:72vh}.side{width:125px}.setnav{width:125px}.tilegrid{grid-template-columns:repeat(3,1fr)}}
+
+#actionCenter{position:absolute;right:0;bottom:48px;width:min(360px,100vw);height:430px;background:#202020f5;z-index:15000;display:none;box-shadow:0 0 22px #0009;padding:14px}
+.ac-title{font-size:18px;margin-bottom:12px}.quickgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.quick{background:#333;padding:14px;cursor:pointer}.quick:hover{background:#444}.quick.on{background:#0879c9}.notification{background:#333;padding:12px;margin-top:10px}.volume{width:100%}
+#virtualView{position:absolute;left:50%;bottom:48px;transform:translateX(-50%);background:#202020f5;padding:10px;z-index:15000;display:none;box-shadow:0 0 18px #0009}.deskThumb{display:inline-block;width:150px;height:85px;margin:5px;background:#145d91;padding:8px;cursor:pointer;border:2px solid transparent}.deskThumb.active{border-color:#fff}
+.dialogOverlay{position:absolute;inset:0;background:#0008;z-index:16000;display:none;align-items:center;justify-content:center}.dialog{width:min(420px,92vw);background:#f3f3f3;color:#222;padding:20px;box-shadow:0 5px 25px #000}.dialog input{width:100%;padding:9px;border:1px solid #999;color:#222}.dialog button{padding:8px 18px;margin-left:7px;color:#222;cursor:pointer}
+
+#taskbar{user-select:none}
+#taskbar .taskapp{position:relative}
+#taskbar .taskapp.active:after{content:"";position:absolute;bottom:0;left:10px;right:10px;height:3px;background:#4cc2ff}
+#taskbar .taskapp.minimized{opacity:.55}
+#taskbarContext{position:absolute;display:none;z-index:25000;background:#fff;color:#222;min-width:210px;border:1px solid #aaa;box-shadow:0 5px 18px #0007;padding:4px 0;font-size:13px}
+#taskbarContext div{padding:9px 14px;cursor:pointer}
+#taskbarContext div:hover{background:#e5f1fb}
+#clockPanel{position:absolute;right:0;bottom:48px;width:310px;background:#202020f5;color:#fff;display:none;z-index:18000;padding:18px;box-shadow:0 0 20px #0009}
+#clockBig{font-size:38px}.calmini{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:12px}.calmini div{text-align:center;padding:7px;font-size:12px}.calmini .today{background:#0078d7}
+#searchPanel{position:absolute;left:0;bottom:48px;width:min(430px,100vw);height:500px;background:#202020f5;display:none;z-index:18000;box-shadow:0 0 20px #0009;padding:16px}
+#searchPanel input{width:100%;padding:11px;border:0;color:#222}.searchResult{padding:12px;margin-top:5px;background:#333;cursor:pointer}.searchResult:hover{background:#444}
+#showDesktop{margin-left:2px;width:8px;height:48px;border-left:1px solid #555;background:transparent;cursor:pointer}
+#showDesktop:hover{background:#ffffff18}
+
+/* ===== NEXT-LEVEL WINDOWS FEATURES ===== */
+.jumpmenu,.thumbpreview,.trayoverflow{position:fixed;z-index:30000;background:#202020f7;color:#fff;border:1px solid #555;box-shadow:0 8px 28px #0009;border-radius:2px}
+.jumpmenu{width:270px;padding:6px}.jumpmenu .jmhead{padding:10px;border-bottom:1px solid #444;font-weight:600}.jumpmenu button,.trayoverflow button{display:block;width:100%;padding:9px 10px;border:0;background:transparent;color:#fff;text-align:left}.jumpmenu button:hover,.trayoverflow button:hover{background:#0866ad}
+.thumbpreview{display:flex;gap:6px;padding:7px;max-width:520px}.thumb{width:145px;height:95px;background:#111;border:1px solid #555;overflow:hidden;position:relative;cursor:pointer}.thumb .mini{transform:scale(.18);transform-origin:top left;width:550px;height:360px;pointer-events:none}.thumb label{position:absolute;left:0;right:0;bottom:0;background:#000b;padding:4px;font-size:11px}
+.tb.dragging{opacity:.45}.tb.dropTarget{outline:2px solid #39f}.badge{position:absolute;top:4px;right:5px;background:#e81123;color:#fff;border-radius:10px;min-width:16px;height:16px;line-height:16px;font-size:10px;padding:0 4px}.tb{position:relative}
+.startapps{margin-top:14px;border-top:1px solid #444;padding-top:12px}.startapps input{width:100%;background:#333;color:#fff;border:1px solid #555;padding:9px}.applist{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:7px}.applist button{border:0;background:transparent;color:#fff;text-align:left;padding:8px}.applist button:hover{background:#333}
+.trayoverflow{width:190px;padding:6px}.tray-more{font-size:16px!important;min-width:32px!important}.desktop.snap-left{outline:3px solid #fff2}.snapzone{position:fixed;top:0;bottom:40px;width:50px;z-index:25000;display:none}.snapzone.left{left:0}.snapzone.right{right:0}.snapzone.top{left:20%;right:20%;height:45px;bottom:auto;width:auto}.snapzone.show{display:block;background:#1984ff18;border:1px solid #1984ff55}
+</style>
+</head>
+<body>
+
+
+<div id="login"><div class="loginbox"><div class="avatar">👤</div><h2>Windows Web</h2><input id="pw" type="password" placeholder="Password"><div class="loginerr" id="loginerr"></div><button onclick="login()">Sign in ➜</button><p style="font-size:12px;opacity:.8">Default password: <b>1234</b></p></div></div>
+
+<div id="desktop">
+<div class="wallpaper-glow"></div>
+<div id="contextMenu" style="display:none;position:absolute;z-index:20000;width:210px;background:#fff;color:#222;border:1px solid #aaa;box-shadow:0 4px 16px #0006;font-size:13px;padding:4px 0">
+<div class="ctx" onclick="openApp('explorer');hideContext()">Open File Explorer</div>
+<div class="ctx" onclick="openApp('settings');hideContext()">Personalize</div>
+<div class="ctx" onclick="refreshDesktop()">Refresh</div>
+<div class="ctx" onclick="showToast('Display settings');hideContext()">Display settings</div>
+</div>
+<div id="desktopIcons">
+  <div class="deskicon" ondblclick="openApp('explorer')"><div class="ico">📁</div>File Explorer</div>
+  <div class="deskicon" ondblclick="openApp('browser')"><div class="ico">🌐</div>Browser</div>
+  <div class="deskicon" ondblclick="openApp('settings')"><div class="ico">⚙️</div>Settings</div>
+  <div class="deskicon" ondblclick="openApp('notes')"><div class="ico">📝</div>Notes</div>
+  <div class="deskicon" ondblclick="openApp('calc')"><div class="ico">🧮</div>Calculator</div>
+  <div class="deskicon" ondblclick="openApp('taskmgr')"><div class="ico">📊</div>Task Manager</div>
+  <div class="deskicon" ondblclick="openApp('runbox')"><div class="ico">▶️</div>Run</div>
+  <div class="deskicon" ondblclick="openApp('recycle')"><div class="ico">🗑️</div>Recycle Bin</div>
+  <div class="deskicon" ondblclick="openApp('calendar')"><div class="ico">📅</div>Calendar</div>
+  <div class="deskicon" ondblclick="openApp('paint')"><div class="ico">🎨</div>Paint</div>
+  <div class="deskicon" ondblclick="openApp('media')"><div class="ico">🎵</div>Media Player</div>
+  <div class="deskicon" ondblclick="openApp('photos')"><div class="ico">🖼️</div>Photos</div>
+  <div class="deskicon" ondblclick="openApp('terminal')"><div class="ico">⌨️</div>Terminal</div>
+  <div class="deskicon" ondblclick="openApp('weather')"><div class="ico">☀️</div>Weather</div>
+</div>
+
+<div id="startMenu"><div class="start-inner"><div class="start-left">
+<button onclick="openApp('settings');toggleStart()">☰</button><button onclick="lock()">🔒</button><button onclick="shutdown()">⏻</button>
+</div><div class="tiles"><h3>START</h3><div class="tilegrid">
+<div class="tile wide" onclick="openApp('browser');toggleStart()">🌐<br>Browser</div>
+<div class="tile" onclick="openApp('explorer');toggleStart()">📁<br>Explorer</div>
+<div class="tile" onclick="openApp('settings');toggleStart()">⚙️<br>Settings</div>
+<div class="tile" onclick="openApp('notes');toggleStart()">📝<br>Notes</div>
+<div class="tile" onclick="openApp('calc');toggleStart()">🧮<br>Calculator</div>
+<div class="tile" onclick="openApp('taskmgr');toggleStart()">📊<br>Task Manager</div>
+<div class="tile" onclick="openApp('runbox');toggleStart()">▶️<br>Run</div>
+<div class="tile" onclick="openApp('recycle');toggleStart()">🗑️<br>Recycle Bin</div>
+<div class="tile" onclick="openApp('calendar');toggleStart()">📅<br>Calendar</div>
+<div class="tile" onclick="openApp('paint');toggleStart()">🎨<br>Paint</div>
+<div class="tile" onclick="openApp('media');toggleStart()">🎵<br>Media Player</div>
+<div class="tile" onclick="openApp('photos');toggleStart()">🖼️<br>Photos</div>
+<div class="tile" onclick="openApp('terminal');toggleStart()">⌨️<br>Terminal</div>
+<div class="tile" onclick="openApp('weather');toggleStart()">☀️<br>Weather</div>
+<div class="tile wide" onclick="showToast('Windows Web is running!')">💻<br>About this PC</div>
+<div class="tile" onclick="showToast('Shortcuts: Esc closes menus')">⌨️<br>Tips</div>
+</div></div></div></div>
+
+
+
+<div id="taskbarContext">
+<div onclick="taskbarNewWindow()">Open new window</div>
+<div onclick="toggleTaskbarLock()">Lock the taskbar</div>
+<div onclick="openApp('settings');hideTaskbarContext()">Taskbar settings</div>
+<div onclick="hideTaskbarContext()">Close menu</div>
+</div>
+<div id="clockPanel">
+<div id="clockBig"></div><div id="clockDate"></div>
+<div class="calmini" id="miniCal"></div>
+<div style="margin-top:14px"><button onclick="openApp('settings');hideClock()" style="padding:8px;color:#222">Date & time settings</button></div>
+</div>
+<div id="searchPanel">
+<input id="panelSearch" placeholder="Search apps, settings, and files" oninput="liveSearch(this.value)">
+<div id="searchResults"></div>
+</div>
+<div id="actionCenter">
+<div class="ac-title">Notifications</div>
+<div class="quickgrid">
+<div class="quick on" onclick="this.classList.toggle('on')">📶 Wi‑Fi</div>
+<div class="quick on" onclick="this.classList.toggle('on')">🔵 Bluetooth</div>
+<div class="quick" onclick="this.classList.toggle('on')">✈️ Airplane mode</div>
+<div class="quick" onclick="toggleNight()">🌙 Night light</div>
+</div>
+<div class="notification"><b>Windows Web</b><br><small>Everything is up to date.</small></div>
+<div class="notification"><b>Tip</b><br><small>Use Win-style shortcuts like Ctrl+Shift+Esc for Task Manager.</small></div>
+<p>🔊 Volume</p><input class="volume" type="range" min="0" max="100" value="70" oninput="showToast('Volume '+this.value+'%')">
+</div>
+<div id="virtualView"><b>Virtual desktops</b><br><div class="deskThumb active" onclick="switchDesk(1)">🖥️ Desktop 1</div><div class="deskThumb" onclick="switchDesk(2)">🖥️ Desktop 2</div><br><button onclick="addDesktop()" style="padding:7px;color:#222">＋ New desktop</button></div>
+<div id="taskbar">
+<button class="tbbtn" onclick="toggleStart()"><span class="startlogo">⊞</span></button>
+<input class="search" id="taskSearch" placeholder="Type here to search" onfocus="openSearchPanel()" oninput="liveSearch(this.value)" onkeydown="if(event.key==='Enter')doSearch(this.value)">
+<div class="taskapps">
+<button class="taskapp" id="tb-explorer" onclick="openApp('explorer')">📁</button>
+<button class="taskapp" id="tb-browser" onclick="openApp('browser')">🌐</button>
+<button class="taskapp" id="tb-settings" onclick="openApp('settings')">⚙️</button>
+<button class="taskapp" id="tb-notes" onclick="openApp('notes')">📝</button>
+<button class="taskapp" id="tb-calc" onclick="openApp('calc')">🧮</button>
+<button class="taskapp" id="tb-taskmgr" onclick="openApp('taskmgr')">📊</button>
+<button class="taskapp" id="tb-calendar" onclick="openApp('calendar')">📅</button>
+<button class="taskapp" id="tb-paint" onclick="openApp('paint')">🎨</button>
+<button class="taskapp" id="tb-media" onclick="openApp('media')">🎵</button>
+<button class="taskapp" id="tb-terminal" onclick="openApp('terminal')">⌨️</button>
+</div><button class="tbbtn" onclick="toggleVirtual()">🖥️</button><button class="tbbtn" onclick="toggleAction()">🔔</button><button id="showDesktop" title="Show desktop" onclick="showDesktop()"></button><div class="tray"><button onclick="toggleAction()">🔔</button><button onclick="showToast('Network connected')">📶</button><button class="tray-more" id="traymore" onclick="toggleTrayOverflow(event)">⌃</button><button class="clock" id="clock" onclick="showClock()"></button></div>
+</div>
+
+<div class="window" id="explorer"><div class="titlebar"><span class="titletext">📁 File Explorer</span><div class="wincontrols"><button onclick="minimize('explorer')">—</button><button onclick="maximize('explorer')">□</button><button class="close" onclick="closeApp('explorer')">✕</button></div></div><div class="content"><div class="explorer"><div class="explorerbar"><button onclick="showToast('Back')">←</button><button onclick="showToast('Forward')">→</button><div class="path">This PC</div><button onclick="showNewDialog()">＋</button><button onclick="sortFiles()">↕</button><button onclick="showToast('Search is ready')">🔍</button></div><div class="explorerbody"><div class="side"><div onclick="showFolder('Quick access')">⭐ Quick access</div><div onclick="showFolder('Desktop')">🖥️ Desktop</div><div onclick="showFolder('Documents')">📄 Documents</div><div onclick="showFolder('Downloads')">⬇️ Downloads</div><div onclick="showFolder('This PC')">💻 This PC</div></div><div class="files" id="files"></div></div></div></div></div>
+
+<div class="window" id="browser"><div class="titlebar"><span class="titletext">🌐 Browser</span><div class="wincontrols"><button onclick="minimize('browser')">—</button><button onclick="maximize('browser')">□</button><button class="close" onclick="closeApp('browser')">✕</button></div></div><div class="content"><div class="browser"><div class="browserbar"><button onclick="browserHome()">⌂</button><button onclick="showToast('Back')">←</button><input class="url" id="url" value="https://www.example.com" onkeydown="if(event.key==='Enter')navigate()"><button onclick="navigate()">↵</button></div><div class="webpage" id="webpage"></div></div></div></div>
+
+<div class="window" id="settings"><div class="titlebar"><span class="titletext">⚙️ Settings</span><div class="wincontrols"><button onclick="minimize('settings')">—</button><button onclick="maximize('settings')">□</button><button class="close" onclick="closeApp('settings')">✕</button></div></div><div class="content"><div class="settings"><div class="setnav">
+<button class="active" onclick="setPage(this,'system')">🖥️ System</button><button onclick="setPage(this,'personal')">🎨 Personalization</button><button onclick="setPage(this,'privacy')">🔒 Privacy</button><button onclick="setPage(this,'update')">🔄 Update & Security</button><button onclick="setPage(this,'accounts')">👤 Accounts</button>
+</div><div class="setpage" id="setpage"></div></div></div></div>
+
+<div class="window" id="notes"><div class="titlebar"><span class="titletext">📝 Notepad</span><div class="wincontrols"><button onclick="minimize('notes')">—</button><button onclick="maximize('notes')">□</button><button class="close" onclick="closeApp('notes')">✕</button></div></div><div class="content"><div class="notes"><textarea id="noteText" placeholder="Start typing..."></textarea><div class="notesbar">Saved automatically in this browser</div></div></div></div>
+
+<div class="window" id="calc"><div class="titlebar"><span class="titletext">🧮 Calculator</span><div class="wincontrols"><button onclick="minimize('calc')">—</button><button onclick="maximize('calc')">□</button><button class="close" onclick="closeApp('calc')">✕</button></div></div><div class="content"><div class="calc"><div class="calcdisplay" id="calcdisplay">0</div><div class="calckeys">
+<button onclick="calcClear()">C</button><button onclick="calcAdd('(')">(</button><button onclick="calcAdd(')')">)</button><button class="op" onclick="calcAdd('/')">÷</button>
+<button onclick="calcAdd('7')">7</button><button onclick="calcAdd('8')">8</button><button onclick="calcAdd('9')">9</button><button class="op" onclick="calcAdd('*')">×</button>
+<button onclick="calcAdd('4')">4</button><button onclick="calcAdd('5')">5</button><button onclick="calcAdd('6')">6</button><button class="op" onclick="calcAdd('-')">−</button>
+<button onclick="calcAdd('1')">1</button><button onclick="calcAdd('2')">2</button><button onclick="calcAdd('3')">3</button><button class="op" onclick="calcAdd('+')">+</button>
+<button onclick="calcAdd('0')">0</button><button onclick="calcAdd('.')">.</button><button onclick="calcBack()">⌫</button><button class="op" onclick="calcEqual()">=</button>
+</div></div></div></div>
+</div>
+
+
+<div class="window" id="taskmgr"><div class="titlebar"><span class="titletext">📊 Task Manager</span><div class="wincontrols"><button onclick="minimize('taskmgr')">—</button><button onclick="maximize('taskmgr')">□</button><button class="close" onclick="closeApp('taskmgr')">✕</button></div></div><div class="content">
+<div style="height:100%;background:#fff;color:#222">
+<div style="display:flex;border-bottom:1px solid #ddd"><button class="tmnav" onclick="tmPage(this,'processes')">Processes</button><button class="tmnav" onclick="tmPage(this,'performance')">Performance</button><button class="tmnav" onclick="tmPage(this,'startup')">Startup</button></div>
+<div id="tmcontent" style="padding:15px"></div>
+</div></div></div>
+
+<div class="window" id="runbox"><div class="titlebar"><span class="titletext">▶️ Run</span><div class="wincontrols"><button onclick="minimize('runbox')">—</button><button class="close" onclick="closeApp('runbox')">✕</button></div></div><div class="content">
+<div style="padding:25px;color:#222"><h2 style="font-weight:400">Run</h2><p>Type the name of a program, folder, document, or website.</p><input id="runinput" style="width:100%;padding:10px;border:1px solid #aaa;color:#222" placeholder="explorer, settings, calc, browser..."><div style="text-align:right;margin-top:15px"><button onclick="runCommand()" style="padding:9px 22px;background:#0078d7;color:#fff;cursor:pointer">OK</button></div></div>
+</div></div>
+
+<div class="window" id="recycle"><div class="titlebar"><span class="titletext">🗑️ Recycle Bin</span><div class="wincontrols"><button onclick="minimize('recycle')">—</button><button class="close" onclick="closeApp('recycle')">✕</button></div></div><div class="content">
+<div style="padding:18px;color:#222"><h2 style="font-weight:400">Recycle Bin</h2><div id="trashitems" style="border:1px solid #ddd;min-height:130px;padding:15px">Recycle Bin is empty.</div><button onclick="emptyTrash()" style="margin-top:12px;padding:8px 14px;color:#222">Empty Recycle Bin</button></div>
+</div></div>
+
+
+<div class="dialogOverlay" id="newDialog"><div class="dialog"><h3>Create new item</h3><p>Choose a name:</p><input id="newName" value="New Folder"><div style="text-align:right;margin-top:15px"><button onclick="closeDialog()">Cancel</button><button onclick="createItem()">Create</button></div></div></div>
+
+<div class="window" id="calendar"><div class="titlebar"><span class="titletext">📅 Calendar</span><div class="wincontrols"><button onclick="minimize('calendar')">—</button><button onclick="maximize('calendar')">□</button><button class="close" onclick="closeApp('calendar')">✕</button></div></div><div class="content"><div style="padding:20px;color:#222"><h1 id="calTitle" style="font-weight:400"></h1><div id="calGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px"></div></div></div></div>
+
+<div class="window" id="paint"><div class="titlebar"><span class="titletext">🎨 Paint</span><div class="wincontrols"><button onclick="minimize('paint')">—</button><button onclick="maximize('paint')">□</button><button class="close" onclick="closeApp('paint')">✕</button></div></div><div class="content"><div style="height:100%;display:flex;flex-direction:column;background:#ddd"><div style="height:45px;padding:6px;background:#f4f4f4"><button onclick="clearPaint()" style="color:#222;padding:6px">Clear</button> <input id="paintColor" type="color" value="#000000"></div><canvas id="paintCanvas" style="background:white;flex:1;touch-action:none"></canvas></div></div></div>
+
+<div class="window" id="media"><div class="titlebar"><span class="titletext">🎵 Media Player</span><div class="wincontrols"><button onclick="minimize('media')">—</button><button onclick="maximize('media')">□</button><button class="close" onclick="closeApp('media')">✕</button></div></div><div class="content"><div style="height:100%;background:#171717;color:#fff;padding:25px;text-align:center"><div style="font-size:80px">🎵</div><h2 id="trackName">Windows Web Radio</h2><p>Ready to play local audio</p><input id="audioFile" type="file" accept="audio/*" style="max-width:100%"><audio id="audioPlayer" controls style="width:100%;margin-top:20px"></audio></div></div></div>
+
+<div class="window" id="photos"><div class="titlebar"><span class="titletext">🖼️ Photos</span><div class="wincontrols"><button onclick="minimize('photos')">—</button><button onclick="maximize('photos')">□</button><button class="close" onclick="closeApp('photos')">✕</button></div></div><div class="content"><div style="padding:18px;color:#222"><input id="photoFiles" type="file" accept="image/*" multiple><div id="photoGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:15px"></div></div></div></div>
+
+<div class="window" id="terminal"><div class="titlebar"><span class="titletext">⌨️ Windows Web Terminal</span><div class="wincontrols"><button onclick="minimize('terminal')">—</button><button onclick="maximize('terminal')">□</button><button class="close" onclick="closeApp('terminal')">✕</button></div></div><div class="content"><div id="termOut" style="height:calc(100% - 45px);background:#0c0c0c;color:#eee;padding:12px;overflow:auto;font-family:Consolas,monospace;font-size:13px">Windows Web Terminal<br>Type <b>help</b> for commands.<br></div><div style="height:45px;background:#0c0c0c;padding:7px"><input id="termInput" autocomplete="off" style="width:100%;background:#0c0c0c;border:0;outline:0;color:#fff;font-family:Consolas,monospace" placeholder="C:\\Windows>"></div></div></div>
+
+<div class="window" id="weather"><div class="titlebar"><span class="titletext">☀️ Weather</span><div class="wincontrols"><button onclick="minimize('weather')">—</button><button onclick="maximize('weather')">□</button><button class="close" onclick="closeApp('weather')">✕</button></div></div><div class="content"><div style="padding:30px;color:#222"><h1 style="font-weight:400">☀️ Weather</h1><h2>Windows Web Forecast</h2><div class="setting-card">Today <b style="float:right">☀️ 72°F</b><br><small>Clear skies</small></div><div class="setting-card">Tomorrow <b style="float:right">⛅ 74°F</b><br><small>Partly cloudy</small></div><button onclick="showToast('Weather refreshed')" style="padding:8px;color:#222">Refresh</button></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const apps=['explorer','browser','settings','notes','calc','taskmgr','runbox','recycle','calendar','paint','media','photos','terminal','weather'];let z=100;let calcExpr='';
+const $=id=>document.getElementById(id);
+function showToast(s){$('toast').textContent=s;$('toast').style.display='block';clearTimeout(showToast.t);showToast.t=setTimeout(()=>$('toast').style.display='none',1800)}
+function toggleStart(){let s=$('startMenu');s.style.display=s.style.display==='block'?'none':'block'}
+function openApp(id){let w=$(id);if(w.style.display==='block'&&w.style.zIndex==z){w.style.display='none';w.dataset.wasopen='1';updateTaskStates();return}w.style.display='block';delete w.dataset.wasopen;w.style.zIndex=++z;$(id).classList.remove('maxed');$('tb-'+id)?.classList.add('active');if(id==='explorer')showFolder('This PC');if(id==='browser')browserHome();if(id==='settings')setPage(document.querySelector('.setnav button.active'),'system');if(id==='notes')$('noteText').value=localStorage.note||'';updateTaskStates();if(id==='taskmgr')tmPage(null,'processes');if(id==='recycle')showTrash();if(id==='calendar')setupCalendar();if(id==='paint')setupPaint();if(id==='terminal')setupTerminal()}
+function closeApp(id){$(id).style.display='none';delete $(id).dataset.wasopen;updateTaskStates();}
+function minimize(id){$(id).style.display='none';$(id).dataset.wasopen='1';updateTaskStates()}
+function maximize(id){$(id).classList.toggle('maxed');$(id).style.zIndex=++z}
+document.querySelectorAll('.window').forEach(w=>{w.addEventListener('mousedown',()=>w.style.zIndex=++z);let bar=w.querySelector('.titlebar');let dragging=false,ox=0,oy=0;bar.addEventListener('pointerdown',e=>{if(e.target.closest('.wincontrols')||w.classList.contains('maxed'))return;dragging=true;ox=e.clientX-w.offsetLeft;oy=e.clientY-w.offsetTop;bar.setPointerCapture(e.pointerId)});bar.addEventListener('pointermove',e=>{if(!dragging)return;w.style.left=Math.max(0,e.clientX-ox)+'px';w.style.top=Math.max(0,e.clientY-oy)+'px'});bar.addEventListener('pointerup',()=>dragging=false)});
+function showFolder(name){
+  const files=[
+    ['📁','Desktop'],['📄','Documents'],['⬇️','Downloads'],['🖼️','Pictures'],
+    ['🎵','Music'],['🎬','Videos'],['💾','Local Disk (C:)'],['📦','New Folder']
+  ];
+  $('files').innerHTML=files.map(x=>`<div class="file" ondblclick="fileAction('${x[1]}')"><div class="fi">${x[0]}</div>${x[1]}</div>`).join('');
+  document.querySelector('#explorer .path').textContent=name;
+}
+function fileAction(name){
+  if(name==='New Folder'){showToast('Folder opened');return}
+  if(name==='Documents'||name==='Downloads'||name==='Desktop')showToast(name+' opened');
+  else showToast(name);
+}
+function showTrash(){if($('trashitems'))$('trashitems').innerHTML='Recycle Bin is empty.'}
+function browserHome(){ $('url').value='https://www.example.com';$('webpage').innerHTML='<h1>Windows Web Browser</h1><p>This is a working local browser interface for your Windows Web desktop.</p><div class="card"><b>Quick links</b><p><a onclick="demoPage(\\'home\\')">Home</a> · <a onclick="demoPage(\\'about\\')">About</a> · <a onclick="demoPage(\\'help\\')">Help</a></p></div><p>Type a URL or search phrase in the address bar. Network pages may be limited by browser security when running from a local HTML file.</p>'}
+function navigate(){let v=$('url').value.trim();if(!v)return;if(!/^https?:\\/\\//i.test(v)){demoPage(v);return} $('webpage').innerHTML='<h1>Loading…</h1><p>'+esc(v)+'</p><p style="font-size:13px">If this page blocks embedding, use the address bar in your normal browser.</p>'}
+function demoPage(v){$('url').value=v;$('webpage').innerHTML='<h1>'+esc(v==='about'?'About Windows Web':v==='help'?'Help':'Windows Web')+'</h1><p>Everything on this desktop is running from one HTML file.</p><div class="card">Try File Explorer, Settings, Notes, Calculator, the Start menu, search, window controls and the lock screen.</div>'}
+function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+const pages={system:['System','Display, sound, notifications, storage and basic device options.'],personal:['Personalization','Customize the Windows Web experience.'],privacy:['Privacy','Control local app permissions and privacy options.'],update:['Update & Security','Windows Web is up to date.'],accounts:['Accounts','Manage the local Windows Web account.']};
+function setPage(btn,key){document.querySelectorAll('.setnav button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');let p=pages[key]||pages.system;$('setpage').innerHTML='<h1>'+p[0]+'</h1><p>'+p[1]+'</p><div class="setting-card">Wi‑Fi <span class="toggle on" onclick="this.classList.toggle(\\'on\\')"></span><br><small>Connected</small></div><div class="setting-card">Notifications <span class="toggle on" onclick="this.classList.toggle(\\'on\\')"></span><br><small>Allow notifications</small></div><div class="setting-card">Windows Web password <button style="float:right;padding:6px 12px;color:#222" onclick="changePassword()">Change</button><br><small>Used for the startup lock screen</small></div>'}
+function changePassword(){let p=prompt('Set a new password:');if(p){localStorage.webpw=p;showToast('Password changed')}}
+function calcAdd(x){calcExpr+=x;$('calcdisplay').textContent=calcExpr}
+function calcClear(){calcExpr='';$('calcdisplay').textContent='0'}
+function calcBack(){calcExpr=calcExpr.slice(0,-1);$('calcdisplay').textContent=calcExpr||'0'}
+function calcEqual(){try{if(!/^[0-9+*/(). -]+$/.test(calcExpr))throw 0;calcExpr=String(Function('return '+calcExpr)());$('calcdisplay').textContent=calcExpr}catch(e){$('calcdisplay').textContent='Error';calcExpr=''}}
+function doSearch(v){v=v.trim();if(!v)return;toggleStart();openApp('browser');$('url').value=v;if(/^https?:\\/\\//i.test(v))navigate();else demoPage('Search: '+v)}
+$('noteText').addEventListener('input',e=>localStorage.note=e.target.value)
+function login(){let want=localStorage.webpw||'1234';if($('pw').value===want){$('login').style.display='none';sessionStorage.unlocked='1'}else $('loginerr').textContent='Wrong password'}
+function lock(){$('startMenu').style.display='none';$('login').style.display='flex';$('pw').value='';$('loginerr').textContent=''}
+function shutdown(){showToast('Shutting down…');setTimeout(()=>{document.body.innerHTML='<div style="background:#000;color:#fff;position:fixed;inset:0;display:flex;align-items:center;justify-content:center;font-family:Segoe UI;font-size:20px">It is now safe to close this tab.</div>'},800)}
+function tick(){let d=new Date();$('clock').innerHTML=d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})+'<br>'+d.toLocaleDateString();}setInterval(tick,1000);tick()
+if(sessionStorage.unlocked!=='1')$('login').style.display='flex'
+
+function tmPage(btn,key){
+  document.querySelectorAll('.tmnav').forEach(x=>x.style.background='transparent');
+  if(btn)btn.style.background='#e5f1fb';
+  const c=$('tmcontent');
+  if(key==='processes') c.innerHTML='<h3>Processes</h3><div style="border:1px solid #ddd"><p style="padding:10px">🖥️ Windows Web Desktop <b style="float:right">Running</b></p><p style="padding:10px">🌐 Browser <b style="float:right">Active</b></p><p style="padding:10px">📁 File Explorer <b style="float:right">Active</b></p><p style="padding:10px">⚙️ Settings <b style="float:right">Background</b></p></div>';
+  if(key==='performance') c.innerHTML='<h3>Performance</h3><div class="setting-card">CPU <b style="float:right">12%</b></div><div class="setting-card">Memory <b style="float:right">34%</b></div><div class="setting-card">Storage <b style="float:right">18%</b></div>';
+  if(key==='startup') c.innerHTML='<h3>Startup apps</h3><div class="setting-card">Windows Web Shell <b style="float:right">Enabled</b></div><div class="setting-card">Notes <b style="float:right">Disabled</b></div>';
+}
+function runCommand(){
+  let v=$('runinput').value.trim().toLowerCase();
+  const map={explorer:'explorer',settings:'settings',browser:'browser',chrome:'browser',calc:'calc',calculator:'calc',notepad:'notes',notes:'notes','taskmgr':'taskmgr','task manager':'taskmgr',recycle:'recycle',calendar:'calendar',paint:'paint',media:'media','media player':'media',photos:'photos',terminal:'terminal',cmd:'terminal',weather:'weather'};
+  if(map[v]){closeApp('runbox');openApp(map[v]);}
+  else if(/^https?:\/\//.test(v)){closeApp('runbox');openApp('browser');$('url').value=v;navigate();}
+  else if(v){closeApp('runbox');showToast('Windows cannot find "'+v+'"');}
+}
+function emptyTrash(){$('trashitems').innerHTML='Recycle Bin is empty.';showToast('Recycle Bin emptied')}
+function tmOpen(){openApp('taskmgr');tmPage(null,'processes')}
+
+
+
+let taskbarLocked=false,desktopHidden=false;
+const taskAppNames={explorer:'File Explorer',browser:'Browser',settings:'Settings',notes:'Notepad',calc:'Calculator',taskmgr:'Task Manager',runbox:'Run',recycle:'Recycle Bin',calendar:'Calendar',paint:'Paint',media:'Media Player',photos:'Photos',terminal:'Terminal',weather:'Weather'};
+function hideTaskbarContext(){$('taskbarContext').style.display='none'}
+function toggleTaskbarLock(){taskbarLocked=!taskbarLocked;hideTaskbarContext();showToast(taskbarLocked?'Taskbar locked':'Taskbar unlocked')}
+function taskbarNewWindow(){hideTaskbarContext();openApp('explorer')}
+function showDesktop(){desktopHidden=!desktopHidden;apps.forEach(a=>{let w=$(a);if(desktopHidden){if(w.style.display==='block')w.dataset.wasopen='1';w.style.display='none'}else if(w.dataset.wasopen==='1'){w.style.display='block';w.style.zIndex=++z;delete w.dataset.wasopen}})}
+function openSearchPanel(){$('searchPanel').style.display='block';$('startMenu').style.display='none';setTimeout(()=>$('panelSearch').focus(),0)}
+function closeSearchPanel(){$('searchPanel').style.display='none'}
+function liveSearch(v){
+ v=v.trim().toLowerCase();let box=$('searchResults');if(!v){box.innerHTML='<div style="padding:15px;color:#bbb">Start typing to search apps and settings.</div>';return}
+ let hits=apps.filter(a=>(taskAppNames[a]||a).toLowerCase().includes(v));
+ box.innerHTML=hits.length?hits.map(a=>`<div class="searchResult" onclick="closeSearchPanel();openApp('${a}')">🔹 ${taskAppNames[a]}</div>`).join(''):'<div style="padding:15px;color:#bbb">No results found.</div>';
+}
+function updateTaskStates(){
+ apps.forEach(a=>{let b=$('tb-'+a);if(!b)return;let w=$(a);b.classList.toggle('active',w.style.display==='block');b.classList.toggle('minimized',w.style.display!=='block'&&w.dataset.wasopen==='1')})
+}
+function taskbarMenu(e){if(e.target.closest('#taskbar')){e.preventDefault();let m=$('taskbarContext');m.style.display='block';m.style.left=Math.min(e.clientX,innerWidth-220)+'px';m.style.bottom='48px'}}
+function showClock(){let p=$('clockPanel');p.style.display=p.style.display==='block'?'none':'block';$('actionCenter').style.display='none';$('searchPanel').style.display='none';buildMiniCalendar()}
+function hideClock(){$('clockPanel').style.display='none'}
+function buildMiniCalendar(){
+ let d=new Date(),y=d.getFullYear(),m=d.getMonth(),first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),today=d.getDate();
+ $('miniCal').innerHTML=['S','M','T','W','T','F','S'].map(x=>'<div><b>'+x+'</b></div>').join('');
+ for(let i=0;i<first;i++)$('miniCal').innerHTML+='<div></div>';
+ for(let i=1;i<=days;i++)$('miniCal').innerHTML+=`<div class="${i===today?'today':''}">${i}</div>`;
+}
+function toggleAction(){let a=$('actionCenter');a.style.display=a.style.display==='block'?'none':'block';$('startMenu').style.display='none'}
+function toggleVirtual(){let v=$('virtualView');v.style.display=v.style.display==='block'?'none':'block'}
+function switchDesk(n){document.querySelectorAll('.deskThumb').forEach((x,i)=>x.classList.toggle('active',i===n-1));showToast('Switched to Desktop '+n);$('virtualView').style.display='none'}
+function addDesktop(){let v=$('virtualView');let count=v.querySelectorAll('.deskThumb').length+1;let d=document.createElement('div');d.className='deskThumb';d.textContent='🖥️ Desktop '+count;d.onclick=()=>switchDesk(count);v.insertBefore(d,v.querySelector('br'));showToast('Desktop '+count+' created')}
+function toggleNight(){document.body.style.filter=document.body.style.filter?'':'sepia(.35) brightness(.8)';showToast('Night light toggled')}
+function showNewDialog(){$('newDialog').style.display='flex';$('newName').focus()}
+function closeDialog(){$('newDialog').style.display='none'}
+function createItem(){let n=$('newName').value.trim()||'New Folder';let d=document.createElement('div');d.className='file';d.innerHTML='<div class="fi">📁</div>'+esc(n);d.ondblclick=()=>showToast(n+' opened');$('files').appendChild(d);closeDialog();showToast(n+' created')}
+function sortFiles(){let box=$('files');[...box.children].sort((a,b)=>a.textContent.localeCompare(b.textContent)).forEach(x=>box.appendChild(x));showToast('Files sorted A–Z')}
+
+function setupCalendar(){
+  const d=new Date(), y=d.getFullYear(), m=d.getMonth();
+  $('calTitle').textContent=d.toLocaleString([], {month:'long',year:'numeric'});
+  const first=new Date(y,m,1).getDay(), days=new Date(y,m+1,0).getDate();
+  let s=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(x=>'<b style="text-align:center">'+x+'</b>').join('');
+  for(let i=0;i<first;i++)s+='<div></div>';
+  for(let i=1;i<=days;i++)s+='<div onclick="showToast(\'Calendar: '+i+' selected\')" style="padding:12px;text-align:center;border:1px solid #eee;cursor:pointer">'+i+'</div>';
+  $('calGrid').innerHTML=s;
+}
+let paintReady=false,painting=false;
+function setupPaint(){
+  const c=$('paintCanvas'); if(paintReady)return; paintReady=true;
+  const resize=()=>{let r=c.getBoundingClientRect();c.width=Math.max(300,r.width);c.height=Math.max(250,r.height)};
+  resize(); window.addEventListener('resize',resize);
+  const pos=e=>{let r=c.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top]};
+  c.addEventListener('pointerdown',e=>{painting=true;c.setPointerCapture(e.pointerId);let [x,y]=pos(e);let q=c.getContext('2d');q.beginPath();q.moveTo(x,y)});
+  c.addEventListener('pointermove',e=>{if(!painting)return;let [x,y]=pos(e),q=c.getContext('2d');q.strokeStyle=$('paintColor').value;q.lineWidth=4;q.lineCap='round';q.lineTo(x,y);q.stroke()});
+  c.addEventListener('pointerup',()=>painting=false);
+}
+function clearPaint(){let c=$('paintCanvas');c.getContext('2d').clearRect(0,0,c.width,c.height)}
+function setupTerminal(){
+ $('termInput').onkeydown=e=>{if(e.key!=='Enter')return;let v=e.target.value.trim(),o=$('termOut');o.innerHTML+='<br>C:\\\\Windows&gt; '+esc(v)+'<br>';let cmd=v.toLowerCase();
+ if(cmd==='help')o.innerHTML+='help, cls, dir, explorer, settings, calc, notepad, browser, taskmgr, date, time, ver, echo';
+ else if(cmd==='cls')o.innerHTML='';
+ else if(cmd==='dir')o.innerHTML+='Desktop&nbsp;&nbsp; Documents&nbsp;&nbsp; Downloads&nbsp;&nbsp; Pictures&nbsp;&nbsp; Windows';
+ else if(cmd==='explorer'||cmd==='start explorer'){openApp('explorer');o.innerHTML+='Opening File Explorer...'}
+ else if(cmd==='settings'){openApp('settings');o.innerHTML+='Opening Settings...'}
+ else if(cmd==='calc'){openApp('calc');o.innerHTML+='Opening Calculator...'}
+ else if(cmd==='notepad'){openApp('notes');o.innerHTML+='Opening Notepad...'}
+ else if(cmd==='browser'){openApp('browser');o.innerHTML+='Opening Browser...'}
+ else if(cmd==='taskmgr'){tmOpen();o.innerHTML+='Opening Task Manager...'}
+ else if(cmd==='date')o.innerHTML+=new Date().toLocaleDateString();
+ else if(cmd==='time')o.innerHTML+=new Date().toLocaleTimeString();
+ else if(cmd==='ver')o.innerHTML+='Microsoft Windows Web [Version 10.0-Web]';
+ else if(cmd.startsWith('echo '))o.innerHTML+=esc(v.slice(5));
+ else if(v)o.innerHTML+="'"+esc(v)+"' is not recognized as a command.";
+ e.target.value='';o.scrollTop=o.scrollHeight;
+ }
+}
+$('audioFile')?.addEventListener('change',e=>{let f=e.target.files[0];if(f){$('audioPlayer').src=URL.createObjectURL(f);$('trackName').textContent=f.name}})
+$('photoFiles')?.addEventListener('change',e=>{let g=$('photoGrid');g.innerHTML='';[...e.target.files].forEach(f=>{let img=document.createElement('img');img.src=URL.createObjectURL(f);img.style.width='100%';img.style.height='130px';img.style.objectFit='cover';img.style.cursor='pointer';img.onclick=()=>window.open(img.src);g.appendChild(img)})})
+function hideContext(){ $('contextMenu').style.display='none' }
+function refreshDesktop(){hideContext();$('desktopIcons').style.opacity='.35';setTimeout(()=>$('desktopIcons').style.opacity='1',180);showToast('Desktop refreshed')}
+$('desktop').addEventListener('contextmenu',e=>{if(e.target.closest('.window')||e.target.closest('#taskbar')||e.target.closest('#startMenu'))return;e.preventDefault();let m=$('contextMenu');m.style.display='block';m.style.left=Math.min(e.clientX,innerWidth-215)+'px';m.style.top=Math.min(e.clientY,innerHeight-180)+'px'})
+document.addEventListener('click',e=>{if(!e.target.closest('#contextMenu'))hideContext();if(!e.target.closest('#taskbarContext')&&!e.target.closest('#taskbar'))hideTaskbarContext();if(!e.target.closest('#clockPanel')&&!e.target.closest('#clock'))hideClock();if(!e.target.closest('#searchPanel')&&!e.target.closest('.search'))closeSearchPanel()})
+$('taskbar').addEventListener('contextmenu',taskbarMenu)
+document.addEventListener('dblclick',e=>{if(e.target===document.body||e.target.id==='desktop'||e.target.classList.contains('wallpaper-glow'))openApp('explorer')})
+window.addEventListener('keydown',e=>{
+ if(e.key==='Escape'){$('startMenu').style.display='none';hideContext();$('actionCenter').style.display='none';$('virtualView').style.display='none'}
+ if(e.key==='Enter'&&document.activeElement===$('pw'))login();
+ if(e.ctrlKey&&e.shiftKey&&e.key.toLowerCase()==='escape'){e.preventDefault();tmOpen()}
+ if(e.altKey&&e.key==='F4'){let visible=apps.filter(a=>$(a).style.display==='block').sort((a,b)=>$(a).style.zIndex-$(b).style.zIndex).pop();if(visible)closeApp(visible)}
+ if(e.key==='F2'&&document.activeElement!==$('pw'))showToast('Rename: select an item first')
+ if(e.key==='F5'){e.preventDefault();refreshDesktop()}
+ if(e.ctrlKey&&e.key.toLowerCase()==='n'&&$('explorer').style.display==='block'){e.preventDefault();showNewDialog()}
+ if(e.key==='Meta'&&e.key.toLowerCase()==='s'){e.preventDefault();openSearchPanel()}
+ if(e.key==='Meta'&&e.key.toLowerCase()==='d'){e.preventDefault();showDesktop()}
+ if(e.key==='Meta'&&e.key.toLowerCase()==='a'){e.preventDefault();toggleAction()}
+})
+
+
+/* ===== ADVANCED TASKBAR / SHELL ===== */
+const PIN_KEY='win10.pins', NOTEY='win10.notifications';
+let pins;
+try{pins=JSON.parse(localStorage.getItem(PIN_KEY)||'["explorer","edge","settings","notepad","calc","taskmgr","calendar","paint","media","terminal"]')}catch(e){pins=["explorer","edge","settings","notepad","calc","taskmgr","calendar","paint","media","terminal"]}
+function savePins(){localStorage.setItem(PIN_KEY,JSON.stringify(pins))}
+function pinnedApps(){return pins.map(id=>document.getElementById('t-'+id)).filter(Boolean)}
+function rebuildPins(){
+  const bar=document.querySelector('.taskbar'); if(!bar)return;
+  const search=bar.querySelector('.search'), start=bar.querySelector('.winlogo')?.parentElement;
+  const virtual=bar.querySelector('[onclick*="toggleVirtual"]'), show=bar.querySelector('[onclick*="showDesktop"]');
+  if(!search||!start)return;
+  [...bar.querySelectorAll('.tb[data-pin]')].forEach(x=>x.remove());
+  let ref=virtual||show||bar.querySelector('.tray');
+  pins.forEach((id,i)=>{
+    const old=document.getElementById('t-'+id);
+    if(!old)return;
+    const b=old.cloneNode(true); b.id='t-'+id; b.className='tb'; b.dataset.pin=id;
+    b.draggable=true; b.title=(old.title||id)+' — right-click for jump list';
+    b.onclick=()=>openWin(id);
+    b.oncontextmenu=e=>{e.preventDefault();showJumpList(e,id)};
+    b.ondragstart=e=>{b.classList.add('dragging');e.dataTransfer.setData('text/plain',id)};
+    b.ondragend=()=>b.classList.remove('dragging');
+    b.ondragover=e=>e.preventDefault();
+    b.ondrop=e=>{e.preventDefault();const from=e.dataTransfer.getData('text/plain');reorderPin(from,id)};
+    ref.parentNode.insertBefore(b,ref);
+  });
+  updateTaskStates();
+}
+function reorderPin(a,b){if(a===b)return;const ia=pins.indexOf(a),ib=pins.indexOf(b);if(ia<0||ib<0)return;pins.splice(ia,1);pins.splice(pins.indexOf(b),0,a);savePins();rebuildPins();toast('Taskbar','Pinned apps reordered.')}
+function showJumpList(e,id){
+  closeJumpList();
+  const names={explorer:'File Explorer',edge:'Microsoft Edge',settings:'Settings',notepad:'Notepad',calc:'Calculator',taskmgr:'Task Manager',calendar:'Calendar',paint:'Paint',media:'Media Player',terminal:'Terminal'};
+  const menu=document.createElement('div');menu.className='jumpmenu';menu.id='jumpmenu';
+  const actions={
+    explorer:[['📁 Open File Explorer',"openWin('explorer')"],['🗂️ This PC',"openWin('explorer');current='This PC';renderFiles()"],['📥 Downloads',"openWin('explorer');current='Downloads';renderFiles()"]],
+    edge:[['🌐 New tab',"openWin('edge');toast('Edge','New tab opened')"],['⭐ Favorites',"openWin('edge');toast('Edge','Favorites opened')"]],
+    settings:[['⚙️ System',"openWin('settings')"],['🎨 Personalization',"openWin('settings');toast('Settings','Personalization')"]],
+    notepad:[['📝 New note',"openWin('notepad');document.getElementById('note').value=''"],['📄 Open notes',"openWin('notepad')"]],
+    calc:[['🧮 Calculator',"openWin('calc')"],['🧹 Clear',"openWin('calc');calc='';document.getElementById('screen').textContent='0'"]],
+    taskmgr:[['📊 Processes',"openWin('taskmgr')"],['⚡ Performance',"openWin('taskmgr');toast('Task Manager','Performance')"]],
+    calendar:[['📅 Today',"openWin('calendar')"]],paint:[['🎨 New canvas',"openWin('paint');clearPaint()']],
+    media:[['🎵 Media Player',"openWin('media')"]],terminal:[['⌨️ New terminal',"openWin('terminal')"]]
+  };
+  menu.innerHTML='<div class="jmhead">'+(names[id]||id)+'</div>'+((actions[id]||[['Open',`openWin('${id}')`]]).map(a=>`<button onclick="${a[1]};closeJumpList()">${a[0]}</button>`).join(''))+
+    `<button onclick="unpinApp('${id}');closeJumpList()">📌 Unpin from taskbar</button>`;
+  document.body.appendChild(menu);
+  menu.style.left=Math.min(innerWidth-280,Math.max(4,e.clientX-10))+'px';
+  menu.style.top=Math.min(innerHeight-260,Math.max(4,e.clientY-250))+'px';
+}
+function closeJumpList(){document.getElementById('jumpmenu')?.remove()}
+function unpinApp(id){pins=pins.filter(x=>x!==id);savePins();rebuildPins();toast('Taskbar',id+' unpinned')}
+function pinApp(id){if(!pins.includes(id)){pins.push(id);savePins();rebuildPins();toast('Taskbar',id+' pinned')}}
+document.addEventListener('click',e=>{if(!e.target.closest('.jumpmenu'))closeJumpList()});
+
+function showThumbs(id){
+  closeThumbs();
+  const apps=pins.filter(x=>document.getElementById(x)?.classList.contains('visible'));
+  if(!apps.length)return;
+  const panel=document.createElement('div');panel.className='thumbpreview';panel.id='thumbpreview';
+  apps.forEach(a=>{const w=document.getElementById(a),d=document.createElement('div');d.className='thumb';d.innerHTML=`<div class="mini">${w.outerHTML}</div><label>${w.querySelector('.tt')?.textContent||a}</label>`;d.onclick=()=>{openWin(a);closeThumbs()};panel.appendChild(d)});
+  document.body.appendChild(panel);const b=document.getElementById('t-'+id);const r=b?.getBoundingClientRect();if(r){panel.style.left=Math.min(innerWidth-panel.offsetWidth-5,Math.max(5,r.left))+'px';panel.style.bottom='43px'}
+}
+function closeThumbs(){document.getElementById('thumbpreview')?.remove()}
+function addBadges(){
+  const counts={edge:2,notepad:1,terminal:3};
+  Object.entries(counts).forEach(([id,n])=>{const b=document.getElementById('t-'+id);if(b&&!b.querySelector('.badge'))b.insertAdjacentHTML('beforeend',`<span class="badge">${n}</span>`)});
+}
+function clearBadges(id){document.querySelector(`#t-${id} .badge`)?.remove()}
+document.addEventListener('mouseover',e=>{const b=e.target.closest('.tb[data-pin]');if(b){clearTimeout(window._thumbTimer);window._thumbTimer=setTimeout(()=>showThumbs(b.dataset.pin),450)}})
+document.addEventListener('mouseout',e=>{if(e.target.closest('.tb[data-pin]')){clearTimeout(window._thumbTimer);setTimeout(()=>{if(!document.querySelector('#thumbpreview:hover'))closeThumbs()},120)}})
+
+function toggleTrayOverflow(e){
+  e?.stopPropagation(); document.getElementById('trayoverflow')?.remove();
+  const d=document.createElement('div');d.id='trayoverflow';d.className='trayoverflow';
+  d.innerHTML='<button onclick="toast(\'Network\',\'Wi‑Fi connected\');this.parentNode.remove()">📶 Wi‑Fi</button><button onclick="toast(\'Bluetooth\',\'Bluetooth is on\');this.parentNode.remove()">ᛒ Bluetooth</button><button onclick="toast(\'Battery\',\'Battery 100%\');this.parentNode.remove()">🔋 Battery</button><button onclick="openWin(\'settings\');this.parentNode.remove()">⚙️ System settings</button>';
+  document.body.appendChild(d);const b=document.getElementById('traymore'),r=b.getBoundingClientRect();d.style.right='8px';d.style.bottom='43px';
+}
+document.addEventListener('click',e=>{if(!e.target.closest('#trayoverflow')&&!e.target.closest('#traymore'))document.getElementById('trayoverflow')?.remove()});
+
+function showSnapZones(){document.querySelectorAll('.snapzone').forEach(x=>x.classList.add('show'))}
+function hideSnapZones(){document.querySelectorAll('.snapzone').forEach(x=>x.classList.remove('show'))}
+function snapWindow(id,side){const w=document.getElementById(id);if(!w)return;w.classList.remove('max');w.style.top='0px';w.style.height='calc(100vh - 40px)';w.style.width='50vw';w.style.left=side==='right'?'50vw':'0px';hideSnapZones();toast('Window','Snapped '+side)}
+function addSnapZones(){if(document.querySelector('.snapzone'))return;['left','right','top'].forEach(s=>{const z=document.createElement('div');z.className='snapzone '+s;z.ondragover=()=>showSnapZones();z.ondrop=()=>{if(drag)snapWindow(drag.id,s==='top'?'left':s)};document.body.appendChild(z)})}
+function startMenuApps(){
+  const box=document.querySelector('.startapps');if(!box)return;
+  box.innerHTML='<div class="starthead">All apps</div><input placeholder="Search apps..." oninput="filterStartApps(this.value)"><div class="applist">'+[
+    ['📁','File Explorer','explorer'],['🌐','Microsoft Edge','edge'],['⚙️','Settings','settings'],['📝','Notepad','notepad'],['🧮','Calculator','calc'],['📊','Task Manager','taskmgr'],['📅','Calendar','calendar'],['🎨','Paint','paint'],['🎵','Media Player','media'],['⌨️','Terminal','terminal'],['🖼️','Photos','photos'],['🌤️','Weather','weather'],['▶️','Run','run'],['🗑️','Recycle Bin','recycle']
+  ].map(a=>`<button data-app="${a[1].toLowerCase()}" onclick="openWin('${a[2]}')">${a[0]} ${a[1]}</button>`).join('')+'</div>';
+}
+function filterStartApps(v){document.querySelectorAll('.applist button').forEach(b=>b.style.display=b.dataset.app.includes(v.toLowerCase())?'block':'none')}
+function shellInit(){addSnapZones();rebuildPins();addBadges();startMenuApps()}
+setTimeout(shellInit,300);
+</script>
+</body>
+</html>
