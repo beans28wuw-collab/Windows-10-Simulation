@@ -1,343 +1,1245 @@
+AI Mode
+All
+Images
+Videos
+News
+Maps
+Shopping
+Books
+Flights
+Finance
+An interactive web simulation modeling a Windows 10 desktop environment with game integration is ready for exploration.
+Windows 10 Web Dashboard
+The web simulator mimics a desktop user interface with functional components:
+The Desktop Interface: A responsive CSS grid layout staging icons for unblocked web games.
+Interactive Taskbar: Located at the bottom of the screen featuring a Start menu action and a persistent, custom-mapped shortcut icon for GeForce NOW.
+Dynamic App Windowing: Clicking any desktop icon or the taskbar shortcut initializes a modal container styled as a standard OS window, embedding the application directly using responsive elements.
+
+AI-generated. Don't enter sensitive personal info.
+Structure & Deployment Options
+If you intend to host or run this project locally as a single file, you can utilize the architectural template below. It bundles the UI structure (HTML), the visual theme mimicking the dark-mode taskbar (CSS), and the application layer handling shortcuts and modal visibility (JavaScript).
+html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Windows 10 Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebOS - Desktop Environment</title>
     <style>
+        :root {
+            --taskbar-bg: rgba(16, 16, 16, 0.85);
+            --desktop-bg: #1e1e24;
+            --window-bg: #202024;
+            --accent-color: #0078d7;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--desktop-bg); }
+        
+        /* Desktop Area */
+        .desktop {
+            width: 100%;
+            height: calc(100% - 48px);
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 90px);
+            grid-template-rows: repeat(auto-fill, 90px);
+            grid-gap: 15px;
+            grid-auto-flow: column;
+        }
+        .desktop-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            cursor: pointer;
+            text-align: center;
+            border-radius: 4px;
+            padding: 5px;
+            font-size: 12px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+        .desktop-icon:hover { background: rgba(255, 255, 255, 0.1); }
+        .desktop-icon svg { width: 40px; height: 40px; margin-bottom: 6px; }
+
+        /* Taskbar */
+        .taskbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 48px;
+            background: var(--taskbar-bg);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 9999;
+            padding: 0 10px;
+        }
+        .taskbar-left { display: flex; align-items: center; height: 100%; }
+        .start-btn {
+            height: 100%;
+            width: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .start-btn:hover { background: rgba(255, 255, 255, 0.1); }
+        .pinned-apps { display: flex; align-items: center; height: 100%; margin-left: 10px; gap: 4px; }
+        .taskbar-icon {
+            height: 40px;
+            width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .taskbar-icon:hover { background: rgba(255, 255, 255, 0.1); }
+        .taskbar-icon svg { width: 24px; height: 24px; }
+
+        /* OS Window System */
+        .window {
+            position: absolute;
+            top: 10%;
+            left: 15%;
+            width: 70%;
+            height: 70%;
+            background: var(--window-bg);
+            border: 1px solid #444;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 100;
+        }
+        .window.hidden { display: none !important; }
+        .window-header {
+            height: 34px;
+            background: #18181c;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            color: #fff;
+            user-select: none;
+            font-size: 13px;
+        }
+        .window-controls { display: flex; gap: 8px; }
+        .control-btn {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-close { background: #ff5f56; }
+        .window-body { flex: 1; width: 100%; height: 100%; background: #000; }
+        .window-body iframe { width: 100%; height: 100%; border: none; }
+    </style>
+</head>
+<body>
+
+    <!-- Desktop Icons -->
+    <div class="desktop">
+        <div class="desktop-icon" onclick="openApp('Retro Games', 'https://purexbox.com')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg>
+            <span>Retro Arcade</span>
+        </div>
+        <div class="desktop-icon" onclick="openApp('2D Physics', 'https://purexbox.com')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m10 15 5-3-5-3v6z"/></svg>
+            <span>Sandbox</span>
+        </div>
+    </div>
+
+    <!-- Taskbar -->
+    <div class="taskbar">
+        <div class="taskbar-left">
+            <div class="start-btn">
+                <svg viewBox="0 0 24 24" fill="#0078d7"><path d="M0 3.449L9.75 2.1v9.45H0V3.449zM0 12.45h9.75v9.45L0 20.551v-8.1zM10.8 1.95L24 0v11.55H10.8V1.95zM10.8 12.45H24v11.55l-13.2-1.95v-9.6z"/></svg>
+            </div>
+            <div class="pinned-apps">
+                <!-- GeForce NOW Taskbar Integration -->
+                <div class="taskbar-icon" title="GeForce NOW" onclick="openApp('GeForce NOW', 'https://geforcenow.com')">
+                    <svg viewBox="0 0 24 24" fill="#76B900"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15.5h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Window Modal Template -->
+    <div id="app-window" class="window hidden">
+        <div class="window-header">
+            <span id="window-title">Application</span>
+            <div class="window-controls">
+                <button class="control-btn btn-close" onclick="closeApp()"></button>
+            </div>
+        </div>
+        <div class="window-body">
+            <iframe id="app-frame" src=""></iframe>
+        </div>
+    </div>
+
+    <script>
+        function openApp(name, url) {
+            document.getElementById('window-title').innerText = name;
+            document.getElementById('app-frame').src = url;
+            document.getElementById('app-window').classList.remove('hidden');
+        }
+
+        function closeApp() {
+            document.getElementById('app-window').classList.add('hidden');
+            document.getElementById('app-frame').src = '';
+        }
+    </script>
+</body>
+</html>
+Use code with caution.
+If you want to tailor the environment further, let me know:
+Do you have specific unblocked game frame targets or open URLs you want pre-configured into the code?
+Would you like custom logic like draggable desktop shortcuts or a working Start Menu grid layout?
+Try without personalization
+
+
+
+
+Here is the complete, single-file source code for your standalone, unblocked-gaming optimization of the Windows 10 simulation dashboard.
+Save this file as index.html on your device. It combines structural framing, high-performance dark-mode taskbar styles, a working Start Menu toggle, draggable active application window modals, and shortcut setups featuring GeForce NOW.
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 10 Pro - Unblocked Gaming Hub</title>
+    <style>
+        :root {
+            --taskbar-bg: rgba(16, 16, 16, 0.85);
+            --desktop-bg: #111116;
+            --window-bg: #1c1c22;
+            --window-header: #121216;
+            --accent-color: #0078d7;
+            --gfn-green: #76B900;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             user-select: none;
             -webkit-user-select: none;
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
         }
 
         body, html {
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #000;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e1e2f);
+            color: #ffffff;
         }
 
-        /* --- DESKTOP CORES SHELL --- */
-        #desktop-shell {
+        /* Desktop Grid Environment */
+        .desktop-environment {
             width: 100%;
-            height: 100%;
-            position: relative;
-            background: #0078d7 url('https://unsplash.com') no-repeat center center;
-            background-size: cover;
-        }
-
-        /* Desktop Grid Icons Container Layout */
-        .desktop-icons-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: calc(100% - 40px);
-            padding: 10px;
+            height: calc(100% - 48px);
+            padding: 15px;
             display: grid;
+            grid-template-columns: repeat(auto-fill, 95px);
+            grid-template-rows: repeat(auto-fill, 100px);
+            grid-gap: 15px;
             grid-auto-flow: column;
-            grid-template-rows: repeat(auto-fill, 75px);
-            grid-template-columns: repeat(auto-fill, 75px);
-            gap: 15px;
             align-content: flex-start;
-            justify-content: flex-start;
-            z-index: 5;
+            position: relative;
         }
 
-        .sys-shortcut {
-            width: 75px;
-            height: 75px;
+        .shortcut {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            text-align: center;
+            width: 95px;
+            height: 100px;
             cursor: pointer;
-            border: 1px solid transparent;
-            border-radius: 2px;
-            padding: 4px;
+            border-radius: 4px;
+            padding: 8px;
+            transition: background 0.15s ease;
+            text-align: center;
+        }
+
+        .shortcut:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .shortcut svg {
+            width: 42px;
+            height: 42px;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        .shortcut span {
+            font-size: 12px;
+            color: #ffffff;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
+            word-break: break-word;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Taskbar Core Elements */
+        .taskbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 48px;
+            background: var(--taskbar-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 99999;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .taskbar-left-zone {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        .start-trigger {
+            height: 100%;
+            width: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
             transition: background 0.1s;
         }
 
-        .sys-shortcut:hover {
+        .start-trigger:hover, .start-trigger.active {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .pinned-dock {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            gap: 2px;
+            padding-left: 4px;
+        }
+
+        .dock-item {
+            height: 100%;
+            width: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.1s;
+        }
+
+        .dock-item:hover {
             background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.18);
         }
 
-        .shortcut-graphic {
-            font-size: 26px;
-            margin-bottom: 5px;
-        }
-
-        .shortcut-text {
-            color: #fff;
-            font-size: 11px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            width: 100%;
-        }
-
-        /* --- THE ADVANCED WINDOWING ENGINE --- */
-        .window-instance {
+        .dock-item.running::after {
+            content: '';
             position: absolute;
-            width: 500px;
-            height: 360px;
-            background-color: #fff;
-            border: 1px solid #707070;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            bottom: 0;
+            left: 20%;
+            width: 60%;
+            height: 2px;
+            background: var(--accent-color);
+        }
+
+        .dock-item.active-window::after {
+            background: #ffffff !important;
+            width: 70%;
+            left: 15%;
+        }
+
+        /* Start Menu Panel */
+        .start-menu {
+            position: absolute;
+            bottom: 48px;
+            left: 0;
+            width: 640px;
+            height: 500px;
+            background: rgba(20, 20, 25, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: none;
+            display: flex;
+            z-index: 99998;
+            transform: translateY(100%);
+            transition: transform 0.2s cubic-bezier(0.1, 0.9, 0.2, 1);
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.5);
+        }
+
+        .start-menu.open {
+            transform: translateY(0);
+        }
+
+        .start-sidebar {
+            width: 48px;
+            height: 100%;
             display: flex;
             flex-direction: column;
-            z-index: 50;
-            border-radius: 2px;
+            justify-content: flex-end;
+            padding-bottom: 8px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar-action {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .sidebar-action:hover { background: rgba(255,255,255,0.1); }
+
+        .start-apps-list {
+            flex: 1;
+            padding: 15px 5px 15px 15px;
+            overflow-y: auto;
+        }
+
+        .start-app-row {
+            display: flex;
+            align-items: center;
+            padding: 8px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .start-app-row:hover { background: rgba(255,255,255,0.1); }
+        .start-app-row svg { width: 22px; height: 22px; margin-right: 12px; }
+
+        .start-tiles-grid {
+            width: 350px;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 8px;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .tile {
+            background: var(--accent-color);
+            aspect-ratio: 1;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            cursor: pointer;
+            font-size: 12px;
+            transition: transform 0.1s;
+        }
+
+        .tile:hover {
+            outline: 2px solid rgba(255,255,255,0.4);
+        }
+
+        .tile.gfn-tile { background: #1a1a1a; border-left: 3px solid var(--gfn-green); }
+        .tile svg { width: 28px; height: 28px; margin-bottom: auto; }
+
+        /* Window Sandbox Manager */
+        .os-window {
+            position: absolute;
+            background: var(--window-bg);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 1000;
             min-width: 300px;
             min-height: 200px;
         }
 
-        @media (max-width: 600px) {
-            .window-instance {
-                width: 95% !important;
-                height: 70% !important;
-            }
-        }
+        .os-window.hidden { display: none !important; }
 
-        .window-instance.maximized {
-            width: 100% !important;
-            height: calc(100% - 40px) !important;
-            top: 0 !important;
-            left: 0 !important;
-        }
-
-        .window-instance.minimized {
-            display: none !important;
-        }
-
-        .window-header {
-            height: 32px;
-            background-color: #fff;
+        .window-topbar {
+            height: 38px;
+            background: var(--window-header);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding-left: 12px;
-            font-size: 12px;
-            color: #222;
-            border-bottom: 1px solid #eaeaea;
+            padding: 0 12px;
             cursor: move;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
         .window-identity {
             display: flex;
             align-items: center;
-            gap: 8px;
+            font-size: 12px;
+            font-weight: 400;
+            letter-spacing: 0.3px;
         }
+
+        .window-identity svg { width: 16px; height: 16px; margin-right: 8px; }
 
         .window-actions {
             display: flex;
+            align-items: center;
             height: 100%;
         }
 
-        .action-node-btn {
+        .action-node {
             width: 46px;
-            height: 100%;
+            height: 38px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
             cursor: pointer;
-            color: #000;
-        }
-
-        .action-node-btn:hover { background-color: #e5e5e5; }
-        .action-node-btn.exit-node-btn:hover { background-color: #e81123; color: #fff; }
-
-        .window-client-frame {
-            flex: 1;
-            overflow: hidden;
-            background-color: #fff;
-            color: #000;
-        }
-
-        /* --- APPLICATION RUNTIMES --- */
-        /* Command Prompt */
-        .runtime-cmd-pane {
-            width: 100%;
-            height: 100%;
-            background-color: #0c0c0c;
-            color: #cccccc;
-            font-family: 'Consolas', monospace;
-            padding: 12px;
-            font-size: 12px;
-            overflow-y: auto;
-        }
-        .cmd-output-history { margin-bottom: 4px; line-height: 1.4; white-space: pre-wrap; }
-        .cmd-interactive-line { display: flex; align-items: center; width: 100%; }
-        .cmd-shell-input {
             background: transparent;
             border: none;
-            outline: none;
             color: #fff;
-            font-family: 'Consolas', monospace;
-            font-size: 12px;
-            flex: 1;
+            margin-right: -12px;
         }
 
-        /* File Explorer */
-        .runtime-explorer-pane {
-            display: flex;
-            height: 100%;
-        }
-        .explorer-tree-sidebar {
-            width: 130px;
-            background-color: #f0f0f0;
-            border-right: 1px solid #dfdfdf;
-            padding: 10px 5px;
-            font-size: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .sidebar-node-item { padding: 4px 6px; cursor: pointer; border-radius: 3px; }
-        .sidebar-node-item:hover { background-color: #e0e0e0; }
-        .explorer-grid-view {
+        .action-node:hover { background: rgba(255, 255, 255, 0.1); }
+        .action-node.close-node:hover { background: #e81123; }
+
+        .window-view-port {
             flex: 1;
-            padding: 15px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-            gap: 20px;
-            align-content: flex-start;
-        }
-        .explorer-file-node {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            font-size: 11px;
-            cursor: pointer;
+            width: 100%;
+            height: calc(100% - 38px);
+            background: #000000;
+            position: relative;
         }
 
-        /* Edge Browser Clone Layout */
-        .runtime-browser-pane {
+        .window-view-port iframe {
             width: 100%;
             height: 100%;
+            border: none;
+            background: #000;
+        }
+
+        .taskbar-right-zone {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            padding-right: 12px;
+            gap: 12px;
+            font-size: 12px;
+        }
+        
+        .system-tray-clock {
+            text-align: right;
+            line-height: 1.3;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Desktop Grid Elements -->
+    <div class="desktop-environment" id="desktop">
+        <div class="shortcut" onclick="launchApplication('CrazyGames Unblocked', 'https://crazygames.com')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#ff4757" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <span>CrazyGames</span>
+        </div>
+        <div class="shortcut" onclick="launchApplication('Retro Arcade Online', 'https://retrogames.cc')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2ed573" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M8 10v4M16 11h.01M19 13h.01"/></svg>
+            <span>Retro Arcade</span>
+Use code with caution.
+Poki Portal
+
+
+
+GeForce NOW
+
+NVIDIA GeForce NOW
+
+
+
+CrazyGames Dashboard
+
+
+
+
+
+Stream GeForce NOW
+
+
+
+Classic Arcades
+
+
+Application Frame
+
+
+✕
+
+
+
+
+
+00:00 AM
+10/07/2026
+
+// Start Menu Controller Engine
+function toggleStartMenu() {
+const menu = document.getElementById('startMenu');
+const trigger = document.getElementById('startTrigger');
+menu.classList.toggle('open');
+trigger.classList.toggle('active');
+}
+// Global Desktop Interface Interaction Management
+document.getElementById('desktop').addEventListener('click', function(e) {
+if (!e.target.closest('#startTrigger') && !e.target.closest('#startMenu')) {
+document.getElementById('startMenu').classList.remove('open');
+document.getElementById('startTrigger').classList.remove('active');
+}
+});
+// App Allocation Handler
+function launchApplication(title, targetUrl) {
+document.getElementById('startMenu').classList.remove('open');
+document.getElementById('startTrigger').classList.remove('active');
+const modal = document.getElementById('appWindow');
+const frame = document.getElementById('applicationSandboxFrame');
+const titleDisplay = document.getElementById('windowTitleDisplay');
+const gfnTaskbarNode = document.getElementById('taskbarGfnIcon');
+titleDisplay.innerText = title;
+frame.src = targetUrl;
+modal.classList.remove('hidden');
+// Handle taskbar running animation status states
+if (title === 'GeForce NOW') {
+gfnTaskbarNode.classList.add('running', 'active-window');
+} else {
+gfnTaskbarNode.classList.remove('active-window');
+}
+// Window initialization placement normalization
+modal.style.width = "85%";
+modal.style.height = "80%";
+modal.style.top = "8%";
+modal.style.left = "7.5%";
+}
+function destroyActiveApplication() {
+document.getElementById('appWindow').classList.add('hidden');
+document.getElementById('applicationSandboxFrame').src = '';
+document.getElementById('taskbarGfnIcon').classList.remove('running', 'active-window');
+}
+// Draggable Modals Functional Architecture
+(function() {
+const topbar = document.getElementById('windowTopbar');
+const targetModal = document.getElementById('appWindow');
+let initialX, initialY, offsetX = 0, offsetY = 0;
+let isMoving = false;
+topbar.addEventListener('mousedown', function(e) {
+isMoving = true;
+initialX = e.clientX - offsetX;
+initialY = e.clientY - offsetY;
+});
+document.addEventListener('mousemove', function(e) {
+if (isMoving) {
+e.preventDefault();
+offsetX = e.clientX - initialX;
+offsetY = e.clientY - initialY;
+targetModal.style.transform = translate(${offsetX}px, ${offsetY}px);
+}
+});
+document.addEventListener('mouseup', function() {
+isMoving = false;
+});
+})();
+// System Tray Dynamic Time Display Configuration
+function updateSystemClock() {
+const now = new Date();
+let hours = now.getHours();
+const minutes = String(now.getMinutes()).padStart(2, '0');
+const ampm = hours >= 12 ? 'PM' : 'AM';
+hours = hours % 12;
+hours = hours ? hours : 12;
+const month = String(now.getMonth() + 1).padStart(2, '0');
+const day = String(now.getDate()).padStart(2, '0');
+const year = now.getFullYear();
+document.getElementById('systemClock').innerHTML = ${hours}:${minutes} ${ampm}<br>${month}/${day}/${year};
+}
+setInterval(updateSystemClock, 1000);
+updateSystemClock();
+
+
+
+<FollowUp>
+If you want to configure this further, let me know:
+* Would you like me to inject **more unblocked game domains** directly into the desktop grid loop?
+* Do you want code added to make the windows **resizable from the edges**, or keep the fixed layout code?
+</FollowUp>
+Try without personalization
+
+
+
+
+This is the raw source code text for an interactive, unblocked-gaming simulator built to look like Windows 10.
+Because it is written entirely in standard web code (HTML, CSS, and JavaScript), it functions as a portable dashboard. You can copy this exact text, paste it into a blank text file on your computer, name it index.html, and double-click it to run it directly inside any web browser.
+What the Code Does
+Simulates an OS: It uses styled overlays to make your browser tab look like a Windows 10 desktop, complete with a dark-mode taskbar, system clock, and a Windows Start button.
+Bypasses Web Restrictions: Instead of redirecting your browser to gaming websites (which filters or firewalls often block), it uses HTML <iframe> windows. This creates an isolated "picture-in-picture" frame inside the dashboard to load unblocked web apps like Poki, CrazyGames, or cloud gaming setups.
+Pins GeForce NOW: It includes a dedicated green shortcut icon mapped directly into the virtual taskbar to launch cloud game streaming.
+How to Use It
+Copy all the text starting from <!DOCTYPE html> down to </html>.
+Open a plain text editor on your device (like Notepad on Windows or TextEdit on Mac).
+Paste the text inside and save the file with the exact name index.html (make sure it doesn't save as index.html.txt).
+Double-click your new file. It will instantly launch your private unblocked arcade inside Chrome, Edge, or Safari.
+Would you like me to add more specific game links to this source code, or do you need help fixing how a certain feature loads inside the window?
+Try without personalization
+
+
+
+
+Here is the complete, fully realized single-file HTML code.
+Everything is bundled inside this one block: the layout structure, the dark-mode Windows 10 desktop theme, the virtual window mechanics, a working Start Menu, a live taskbar clock, and pre-configured unblocked gaming shortcuts including GeForce NOW.
+Copy this code, paste it into a blank text document, save it as desktop.html, and double-click it to open your private gaming station.
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 10 Pro - Unblocked Arcade OS</title>
+    <style>
+        :root {
+            --taskbar-bg: rgba(16, 16, 20, 0.85);
+            --desktop-bg: #111116;
+            --window-bg: #1c1c22;
+            --window-header: #121216;
+            --accent-color: #0078d7;
+            --gfn-green: #76B900;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background: linear-gradient(135deg, #0b0f19, #1a1a2e, #111625);
+            background-size: cover;
+            color: #ffffff;
+        }
+
+        /* Desktop Environment grid layout */
+        .desktop-area {
+            width: 100%;
+            height: calc(100% - 48px);
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 100px);
+            grid-template-rows: repeat(auto-fill, 100px);
+            grid-gap: 20px;
+            grid-auto-flow: column;
+            align-content: flex-start;
+            position: relative;
+        }
+
+        .desktop-shortcut {
             display: flex;
             flex-direction: column;
-        }
-        .browser-address-header {
-            height: 36px;
-            background-color: #f3f3f3;
-            border-bottom: 1px solid #dfdfdf;
-            display: flex;
-            align-items: center;
-            padding: 0 8px;
-            gap: 8px;
-        }
-        .browser-address-bar {
-            flex: 1;
-            height: 24px;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 12px;
-            padding: 0 12px;
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            color: #555;
-        }
-        .browser-viewport {
-            flex: 1;
-            display: flex;
             align-items: center;
             justify-content: center;
-            flex-direction: column;
-            background: #f9f9f9;
-            padding: 20px;
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            border-radius: 4px;
+            padding: 10px;
+            transition: background 0.15s ease, transform 0.1s ease;
             text-align: center;
         }
 
-        /* Control Panel */
-        .control-panel-grid {
-            padding: 15px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        .cp-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px;
-            border: 1px solid transparent;
-            cursor: pointer;
-        }
-        .cp-item:hover { background-color: #f2f2f2; border-color: #e5e5e5; }
-
-        /* Recycle Bin Empty view */
-        .bin-empty-view {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: #555;
-            font-size: 13px;
+        .desktop-shortcut:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.02);
         }
 
-        /* --- PLATFORM TASKBAR SYSTEM --- */
-        .os-taskbar-shelf {
-            position: absolute;
+        .desktop-shortcut svg {
+            width: 44px;
+            height: 44px;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
+        }
+
+        .desktop-shortcut span {
+            font-size: 12px;
+            color: #ffffff;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.95);
+            word-break: break-word;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Windows 10 Taskbar Styling */
+        .taskbar-container {
+            position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 40px;
-            background-color: rgba(16, 16, 16, 0.85);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            height: 48px;
+            background: var(--taskbar-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            align-items: center;
-            z-index: 10000;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            z-index: 99999;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.5);
         }
 
-        .taskbar-left-cluster, .taskbar-right-cluster, .active-apps-tray {
+        .taskbar-left {
             display: flex;
             align-items: center;
             height: 100%;
         }
-        .active-apps-tray { flex: 1; margin: 0 10px; overflow-x: auto; gap: 4px; }
 
-        .taskbar-trigger-node {
-            width: 48px;
+        .windows-start-trigger {
             height: 100%;
+            width: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            color: #fff;
-        }
-        .taskbar-trigger-node:hover { background-color: rgba(255, 255, 255, 0.1); }
-        .taskbar-trigger-node.active-state-node {
-            background-color: rgba(255, 255, 255, 0.15);
-            color: #0078d7;
+            transition: background 0.15s;
         }
 
-        .search-box-mockup {
-            width: 150px;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.12);
+        .windows-start-trigger:hover, .windows-start-trigger.active-state {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .windows-start-trigger svg {
+            width: 18px;
+            height: 18px;
+            transition: fill 0.15s;
+        }
+
+        .windows-start-trigger:hover svg {
+            fill: #4da3ff;
+        }
+
+        .taskbar-dock {
             display: flex;
             align-items: center;
-            padding: 0 12px;
-            color: #ccc;
-            font-size: 12px;
-        }
-        @media (max-width: 540px) { .search-box-mockup { display: none; } }
-
-        .app-tray-tab {
             height: 100%;
-            width: 110px;
+            gap: 4px;
+            padding-left: 8px;
+        }
+
+        .dock-shortcut-btn {
+            height: 100%;
+            width: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.15s;
+        }
+
+        .dock-shortcut-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dock-shortcut-btn.app-is-running::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20%;
+            width: 60%;
+            height: 3px;
+            background: var(--accent-color);
+            border-radius: 2px;
+        }
+
+        .dock-shortcut-btn.app-is-focused::after {
+            background: #ffffff !important;
+            width: 70%;
+            left: 15%;
+        }
+
+        /* Windows Start Menu Component */
+        .start-menu-panel {
+            position: absolute;
+            bottom: 48px;
+            left: 0;
+            width: 620px;
+            height: 550px;
+            background: rgba(24, 24, 32, 0.96);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-bottom: none;
+            display: flex;
+            z-index: 99998;
+            transform: translateY(100%);
+            transition: transform 0.22s cubic-bezier(0.0, 0.9, 0.2, 1);
+            box-shadow: 5px -5px 30px rgba(0,0,0,0.7);
+        }
+
+        .start-menu-panel.panel-is-visible {
+            transform: translateY(0);
+        }
+
+        .start-menu-sidebar {
+            width: 50px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding-bottom: 10px;
+            background: rgba(0, 0, 0, 0.25);
+            border-right: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .sidebar-node-action {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        .sidebar-node-action:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .start-menu-apps-column {
+            flex: 1;
+            padding: 20px 10px;
+            overflow-y: auto;
+        }
+
+        .start-menu-section-heading {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent-color);
+            padding: 8px 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .start-menu-app-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 14px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 13.5px;
+            transition: background 0.1s;
+        }
+
+        .start-menu-app-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .start-menu-app-item svg {
+            width: 22px;
+            height: 22px;
+            margin-right: 14px;
+        }
+
+        .start-menu-tiles-section {
+            width: 320px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 10px;
+            background: rgba(0, 0, 0, 0.15);
+            align-content: flex-start;
+        }
+
+        .windows-live-tile {
+            background: var(--accent-color);
+            aspect-ratio: 1.6;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            cursor: pointer;
+            font-size: 12.5px;
+            font-weight: 400;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+            transition: outline 0.1s, transform 0.1s;
+        }
+
+        .windows-live-tile:hover {
+            outline: 2px solid rgba(255, 255, 255, 0.4);
+            transform: scale(0.99);
+        }
+
+        .windows-live-tile.geforce-branded-tile {
+            background: #141414;
+            border-left: 4px solid var(--gfn-green);
+        }
+
+        .windows-live-tile svg {
+            width: 30px;
+            height: 30px;
+            margin-bottom: auto;
+        }
+
+        /* Virtual UI Application Windows Manager */
+        .window-frame-container {
+            position: absolute;
+            background: var(--window-bg);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.65);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 1000;
+            min-width: 400px;
+            min-height: 250px;
+        }
+
+        .window-frame-container.hidden-state {
+            display: none !important;
+        }
+
+        .window-titlebar {
+            height: 40px;
+            background: var(--window-header);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            cursor: move;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .window-metadata {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 400;
+            letter-spacing: 0.2px;
+        }
+
+        .window-metadata svg {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+        }
+
+        .window-control-cluster {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            margin-right: -16px;
+        }
+
+        .window-control-node {
+            width: 46px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+Use code with caution.
+color: #ffffff;
+font-size: 14px;
+transition: background 0.15s;
+}
+.window-control-node:hover {
+background: rgba(255, 255, 255, 0.1);
+}
+.window-control-node.terminate-btn-node:hover {
+background: #e81123;
+}
+.window-content-viewport {
+flex: 1;
+width: 100%;
+height: calc(100% - 40px);
+background: #000000;
+position: relative;
+}
+.window-content-viewport iframe {
+width: 100%;
+height: 100%;
+border: none;
+background: #000000;
+}
+/* Taskbar Notification Area / System Tray Clock */
+.taskbar-right {
+display: flex;
+align-items: center;
+height: 100%;
+padding-right: 16px;
+gap: 16px;
+}
+.system-tray-clock-display {
+text-align: right;
+font-size: 12px;
+line-height: 1.4;
+color: #e5e5e5;
+cursor: pointer;
+padding: 4px 8px;
+border-radius: 4px;
+}
+.system-tray-clock-display:hover {
+background: rgba(255,255,255,0.08);
+}
+
+
+CrazyGames Dashboard
+Retro Arcade
+Poki Web Games
+GeForce NOW
+C
+
+
+CrazyGames Engine
+N
+
+
+NVIDIA GeForce NOW
+P
+
+
+Poki Games Library
+
+Launch GeForce NOW
+
+
+
+Retro Emulator Console
+
+
+Application Framework
+
+
+✕
+
+
+
+
+
+00:00 AM
+10/07/2026
+
+// Start Menu Display Layer Logic
+function triggerStartMenuToggle() {
+const startMenu = document.getElementById('windowsStartMenuPanel');
+const startBtn = document.getElementById('windowsStartTriggerButton');
+startMenu.classList.toggle('panel-is-visible');
+startBtn.classList.toggle('active-state');
+}
+// Collapse start panel when clicking out onto open desktop environment
+document.getElementById('virtualDesktopGrid').addEventListener('click', function(event) {
+if (!event.target.closest('#windowsStartTriggerButton') && !event.target.closest('#windowsStartMenuPanel')) {
+document.getElementById('windowsStartMenuPanel').classList.remove('panel-is-visible');
+document.getElementById('windowsStartTriggerButton').classList.remove('active-state');
+}
+});
+// Frame Sandbox Launch Handler Execution
+function bootApplication(titleText, appSourceUrl) {
+// Dismiss Start Menu if open
+document.getElementById('windowsStartMenuPanel').classList.remove('panel-is-visible');
+document.getElementById('windowsStartTriggerButton').classList.remove('active-state');
+const windowContainer = document.getElementById('virtualOsAppWindow');
+const applicationIframe = document.getElementById('isolatedSandboxViewportFrame');
+const titleDisplayField = document.getElementById('windowSystemTitleText');
+const gfnTaskbarAnchor = document.getElementById('taskbarGfnPinnableNode');
+titleDisplayField.innerText = startMenu.panel-is-visible ? titleText : titleText;
+applicationIframe.src = appSourceUrl;
+windowContainer.classList.remove('hidden-state');
+// Handle virtual hardware indicator bar styling properties
+if (titleText.includes('GeForce NOW')) {
+gfnTaskbarAnchor.classList.add('app-is-running', 'app-is-focused');
+} else {
+gfnTaskbarAnchor.classList.remove('app-is-focused');
+}
+// Clean responsive framing parameters reset initialization
+windowContainer.style.width = "85%";
+windowContainer.style.height = "82%";
+windowContainer.style.top = "6%";
+windowContainer.style.left = "7.5%";
+windowContainer.style.transform = "none";
+// Sync drag engine positional offsets to zero point base configurations
+windowContainer.setAttribute('data-offset-x', '0');
+windowContainer.setAttribute('data-offset-y', '0');
+}
+function shutdownActiveWindowInstance() {
+document.getElementById('virtualOsAppWindow').classList.add('hidden-state');
+document.getElementById('isolatedSandboxViewportFrame').src = '';
+document.getElementById('taskbarGfnPinnableNode').classList.remove('app-is-running', 'app-is-focused');
+}
+// Functional API Layer for Handling Drag Engine Positions on Screen Workspace
+(function() {
+const dragHandle = document.getElementById('windowDragTopbar');
+const targetContainer = document.getElementById('virtualOsAppWindow');
+let baseCoordinateX, baseCoordinateY;
+let currentTrackingOffsetX = 0, currentTrackingOffsetY = 0;
+let activelyDragging = false;
+dragHandle.addEventListener('mousedown', function(mouseEvent) {
+activelyDragging = true;
+// Read absolute historic data parameters if present to prevent window resets
+const storedX = parseFloat(targetContainer.getAttribute('data-offset-x') || 0);
+const storedY = parseFloat(targetContainer.getAttribute('data-offset-y') || 0);
+baseCoordinateX = mouseEvent.clientX - storedX;
+baseCoordinateY = mouseEvent.clientY - storedY;
+});
+document.addEventListener('mousemove', function(mouseEvent) {
+if (activelyDragging) {
+mouseEvent.preventDefault();
+currentTrackingOffsetX = mouseEvent.clientX - baseCoordinateX;
+currentTrackingOffsetY = mouseEvent.clientY - baseCoordinateY;
+targetContainer.style.transform = translate(${currentTrackingOffsetX}px, ${currentTrackingOffsetY}px);
+targetContainer.setAttribute('data-offset-x', currentTrackingOffsetX);
+targetContainer.setAttribute('data-offset-y', currentTrackingOffsetY);
+}
+});
+document.addEventListener('mouseup', function() {
+activelyDragging = false;
+});
+})();
+// Hardware System Tray Dynamic Clock System Implementation
+function runTaskbarClockEngine() {
+const dateInstance = new Date();
+let formatHours = dateInstance.getHours();
+const formatMinutes = String(dateInstance.getMinutes()).padStart(2, '0');
+const systemAmPmMarker = formatHours >= 12 ? 'PM' : 'AM';
+formatHours = formatHours % 12;
+formatHours = formatHours ? formatHours : 12;
+const calendarMonth = String(dateInstance.getMonth() + 1).padStart(2, '0');
+const calendarDay = String(dateInstance.getDate()).padStart(2, '0');
+const calendarYear = dateInstance.getFullYear();
+document.getElementById('liveSystemClockNode').innerHTML = ${formatHours}:${formatMinutes} ${systemAmPmMarker}<br>${calendarMonth}/${calendarDay}/${calendarYear};
+}
+setInterval(runTaskbarClockEngine, 1000);
+runTaskbarClockEngine();
+
+
+
+<FollowUp>
+Now that you have the complete unified system source code, would you like me to show you how to **add a customizable background image picker** into the settings panel, or do you want help adding **custom game emulator options**?
+    </FollowUp>
