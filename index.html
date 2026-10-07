@@ -3,345 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FigureOS Core - Operational Mobile UI Layer</title>
+    <title>GameHub</title>
     <style>
-        :root {
-            --bg-primary: #08080c;
-            --panel-bg: rgba(18, 18, 26, 0.75);
-            --border-glow: rgba(0, 230, 118, 0.15);
-            --accent-green: #00e676;
-            --accent-cyan: #00e5ff;
-            --text-main: #e2e8f0;
-            --text-muted: #64748b;
-            --window-header: #0e0e14;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-
-        body, html {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            font-family: 'Courier New', Courier, monospace, sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-main);
-        }
-
-        /* Workspace layout handles desktop and mobile stacking flows dynamically */
-        .workspace-grid {
-            width: 100%;
-            height: calc(100% - 60px);
-            position: relative;
-            padding: 15px;
-            display: flex;
-            flex-direction: row;
-            gap: 20px;
-            z-index: 2;
-            overflow-y: auto;
-        }
-
-        /* Responsive Sidebar Diagnostics Panel */
-        .hud-diagnostics-panel {
-            width: 280px;
-            flex-shrink: 0;
-            background: var(--panel-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--border-glow);
-            border-radius: 8px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-        }
-
-        .hud-header {
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: var(--accent-cyan);
-            border-bottom: 1px solid rgba(0, 229, 255, 0.2);
-            padding-bottom: 8px;
-            text-transform: uppercase;
-        }
-
-        .stat-node {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .stat-label {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-
-        .stat-bar-container {
-            width: 100%;
-            height: 6px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .stat-bar-fill {
-            height: 100%;
-            width: 50%;
-            background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan));
-            transition: width 0.4s ease;
-        }
-
-        /* Self-stretching App Shortcut Matrix Container */
-        .app-matrix-container {
-            flex: 1;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            grid-gap: 15px;
-            align-content: flex-start;
-        }
-
-        .matrix-app-node {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            aspect-ratio: 1;
-            cursor: pointer;
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 6px;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 10px;
-        }
-
-        .matrix-app-node:hover {
-            background: rgba(0, 230, 118, 0.04);
-            border-color: rgba(0, 230, 118, 0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 230, 118, 0.1);
-        }
-
-        .matrix-app-node svg {
-            width: 32px;
-            height: 32px;
-            margin-bottom: 10px;
-            stroke: var(--text-main);
-            transition: stroke 0.2s;
-        }
-
-        .matrix-app-node:hover svg {
-            stroke: var(--accent-green);
-            filter: drop-shadow(0 0 8px var(--accent-green));
-        }
-
-        .matrix-app-node span {
-            font-size: 11px;
-            color: var(--text-main);
-            text-align: center;
-            letter-spacing: 0.5px;
-            word-break: break-word;
-        }
-
-        /* Persistent Navigation Strips Button Bars */
-        .control-strip-dock {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 60px;
-            background: #0b0b10;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 99999;
-        }
-
-        .dock-brand-zone {
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: 2px;
-            color: var(--accent-green);
-            text-shadow: 0 0 10px rgba(0, 230, 118, 0.4);
-        }
-
-        .dock-active-center {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            height: 100%;
-        }
-
-        .dock-node-tab {
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.05);
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-
-        .dock-node-tab:hover {
-            background: rgba(0, 229, 255, 0.05);
-            border-color: var(--accent-cyan);
-        }
-
-        /* Adaptive App Windows Framer Layer */
-        .figure-os-window {
-            position: absolute;
-            background: #111116;
-            border: 1px solid rgba(255,255,255,0.15);
-            box-shadow: 0 25px 60px rgba(0,0,0,0.8);
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            z-index: 1000;
-            width: 90% !important;
-            height: 80% !important;
-            top: 5% !important;
-            left: 5% !important;
-        }
-
-        .figure-os-window.hidden-frame {
-            display: none !important;
-        }
-
-        .window-topbar-handle {
-            height: 44px;
-            background: var(--window-header);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 14px;
-            cursor: move;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .window-title-metadata {
-            font-size: 11px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .window-title-metadata::before {
-            content: '';
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            background: var(--accent-green);
-            border-radius: 50%;
-            box-shadow: 0 0 6px var(--accent-green);
-        }
-
-        .window-control-actions {
-            display: flex;
-            gap: 6px;
-        }
-
-        .ctrl-action-node {
-            width: 28px;
-            height: 28px;
-            border-radius: 4px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.08);
-            color: #ffffff;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            transition: all 0.15s;
-        }
-
-        .ctrl-action-node:hover {
-            background: #e81123;
-            color: #fff;
-            border-color: transparent;
-        }
-
-        .window-viewport {
-            flex: 1;
-            width: 100%;
-            height: calc(100% - 44px);
-            background: #000000;
-        }
-
-        .window-viewport iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: #000;
-        }
-
-        /* Virtual Shell Prompt Terminal Layer */
-        .terminal-core-viewport {
-            width: 100%;
-            height: 100%;
-            padding: 15px;
-            background: #040406;
-            font-family: monospace;
-            font-size: 11px;
-            line-height: 1.5;
-            color: #00ff66;
-            overflow-y: auto;
-        }
-
-        .terminal-line-output {
-            margin-bottom: 6px;
-            white-space: pre-wrap;
-        }
-
-        .dock-chronometer {
-            font-size: 11px;
-            color: var(--text-muted);
-            letter-spacing: 0.5px;
-        }
-
-        /* Mobile Responsive Media Query Overrides */
+        :root { --bg: #0a0a10; --panel: #14141f; --border: rgba(255,255,255,0.06); --purple: #7c3aed; --text: #f8fafc; --text-2: #94a3b8; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; user-select: none; -webkit-user-select: none; }
+        body, html { width: 100%; height: 100%; background: var(--bg); color: var(--text); overflow-x: hidden; }
+        .header { width: 100%; height: 60px; background: var(--panel); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; position: fixed; top: 0; z-index: 100; }
+        .logo { font-weight: 800; background: linear-gradient(135deg, #a78bfa, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .search-box input { width: 200px; padding: 8px 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 20px; color: #fff; outline: none; }
+        .search-box input:focus { border-color: var(--purple); }
+        .main-layout { margin-top: 60px; display: flex; min-height: calc(100% - 60px); }
+        .sidebar { width: 220px; background: rgba(20,20,31,0.5); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .cat-btn { width: 100%; padding: 10px; border-radius: 6px; cursor: pointer; color: var(--text-2); font-size: 13px; }
+        .cat-btn:hover, .cat-btn.active { background: rgba(124,58,237,0.1); color: var(--text); }
+        .cat-btn.active { border-left: 3px solid var(--purple); border-radius: 0 6px 6px 0; }
+        .content-view { flex: 1; padding: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); grid-gap: 20px; }
+        .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s; display: flex; flex-direction: column; }
+        .card:hover { transform: translateY(-3px); border-color: var(--purple); }
+        .thumb { width: 100%; aspect-ratio: 1.5; background: linear-gradient(135deg, #2563eb, #7c3aed); display: flex; align-items: center; justify-content: center; }
+        .card:nth-child(2n) .thumb { background: linear-gradient(135deg, #ec4899, #8b5cf6); }
+        .card:nth-child(3n) .thumb { background: linear-gradient(135deg, #10b981, #059669); }
+        .info { padding: 12px; }
+        .title { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .tag { font-size: 10px; color: var(--text-2); text-transform: uppercase; margin-top: 4px; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5,5,8,0.95); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .modal.hidden { display: none !important; }
+        .modal-bar { width: 100%; max-width: 1000px; display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .close-btn { background: #ef4444; border: none; color: #fff; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+        .frame-host { width: 100%; max-width: 1000px; height: 70%; background: #000; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .frame-host iframe { width: 100%; height: 100%; border: none; }
         @media (max-width: 768px) {
-            .workspace-grid {
-                flex-direction: column;
-                overflow-y: auto;
-            }
-            .hud-diagnostics-panel {
-                width: 100%;
-                height: auto;
-            }
-            .app-matrix-container {
-                grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
-                grid-gap: 10px;
-            }
-            .matrix-app-node {
-                width: 100%;
-            }
+            .main-layout { flex-direction: column; }
+            .sidebar { width: 100%; flex-direction: row; overflow-x: auto; padding: 10px; border-right: none; border-bottom: 1px solid var(--border); }
+            .cat-btn { white-space: nowrap; width: auto; }
+            .cat-btn.active { border-left: none; border-bottom: 2px solid var(--purple); border-radius: 0; }
+            .frame-host { height: 55%; }
         }
     </style>
 </head>
 <body>
-
-    <div class="workspace-grid">
-        
-        <!-- Metrics Sidebar Panel (Auto-stacks on top for Mobile Layouts) -->
-        <div class="hud-diagnostics-panel">
-            <div class="hud-header">FigureOS Diagnostic</div>
-            
-            <div class="stat-node">
-                <div class="stat-label">Neural Execution Framework</div>
+    <header class="header">
+        <div class="logo">GAMEHUB</div>
+        <div class="search-box"><input type="text" id="search" placeholder="Search..." onkeyup="doSearch()"></div>
+    </header>
+    <div class="main-layout">
+        <nav class="sidebar">
+            <div class="cat-btn active" onclick="filterCat('ALL', this)">All</div>
+            <div class="cat-btn" onclick="filterCat('DASH', this)">Dashboards</div>
+            <div class="cat-btn" onclick="filterCat('CLOUD', this)">Cloud</div>
+            <div class="cat-btn" onclick="filterCat('EMU', this)">Emulators</div>
+        </nav>
+        <main class="content-view">
+            <div class="grid">
+                <div class="card" data-cat="DASH" onclick="play('CrazyGames', 'https://crazygames.com')">
+                    <div class="thumb"></div><div class="info"><div class="title">CrazyGames</div><div class="tag">Dashboard</div></div>
+                </div>
+                <div class="card" data-cat="DASH" onclick="play('Poki', 'https://poki.com')">
+                    <div class="thumb"></div><div class="info"><div class="title">Poki Hub</div><div class="tag">Dashboard</div></div>
+                </div>
+                <div class="card" data-cat="CLOUD" onclick="play('GeForce NOW', 'https://geforcenow.com')">
+                    <div class="thumb"></div><div class="info"><div class="title">GeForce NOW</div><div class="tag">Cloud Stream</div></div>
+                </div>
+                <div class="card" data-cat="EMU" onclick="play('Retro Arcade', 'https://retrogames.cc')">
+                    <div class="thumb"></div><div class="info"><div class="title">Retro Arcade</div><div class="tag">Emulation</div></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <div id="modal" class="modal hidden">
+        <div class="modal-bar"><div id="m-title"></div><button class="close-btn" onclick="closePlay()">Close</button></div>
+        <div class="frame-host"><iframe id="view" src=""></iframe></div>
+    </div>
+    <script>
+        function doSearch() {
+            let val = document.getElementById('search').value.toLowerCase();
+            let cards = document.getElementsByClassName('card');
+            for (let i = 0; i < cards.length; i++) {
+                let txt = cards[i].querySelector('.title').innerText.toLowerCase();
+                cards[i].style.display = txt.includes(val) ? "" : "none";
+            }
+        }
+        function filterCat(cat, btn) {
+            let cards = document.getElementsByClassName('card');
+            let tabs = document.getElementsByClassName('cat-btn');
+            for(let i=0; i<tabs.length; i++) tabs[i].classList.remove('active');
+            btn.classList.add('active');
+            for (let i = 0; i < cards.length; i++) {
+                let c = cards[i].getAttribute('data-cat');
+                cards[i].style.display = (cat === 'ALL' || c === cat) ? "" : "none";
+            }
+        }
+        function play(name, url) {
+            document.getElementById('m-title').innerText = name;
+            document.getElementById('view').src = url;
+            document.getElementById('modal').classList.remove('hidden');
+        }
+        function closePlay() {
+            document.getElementById('modal').classList.add('hidden');
+            document.getElementById('view').src = '';
+        }
+    </script>
+</body>
+</html>
