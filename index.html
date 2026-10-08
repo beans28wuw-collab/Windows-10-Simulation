@@ -83,6 +83,13 @@ textarea.np{flex:1;border:0;outline:0;resize:none;padding:12px;background:var(--
 #w11lock input{width:100%;padding:13px 16px;border-radius:9px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);outline:0;margin:12px 0;color:#fff}
 #w11power{position:fixed;right:12px;bottom:58px;z-index:12001;display:none;min-width:220px;padding:8px;background:var(--win);border:1px solid var(--ln);border-radius:12px;box-shadow:var(--sh)}#w11power.on{display:block}
 .w11pow{padding:10px 12px;border-radius:7px;cursor:pointer}.w11pow:hover{background:var(--card)}
+</style><style id="uw-upgrade-css">
+.uw-menu{position:fixed;display:none;min-width:235px;padding:6px;background:var(--win);border:1px solid var(--ln);border-radius:10px;box-shadow:var(--sh);z-index:50000;backdrop-filter:blur(24px)}
+.uw-menu.on{display:block}.uw-item{padding:9px 11px;border-radius:6px;display:flex;align-items:center;gap:10px;cursor:pointer}.uw-item:hover{background:var(--card)}.uw-sep{height:1px;background:var(--ln);margin:5px 4px}
+.uw-notify{position:fixed;right:12px;bottom:62px;width:min(370px,calc(100% - 24px));max-height:70vh;overflow:auto;background:var(--win);border:1px solid var(--ln);border-radius:14px;box-shadow:var(--sh);z-index:50001;padding:12px;display:none}.uw-notify.on{display:block}.uw-nhead{display:flex;align-items:center;justify-content:space-between;font-weight:600;margin-bottom:8px}.uw-note{padding:10px;border:1px solid var(--ln);background:var(--card);border-radius:9px;margin:6px 0}.uw-note small{display:block;color:var(--mut);margin-top:4px}.uw-badge{position:absolute;right:2px;top:2px;width:7px;height:7px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 2px var(--tk)}
+.uw-search-results{position:absolute;left:18px;right:18px;top:58px;background:var(--win);border:1px solid var(--ln);border-radius:10px;box-shadow:var(--sh);overflow:auto;max-height:310px;z-index:30}.uw-search-results:empty{display:none}.uw-result{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer}.uw-result:hover,.uw-result.sel{background:var(--card)}.uw-result small{display:block;color:var(--mut)}
+#uw-poweroff{position:fixed;inset:0;background:#050505;color:white;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:60000}.uw-power-logo{font-size:68px;font-weight:300}
+@media(max-width:640px){.uw-notify{right:8px;bottom:58px}.uw-menu{min-width:210px}}
 </style></head><body>
 <div id="wall"></div><div id="desk"></div>
 <div class="pop" id="start"><input class="si" id="q" placeholder="Search for apps, settings, and documents" autocomplete="off"><div class="sc" id="sc"></div><div class="sf"><span id="un">👤 User</span><button id="pb" title="Power">⏻</button></div><div id="pw"><button data-p="lock">🔒 Lock</button><button data-p="sleep">🌙 Sleep</button><button data-p="restart">🔄 Restart</button><button data-p="off">⏻ Shut down</button></div></div>
@@ -531,5 +538,77 @@ const tray=$('#tray');if(tray){const b=E('button');b.title='Show desktop';b.text
 $('#task')?.addEventListener('contextmenu',e=>{e.preventDefault();ctx.innerHTML='<div class="wctxi" data-q="center">▣ Center taskbar</div><div class="wctxi" data-q="left">▤ Left taskbar</div><div class="wctxi" data-q="lock">🔒 Lock</div><div class="wctxi" data-q="power">⏻ Power</div>';ctx.style.left=Math.min(innerWidth-225,e.clientX)+'px';ctx.style.top=Math.max(8,e.clientY-180)+'px';ctx.classList.add('on');ctx.onclick=ev=>{const q=ev.target.closest('[data-q]')?.dataset.q;if(!q)return;if(q==='left'){document.body.classList.add('l');$('#task').classList.add('l');try{ST.set('w11.al','l')}catch{}}if(q==='center'){document.body.classList.remove('l');$('#task').classList.remove('l');try{ST.set('w11.al','c')}catch{}}if(q==='lock')lock();if(q==='power')power.classList.add('on');hideCtx()}});
 /* Window snap keyboard helpers */
 document.addEventListener('keydown',e=>{if(!(e.metaKey||e.ctrlKey)||!e.altKey&&!(e.metaKey))return;const w=typeof act!=='undefined'?act:null;if(!w)return;if(e.key==='ArrowLeft'){e.preventDefault();snapWin(w,'left')}if(e.key==='ArrowRight'){e.preventDefault();snapWin(w,'right')}if(e.key==='ArrowUp'){e.preventDefault();snapWin(w,'max')}if(e.key==='ArrowDown'){e.preventDefault();if(w.e.classList.contains('max')){w.e.classList.remove('max');}else snapWin(w,'bl')}});
+})();
+</script><script id="uw-upgrade-js">
+(()=>{
+'use strict';
+const U=s=>document.querySelector(s), UE=(t,c,h='')=>{const e=document.createElement(t);if(c)e.className=c;e.innerHTML=h;return e};
+const announce=m=>{try{toast(m)}catch{}};
+/* Real show-desktop behavior */
+let uwDeskHidden=false,uwDeskPrev=[];
+const uwShowDesktop=()=>{
+ const a=Object.values(wins||{}).filter(w=>w&&w.desk===cd&&vis(w));
+ if(!a.length)return;
+ if(!uwDeskHidden){uwDeskPrev=a.map(w=>[w,w.e.style.display]);a.forEach(w=>w.e.style.display='none');uwDeskHidden=true;act=null;drawTask?.();}
+ else{uwDeskPrev.forEach(([w,d])=>{if(w?.e?.isConnected)w.e.style.display=d||''});uwDeskHidden=false;drawTask?.();}
+};
+const sd=U('#sd');if(sd){sd.title='Show desktop';sd.onclick=uwShowDesktop}
+/* Rich desktop menu, capture phase prevents the old basic menu */
+let um=U('#uw-menu');if(!um){um=UE('div','uw-menu');um.id='uw-menu';um.innerHTML=`
+<div class="uw-item" data-u="refresh">🔄 <span>Refresh</span></div>
+<div class="uw-item" data-u="folder">📁 <span>New folder</span></div>
+<div class="uw-item" data-u="text">📄 <span>New text document</span></div>
+<div class="uw-sep"></div>
+<div class="uw-item" data-u="terminal">⌨️ <span>Open Terminal</span></div>
+<div class="uw-item" data-u="explorer">📂 <span>Open File Explorer</span></div>
+<div class="uw-sep"></div>
+<div class="uw-item" data-u="settings">⚙️ <span>Display settings</span></div>
+<div class="uw-item" data-u="personal">🎨 <span>Personalize</span></div>`;document.body.append(um)}
+const hideUM=()=>um.classList.remove('on');
+document.addEventListener('contextmenu',e=>{
+ if(e.target.closest('.win,#task,.pop,#ctx,.uw-menu'))return;
+ e.preventDefault();e.stopImmediatePropagation();
+ um.style.left=Math.min(e.clientX,innerWidth-245)+'px';um.style.top=Math.min(e.clientY,innerHeight-365)+'px';um.classList.add('on');
+},true);
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('#uw-menu'))hideUM()},true);
+um.onclick=async e=>{const a=e.target.closest('[data-u]')?.dataset.u;if(!a)return;hideUM();
+ if(a==='refresh'){drawDesk();announce('Desktop refreshed')}
+ else if(a==='folder'){const n=fs.Desktop,k=uniq(n,'New folder');n[k]={};save();drawDesk();announce('New folder created')}
+ else if(a==='text'){const n=fs.Desktop,k=uniq(n,'New Text Document.txt');n[k]='';save();drawDesk();announce('Text document created')}
+ else if(a==='terminal')open('term');else if(a==='explorer')open('files');else if(a==='settings')open('settings',{page:'display'});else if(a==='personal')open('settings',{page:'personalization'});
+};
+/* Start menu live search with apps + files */
+const st=U('#start'),q=U('#q');
+let sr=U('#uw-search-results');
+if(st&&q&&!sr){sr=UE('div','uw-search-results');sr.id='uw-search-results';st.append(sr)}
+const drawUWSearch=()=>{
+ if(!sr||!q)return;const v=q.value.trim().toLowerCase();
+ if(!v){sr.innerHTML='';return}
+ const apps=Object.keys(APPS).filter(k=>APPS[k].n.toLowerCase().includes(v)||k.includes(v)).slice(0,8);
+ const found=[];const walk=(obj,path)=>{if(!obj||found.length>=10)return;for(const k of Object.keys(obj)){if(k.toLowerCase().includes(v))found.push({k,path:[...path,k],dir:isD(obj[k])});if(isD(obj[k]))walk(obj[k],[...path,k]);if(found.length>=10)break}};walk(fs,[]);
+ sr.innerHTML=apps.map(k=>`<div class="uw-result" data-app="${esc(k)}"><span style="font-size:22px">${APPS[k].i}</span><span>${esc(APPS[k].n)}<small>App</small></span></div>`).join('')+found.map(f=>`<div class="uw-result" data-file="${esc(f.path.join('/'))}"><span style="font-size:22px">${f.dir?'📁':'📄'}</span><span>${esc(f.k)}<small>${esc(f.path.slice(0,-1).join(' › ')||'Home')}</small></span></div>`).join('')||'<div style="padding:12px;color:var(--mut)">No results</div>';
+};
+q?.addEventListener('input',drawUWSearch);q?.addEventListener('keydown',e=>{if(e.key==='Escape'){sr.innerHTML='';return}if(e.key==='Enter'){const x=sr.querySelector('.uw-result');if(x)x.click()}});
+sr?.addEventListener('click',e=>{const a=e.target.closest('[data-app]')?.dataset.app,f=e.target.closest('[data-file]')?.dataset.file;if(a){open(a);closePops();}else if(f){open('notepad',{path:f.split('/')});closePops()}});
+/* Notification center */
+let nb=U('#uw-notify');if(!nb){nb=UE('div','uw-notify');nb.id='uw-notify';nb.innerHTML='<div class="uw-nhead"><span>Notifications</span><button class="bt" data-clear>Clear all</button></div><div id="uw-notes"></div>';document.body.append(nb)}
+const drawN=()=>{const box=U('#uw-notes');if(!box)return;box.innerHTML=NOTI.length?NOTI.slice(0,15).map(n=>`<div class="uw-note">${esc(n.t)}<small>${new Date(n.at).toLocaleTimeString([],TF())}</small></div>`).join(''):'<div style="padding:12px;color:var(--mut)">No new notifications.</div>'};
+nb.onclick=e=>{if(e.target.closest('[data-clear]')){NOTI.length=0;drawN()}};
+const tray=U('#tray');if(tray&&!U('#uw-notify-btn')){const b=document.createElement('button');b.id='uw-notify-btn';b.className='tbn';b.title='Notifications';b.textContent='🔔';b.style.position='relative';b.onclick=()=>{nb.classList.toggle('on');if(nb.classList.contains('on'))drawN()};tray.insertBefore(b,tray.firstChild)}
+/* Recoverable shutdown screen */
+let po=U('#uw-poweroff');if(!po){po=UE('div');po.id='uw-poweroff';po.innerHTML='<div class="uw-power-logo">⊞</div><div style="font-size:20px">Windows Web is off</div><button class="bt" data-on>Power on</button>';document.body.append(po)}
+po.querySelector('[data-on]').onclick=()=>{po.style.display='none';try{boot(700)}catch{}announce('Windows Web started')};
+window.uwPowerOff=()=>{po.style.display='flex'};
+/* Extra Windows-like shortcuts */
+document.addEventListener('keydown',e=>{
+ if(e.target.matches('input,textarea,[contenteditable]'))return;
+ if(e.key==='Escape'){hideUM();nb.classList.remove('on');return}
+ if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='e'){e.preventDefault();open('files')}
+ if((e.metaKey||e.ctrlKey)&&e.shiftKey&&e.key.toLowerCase()==='t'){e.preventDefault();open('term')}
+ if((e.metaKey||e.ctrlKey)&&e.shiftKey&&e.key.toLowerCase()==='n'){e.preventDefault();open('notepad')}
+ if(e.key==='PrintScreen'){e.preventDefault();try{open('snip')}catch{}}
+});
+/* Keep taskbar state fresh */
+setInterval(()=>{try{drawTask();drawN()}catch{}},1500);
 })();
 </script></body></html>
