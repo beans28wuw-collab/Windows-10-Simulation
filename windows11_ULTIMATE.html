@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Windows 11</title>
+<style>
+:root{--acc:#0067c0;--win:#f3f3f3;--cont:#fbfbfb;--card:rgba(0,0,0,.05);--txt:#1a1a1a;--mut:#616161;--ln:rgba(0,0,0,.1);--tk:rgba(243,243,243,.82);--sh:0 8px 32px rgba(0,0,0,.28);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--win:#202020;--cont:#272727;--card:rgba(255,255,255,.07);--txt:#fff;--mut:#a8a8a8;--ln:rgba(255,255,255,.1);--tk:rgba(28,28,28,.82)}}
+:root[data-theme=dark]{--win:#202020;--cont:#272727;--card:rgba(255,255,255,.07);--txt:#fff;--mut:#a8a8a8;--ln:rgba(255,255,255,.1);--tk:rgba(28,28,28,.82)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;height:100%;overflow:hidden;font:14px "Segoe UI Variable","Segoe UI",system-ui,sans-serif;color:var(--txt);background:#0b1230;user-select:none;touch-action:manipulation}
+button,input,textarea{font:inherit;color:inherit}
+#wall{position:fixed;inset:0;background:var(--wp);background-size:cover}
+#desk{position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);bottom:calc(48px + env(safe-area-inset-bottom,0px))}
+.di{width:84px;padding:8px 2px;text-align:center;color:#fff;font-size:12px;text-shadow:0 1px 3px #000;border-radius:6px}.di b{display:block;font-size:34px;font-weight:400}.di:hover,.di.s{background:rgba(255,255,255,.16)}
+.win{position:absolute;background:var(--win);border:1px solid var(--ln);border-radius:8px;box-shadow:var(--sh);display:flex;flex-direction:column;overflow:hidden;min-width:260px;min-height:160px;max-width:100%;animation:pop .18s cubic-bezier(.2,.8,.2,1)}
+@keyframes pop{from{opacity:0;transform:scale(.96)}}
+@media (prefers-reduced-motion:reduce){.win{animation:none}}
+.win.max{inset:0!important;width:auto!important;height:auto!important;border-radius:0}
+.tb{height:36px;display:flex;align-items:center;gap:8px;padding-left:12px;touch-action:none;flex:none}
+.tt{flex:1;font-weight:400;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.win:not(.on) .tb{opacity:.6}
+.tc{display:flex;height:100%}.tc button{width:46px;border:0;background:none;font-size:12px}.tc button:hover{background:var(--ln)}.tc .bc:hover{background:#c42b1c;color:#fff}
+.bd{flex:1;min-height:0;display:flex;flex-direction:column;background:var(--cont);user-select:text}
+.rz{position:absolute;right:0;bottom:0;width:18px;height:18px;cursor:nwse-resize;touch-action:none}
+#task{position:fixed;left:0;right:0;bottom:0;height:calc(48px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:var(--tk);backdrop-filter:blur(30px) saturate(1.5);-webkit-backdrop-filter:blur(30px) saturate(1.5);border-top:1px solid var(--ln);display:flex;align-items:center;justify-content:center;z-index:9000}
+#task.l{justify-content:flex-start;padding-left:6px}
+#pins{display:flex;align-items:center;max-width:calc(100% - 96px);overflow-x:auto;scrollbar-width:none}
+.tbn{flex:none;width:44px;height:40px;margin:0 2px;border:0;border-radius:6px;background:none;font-size:22px;position:relative;display:flex;align-items:center;justify-content:center}
+.tbn:hover{background:var(--card)}.tbn:active{transform:scale(.9)}
+.tbn.run::after{content:"";position:absolute;bottom:2px;left:50%;width:6px;height:3px;margin-left:-3px;border-radius:2px;background:var(--mut);transition:.2s}
+.tbn.on::after{width:16px;margin-left:-8px;background:var(--acc)}
+.lg{display:grid;grid-template-columns:1fr 1fr;gap:2px;width:20px}.lg i{height:9px;background:var(--acc)}
+#tray{position:absolute;right:6px;top:0;bottom:env(safe-area-inset-bottom,0px);display:flex;align-items:center}
+#tray button{border:0;background:none;height:40px;border-radius:6px;padding:0 8px;font-size:12px;line-height:1.25;text-align:right}#tray button:hover{background:var(--card)}
+.pop{position:fixed;display:none;background:var(--win);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:1px solid var(--ln);border-radius:12px;box-shadow:var(--sh);z-index:9500}
+.pop.on{display:flex}
+#start{left:50%;transform:translateX(-50%);bottom:calc(58px + env(safe-area-inset-bottom,0px));width:min(620px,calc(100% - 16px));height:min(620px,calc(100% - 80px));flex-direction:column;padding:18px 22px 0;overflow:hidden}
+body.l #start{left:8px;transform:none}
+.si{width:100%;padding:10px 14px;border:1px solid var(--ln);border-bottom:2px solid var(--acc);border-radius:20px;background:var(--card);outline:0}
+.sc{flex:1;overflow:auto;margin:14px -8px 0;padding:0 8px}.sh{display:flex;justify-content:space-between;font-weight:600;margin:6px 0 10px}
+.pg{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}.ap{border:0;background:none;border-radius:6px;padding:10px 2px;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:6px}.ap b{font-size:28px;font-weight:400}.ap:hover,.rc:hover{background:var(--card)}
+.rc{display:flex;align-items:center;gap:10px;padding:8px;border-radius:6px;cursor:default}.rc span{font-size:22px}.rc small{display:block;color:var(--mut)}
+.sf{display:flex;align-items:center;justify-content:space-between;height:64px;margin:0 -22px;padding:0 28px;background:var(--card);border-top:1px solid var(--ln)}.sf button{border:0;background:none;font-size:20px;border-radius:6px;padding:6px 10px}.sf button:hover{background:var(--card)}
+#pw{position:absolute;right:20px;bottom:60px;background:var(--win);border:1px solid var(--ln);border-radius:8px;box-shadow:var(--sh);display:none;flex-direction:column;padding:4px;z-index:2}#pw.on{display:flex}#pw button{text-align:left;font-size:14px;padding:8px 20px}
+#qs,#cal{right:8px;bottom:calc(58px + env(safe-area-inset-bottom,0px));width:min(360px,calc(100% - 16px));flex-direction:column;padding:16px;gap:12px}
+.qg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.qt{border:1px solid var(--ln);background:var(--card);border-radius:6px;padding:12px 4px;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:4px}.qt b{font-size:20px;font-weight:400}.qt.on{background:var(--acc);color:#fff;border-color:transparent}
+.sl{display:flex;align-items:center;gap:10px}.sl input{flex:1;accent-color:var(--acc)}
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}.cg div{padding:8px 0;border-radius:50%}.cg .t{background:var(--acc);color:#fff}.cg .h{color:var(--mut);font-size:12px}
+.cn{display:flex;align-items:center;justify-content:space-between}.cn button{border:0;background:none;font-size:18px;padding:4px 12px;border-radius:6px}.cn button:hover{background:var(--card)}
+#fly{z-index:9600;gap:8px;padding:8px}.lay{position:relative;width:64px;height:44px;background:var(--card);border-radius:4px}.lay b{position:absolute;border:2px solid var(--win);background:var(--ln);border-radius:4px}.lay b:hover{background:var(--acc)}
+#ctx{z-index:9700;flex-direction:column;padding:4px;min-width:180px}#ctx div{padding:8px 14px;border-radius:4px}#ctx div:hover{background:var(--card)}
+#boot,#lock,#off{position:fixed;inset:0;z-index:20000;display:none;align-items:center;justify-content:center;flex-direction:column;gap:22px;color:#fff;background:#000}#boot.on,#lock.on,#off.on{display:flex}
+#lock{background:var(--wp);background-size:cover;font-size:18px}#lock b{font-size:84px;font-weight:300}
+.spin{width:28px;height:28px;border:3px solid #444;border-top-color:#fff;border-radius:50%;animation:s 1s linear infinite}@keyframes s{to{transform:rotate(360deg)}}
+#toast{position:fixed;left:50%;bottom:calc(64px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--win);border:1px solid var(--ln);border-radius:8px;padding:10px 16px;box-shadow:var(--sh);z-index:9800;display:none}
+#icons{position:absolute;inset:0;padding:6px;display:flex;flex-direction:column;flex-wrap:wrap;align-content:flex-start;gap:2px}.dk{display:none!important}.win .bd{zoom:var(--zm,1)}.rm *,.rm *::before{animation:none!important;transition:none!important}
+#wd{left:8px;bottom:calc(58px + env(safe-area-inset-bottom,0px));width:min(480px,calc(100% - 16px));height:min(560px,calc(100% - 80px));flex-direction:column;padding:16px;gap:10px;overflow:auto}.wc{background:var(--card);border:1px solid var(--ln);border-radius:8px;padding:14px}
+#run{left:8px;bottom:calc(58px + env(safe-area-inset-bottom,0px));width:min(420px,calc(100% - 16px));flex-direction:column;padding:16px;gap:10px}#cal{max-height:calc(100% - 80px);overflow:auto}
+#tvw{position:fixed;inset:0 0 calc(48px + env(safe-area-inset-bottom,0px)) 0;z-index:9400;background:rgba(0,0,0,.45);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:none;flex-direction:column;gap:20px;padding:calc(24px + env(safe-area-inset-top,0px)) 24px 24px;overflow:auto;color:#fff}#tvw.on{display:flex}
+.tvh{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.tvh .bt{color:#fff;background:rgba(255,255,255,.12)}.tvh .bt.cur{outline:2px solid var(--acc)}.tvg{display:flex;flex-wrap:wrap;gap:16px;justify-content:center}
+.tvc{width:220px;height:150px;background:var(--win);color:var(--txt);border-radius:8px;box-shadow:var(--sh);display:flex;flex-direction:column;cursor:pointer}.tvt{display:flex;justify-content:space-between;align-items:center;padding:6px 6px 6px 12px;font-size:12px}.tvt button{border:0;background:none;font-size:12px;padding:4px 8px;border-radius:4px}.tvt button:hover{background:#c42b1c;color:#fff}.tvp{flex:1;display:flex;align-items:center;justify-content:center;font-size:48px;background:var(--cont);border-radius:0 0 8px 8px}
+#tray #sd{width:10px;padding:0;border-left:1px solid var(--ln);margin-left:4px;border-radius:0}.dlg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9900;display:flex;align-items:center;justify-content:center}.dlgb{background:var(--win);border:1px solid var(--ln);border-radius:12px;padding:20px;width:min(380px,92vw);box-shadow:var(--sh)}.dlgb input,#ri{width:100%;padding:8px;border:1px solid var(--ln);border-bottom:2px solid var(--acc);border-radius:4px;background:var(--card);outline:0}
+#pv{z-index:9550;padding:6px}.pvc{width:200px;cursor:pointer}.pvt{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:2px 2px 6px}.pvt button{border:0;background:none;border-radius:4px;padding:2px 6px}.pvt button:hover{background:#c42b1c;color:#fff}.pvb{height:90px;display:flex;align-items:center;justify-content:center;font-size:40px;background:var(--cont);border-radius:6px}
+.sx{flex:1;display:flex;min-height:0}.snav{width:200px;padding:10px;border-right:1px solid var(--ln);overflow:auto;flex:none}.snav>input{width:100%;padding:7px 10px;margin-bottom:8px;border:1px solid var(--ln);border-bottom:2px solid var(--acc);border-radius:4px;background:var(--card);outline:0}.snav [data-pg]{padding:9px 10px;border-radius:6px;border-left:3px solid transparent}.snav [data-pg]:hover{background:var(--card)}.snav .cur{background:var(--card);border-left-color:var(--acc)}.spg{flex:1;padding:16px;overflow:auto}
+.sr{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:var(--card);border:1px solid var(--ln);border-radius:6px;margin-bottom:4px}.sr input[type=range]{accent-color:var(--acc)}.tg{width:40px;height:20px;border-radius:10px;background:var(--mut);position:relative;display:inline-block;cursor:pointer}.tg::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.15s}.tg.on{background:var(--acc)}.tg.on::after{left:23px}
+.hc .win,.hc #task,.hc #start{filter:contrast(1.3)}
+@media(max-width:640px){.sx{flex-direction:column}.snav{width:auto;display:flex;flex-direction:column;border-right:0;border-bottom:1px solid var(--ln);max-height:140px}#nl{display:flex;gap:4px;overflow-x:auto}#nl div{white-space:nowrap}}
+@media(pointer:coarse){.tbn{width:48px;height:44px}.tc button{width:54px;height:36px}.rz{width:30px;height:30px}.ap,.rc,.fi,.snav [data-pg]{min-height:44px}}
+/* apps */
+.bar{display:flex;gap:6px;padding:6px 8px;border-bottom:1px solid var(--ln);align-items:center;flex-wrap:wrap}.bar button,.bt{border:1px solid var(--ln);background:var(--card);border-radius:4px;padding:5px 12px}.bar button:hover,.bt:hover{filter:brightness(.95)}
+.fx{flex:1;display:flex;min-height:0}.fsb{width:150px;padding:8px;border-right:1px solid var(--ln);overflow:auto}.fsb div,.fi{padding:7px 10px;border-radius:6px}.fsb div:hover,.fi:hover{background:var(--card)}.fm{flex:1;display:flex;flex-direction:column;min-width:0}.fl{flex:1;overflow:auto;padding:6px}.fi{display:flex;gap:10px;align-items:center}.fi.s{background:var(--card);outline:1px solid var(--acc)}
+@media(max-width:640px){.fsb{display:none}.pg{grid-template-columns:repeat(3,1fr)}#sysb{display:none}#task{justify-content:flex-start}}
+textarea.np{flex:1;border:0;outline:0;resize:none;padding:12px;background:var(--cont);font:14px Consolas,monospace;user-select:text}
+.cd{padding:14px 16px 6px;text-align:right}.cd small{display:block;height:16px;color:var(--mut)}.cd div{font-size:40px;overflow:hidden}.ck{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:2px}.ck button{border:0;background:var(--card);border-radius:4px;font-size:18px;min-height:40px}.ck button:hover{filter:brightness(.9)}.ck .e{background:var(--acc);color:#fff}
+.st{padding:16px;overflow:auto}.st h3{margin:14px 0 8px;font-weight:600}.sw{display:flex;flex-wrap:wrap;gap:8px}.sw i{width:34px;height:34px;border-radius:50%;border:3px solid transparent;cursor:pointer}.sw i.on{border-color:var(--txt)}.sw .w{border-radius:6px;width:64px}
+.tm{flex:1;background:#0c0c0c;color:#ddd;font:13px Consolas,monospace;padding:10px;overflow:auto;user-select:text}.tm div{white-space:pre-wrap}.ti2{border:0;outline:0;background:#0c0c0c;color:#fff;font:13px Consolas,monospace;padding:8px 10px;border-top:1px solid #333}
+</style><style id="w11-function-pack">
+#w11ctx{position:fixed;display:none;z-index:12000;min-width:210px;background:var(--win);border:1px solid var(--ln);border-radius:10px;box-shadow:var(--sh);padding:6px;backdrop-filter:blur(28px)}
+#w11ctx.on{display:block}.wctxi{padding:9px 11px;border-radius:6px;cursor:pointer;display:flex;gap:10px}.wctxi:hover{background:var(--card)}
+#w11snap{position:fixed;display:none;z-index:11900;pointer-events:none}.w11zone{position:absolute;border-radius:10px;background:color-mix(in srgb,var(--acc) 30%,transparent);border:1px solid color-mix(in srgb,var(--acc) 70%,transparent);opacity:0;transition:.12s}.w11zone.on{opacity:1}
+#w11lock{position:fixed;inset:0;z-index:20000;display:none;align-items:center;justify-content:center;background:linear-gradient(135deg,#0b1530,#182a55 55%,#07111f);color:#fff;text-align:center}.w11lock.on{display:flex}.w11lockbox{width:min(420px,calc(100% - 30px));padding:30px;border-radius:20px;background:rgba(0,0,0,.28);backdrop-filter:blur(25px)}
+#w11lock input{width:100%;padding:13px 16px;border-radius:9px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);outline:0;margin:12px 0;color:#fff}
+#w11power{position:fixed;right:12px;bottom:58px;z-index:12001;display:none;min-width:220px;padding:8px;background:var(--win);border:1px solid var(--ln);border-radius:12px;box-shadow:var(--sh)}#w11power.on{display:block}
+.w11pow{padding:10px 12px;border-radius:7px;cursor:pointer}.w11pow:hover{background:var(--card)}
+</style><style id="uw-upgrade-css">
+.uw-menu{position:fixed;display:none;min-width:235px;padding:6px;background:var(--win);border:1px solid var(--ln);border-radius:10px;box-shadow:var(--sh);z-index:50000;backdrop-filter:blur(24px)}
+.uw-menu.on{display:block}.uw-item{padding:9px 11px;border-radius:6px;display:flex;align-items:center;gap:10px;cursor:pointer}.uw-item:hover{background:var(--card)}.uw-sep{height:1px;background:var(--ln);margin:5px 4px}
+.uw-notify{position:fixed;right:12px;bottom:62px;width:min(370px,calc(100% - 24px));max-height:70vh;overflow:auto;background:var(--win);border:1px solid var(--ln);border-radius:14px;box-shadow:var(--sh);z-index:50001;padding:12px;display:none}.uw-notify.on{display:block}.uw-nhead{display:flex;align-items:center;justify-content:space-between;font-weight:600;margin-bottom:8px}.uw-note{padding:10px;border:1px solid var(--ln);background:var(--card);border-radius:9px;margin:6px 0}.uw-note small{display:block;color:var(--mut);margin-top:4px}.uw-badge{position:absolute;right:2px;top:2px;width:7px;height:7px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 2px var(--tk)}
+.uw-search-results{position:absolute;left:18px;right:18px;top:58px;background:var(--win);border:1px solid var(--ln);border-radius:10px;box-shadow:var(--sh);overflow:auto;max-height:310px;z-index:30}.uw-search-results:empty{display:none}.uw-result{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer}.uw-result:hover,.uw-result.sel{background:var(--card)}.uw-result small{display:block;color:var(--mut)}
+#uw-poweroff{position:fixed;inset:0;background:#050505;color:white;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:60000}.uw-power-logo{font-size:68px;font-weight:300}
+@media(max-width:640px){.uw-notify{right:8px;bottom:58px}.uw-menu{min-width:210px}}
+</style></head><body>
+<div id="wall"></div><div id="desk"></div>
+<div class="pop" id="start"><input class="si" id="q" placeholder="Search for apps, settings, and documents" autocomplete="off"><div class="sc" id="sc"></div><div class="sf"><span id="un">👤 User</span><button id="pb" title="Power">⏻</button></div><div id="pw"><button data-p="lock">🔒 Lock</button><button data-p="sleep">🌙 Sleep</button><button data-p="restart">🔄 Restart</button><button data-p="off">⏻ Shut down</button></div></div>
+<div class="pop" id="wd"></div><div class="pop" id="run"><b>Run</b><span style="color:var(--mut)">Type the name of an app or a website.</span><input id="ri" placeholder="notepad, calc, settings, example.com" autocomplete="off"><div style="text-align:right"><button class="bt" id="rok">OK</button></div></div><div id="tvw"></div><div class="pop" id="qs"></div><div class="pop" id="cal"></div><div class="pop" id="fly"></div><div class="pop" id="ctx"></div>
+<div id="task"><div id="pins"><button class="tbn" id="sb" title="Start"><span class="lg"><i></i><i></i><i></i><i></i></span></button><button class="tbn" id="sr" title="Search">🔍</button><button class="tbn" id="tv" title="Task view">🗔</button><button class="tbn" id="wb" title="Widgets">🌤️</button></div><div id="tray"><button id="sysb" title="Quick settings"><span id="sys">📶 🔊 🔋</span></button><button id="clk"></button><button id="sd" title="Show desktop"></button></div></div>
+<div id="toast"></div>
+<div id="lock"><b id="lt"></b><div id="ld"></div><div id="lh" style="opacity:.85;font-size:14px">Click anywhere to unlock</div><input id="lpw" type="password" placeholder="Password" autocomplete="off" style="display:none;padding:10px 14px;border-radius:6px;border:0;width:240px;text-align:center"></div>
+<div id="off"><div></div><span style="opacity:.7">Click to power on</span></div><div id="boot"><div style="font-size:64px">⊞</div><div class="spin"></div></div>
+<script>
+(()=>{
+const $=s=>document.querySelector(s),E=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ST={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const TF=()=>ST.get('w11.h24','')?{hour:'2-digit',minute:'2-digit',hour12:false}:{hour:'numeric',minute:'2-digit'};
+const R=document.documentElement,coarse=matchMedia('(pointer:coarse)'),dark=()=>R.dataset.theme?R.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;
+const WP=['radial-gradient(60% 80% at 25% 65%,#0a4bd8,transparent 62%),radial-gradient(50% 70% at 72% 35%,#8a4af0,transparent 62%),radial-gradient(45% 55% at 55% 95%,#00b7c3,transparent 70%),#0b1230','radial-gradient(70% 80% at 70% 30%,#ff7eb3,transparent 60%),radial-gradient(60% 70% at 20% 80%,#ffb86b,transparent 62%),#3a1c71','radial-gradient(70% 80% at 30% 30%,#43e97b,transparent 60%),radial-gradient(60% 70% at 80% 80%,#38f9d7,transparent 62%),#07302b','linear-gradient(160deg,#232526,#414345)'];
+const ACC=['#0067c0','#8764b8','#e3008c','#c42b1c','#107c10','#00b294','#ca5010','#5d5a58'];
+if(ST.get('w11.theme',''))R.dataset.theme=ST.get('w11.theme','');
+const setTheme=t=>{R.dataset.theme=t;ST.set('w11.theme',t)},setAcc=c=>{R.style.setProperty('--acc',c);ST.set('w11.acc',c)},setWP=i=>{$('#wall').style.setProperty('--wp',WP[i]);$('#lock').style.setProperty('--wp',WP[i]);ST.set('w11.wp',i)};
+setAcc(ST.get('w11.acc',ACC[0]));setWP(+ST.get('w11.wp',0)||0);
+const NOTI=[];const toast=t=>{NOTI.unshift({t,at:new Date()});if(NOTI.length>15)NOTI.pop();const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',1800)};
+/* file system */
+let fs;try{fs=JSON.parse(ST.get('w11.fs','null'))}catch(e){}
+if(!fs||typeof fs!=='object')fs={Desktop:{},Documents:{'Welcome.txt':'Welcome to Windows 11 Web.\n\nTry Snap layouts: hover the maximize button on a window.'},Downloads:{},Pictures:{},Music:{},'Recycle Bin':{}};
+let onSave=null;const save=()=>{ST.set('w11.fs',JSON.stringify(fs));onSave&&onSave()},node=p=>p.reduce((o,k)=>o&&o[k],fs),isD=v=>v&&typeof v==='object';
+const uniq=(n,k)=>{if(!(k in n))return k;let i=2;const b=k.replace(/(\.\w+)?$/,''),x=(k.match(/\.\w+$/)||[''])[0];while((b+' ('+i+')'+x) in n)i++;return b+' ('+i+')'+x};
+/* window manager */
+const wins={};let zc=10,act=null,cd=1,nd=1;const PIN=['files','browser','notepad','paint','calc','term','store','settings'];
+const vis=w=>w.e.style.display!=='none';
+function focus(w){act=w;w.e.style.zIndex=++zc;Object.values(wins).forEach(o=>o.e.classList.toggle('on',o===w));drawTask()}
+function show(w){w.desk=cd;w.e.classList.remove('dk');w.e.style.display='';focus(w)}
+function minimize(w){w.e.style.display='none';if(act===w)act=null;const t=Object.values(wins).filter(o=>vis(o)&&o.desk===cd).sort((a,b)=>b.e.style.zIndex-a.e.style.zIndex)[0];if(t)focus(t);else drawTask()}
+function close(w){w.e.remove();delete wins[w.id];if(act===w)act=null;drawTask()}
+function maxToggle(w){if(w.max){w.max=false;w.e.classList.remove('max');if(w.prev)Object.assign(w.e.style,w.prev)}else{if(!w.snap)w.prev=pick(w.e);w.max=true;w.snap=false;w.e.classList.add('max')}focus(w)}
+const pick=e=>({left:e.style.left,top:e.style.top,width:e.style.width,height:e.style.height});
+function snapTo(w,z){const D=$('#desk').getBoundingClientRect(),g=4;if(!w.max&&!w.snap)w.prev=pick(w.e);w.max=false;w.snap=true;w.e.classList.remove('max');
+Object.assign(w.e.style,{left:z[0]*D.width+g+'px',top:z[1]*D.height+g+'px',width:z[2]*D.width-2*g+'px',height:z[3]*D.height-2*g+'px'});focus(w)}
+function open(id,arg){let w=wins[id];if(w){show(w);if(arg&&w.onarg)w.onarg(arg);return w}
+const a=APPS[id],e=E('div','win'),D=$('#desk').getBoundingClientRect(),W=Math.min(a.w,innerWidth-16),H=Math.min(a.h,D.height-16),n=Object.keys(wins).length%6*28,small=innerWidth<640;
+e.style.cssText=`width:${W}px;height:${H}px;left:${small?8:Math.max(4,Math.min(80+n,D.width-W-8))}px;top:${small?8:Math.max(4,Math.min(24+n,D.height-H-8))}px`;
+e.innerHTML=`<div class="tb"><span>${a.i}</span><span class="tt">${a.n}</span><span class="tc"><button class="bm">—</button><button class="bx">☐</button><button class="bc">✕</button></span></div><div class="bd"></div><i class="rz"></i>`;
+$('#desk').append(e);w={id,e,bd:e.querySelector('.bd'),tt:e.querySelector('.tt'),max:false,snap:false,prev:null,desk:cd};wins[id]=w;
+const tb=e.querySelector('.tb'),bx=e.querySelector('.bx');
+e.querySelector('.bm').onclick=()=>minimize(w);e.querySelector('.bc').onclick=()=>close(w);bx.onclick=()=>{if(w.lp){w.lp=0;return}hideFly();maxToggle(w)};tb.ondblclick=ev=>{if(!ev.target.closest('button'))maxToggle(w)};
+e.addEventListener('pointerdown',()=>{if(act!==w)focus(w)},true);
+bx.onmouseenter=()=>{if(matchMedia('(hover:hover)').matches)showFly(w,bx)};bx.onmouseleave=()=>flyOut();let lp2=0;bx.addEventListener('pointerdown',e=>{if(e.pointerType==='touch')lp2=setTimeout(()=>{w.lp=1;showFly(w,bx)},450)});['pointerup','pointercancel','pointerleave'].forEach(t=>bx.addEventListener(t,()=>clearTimeout(lp2)));
+tb.onpointerdown=ev=>{if(ev.target.closest('button')||w.max)return;const sx=ev.clientX-e.offsetLeft,sy=ev.clientY-e.offsetTop;tb.setPointerCapture(ev.pointerId);
+tb.onpointermove=m=>{e.style.left=Math.max(-W+90,Math.min(innerWidth-90,m.clientX-sx))+'px';e.style.top=Math.max(0,Math.min(D.height-40,m.clientY-sy))+'px';w.snap=false};
+tb.onpointerup=u=>{tb.onpointermove=tb.onpointerup=null;if(u.clientY<=4)maxToggle(w);else if(u.clientX<=4)snapTo(w,[0,0,.5,1]);else if(u.clientX>=innerWidth-4)snapTo(w,[.5,0,.5,1])}};
+e.querySelector('.rz').onpointerdown=ev=>{ev.stopPropagation();ev.preventDefault();const g=ev.target,r=e.getBoundingClientRect();g.setPointerCapture(ev.pointerId);g.onpointermove=m=>{e.style.width=Math.max(260,r.width+m.clientX-ev.clientX)+'px';e.style.height=Math.max(160,r.height+m.clientY-ev.clientY)+'px'};g.onpointerup=()=>g.onpointermove=g.onpointerup=null};
+a.r(w,arg);focus(w);closePops();return w}
+/* snap layouts */
+const SN=[[[0,0,.5,1],[.5,0,.5,1]],[[0,0,.66,1],[.66,0,.34,1]],[[0,0,.5,.5],[.5,0,.5,.5],[0,.5,1,.5]],[[0,0,.34,1],[.34,0,.32,1],[.66,0,.34,1]]];let fw=null,ft=0;const fly=$('#fly');
+function showFly(w,b){clearTimeout(ft);fw=w;fly.innerHTML=SN.map((l,i)=>`<div class="lay">${l.map((z,j)=>`<b data-l="${i}" data-z="${j}" style="left:${z[0]*100}%;top:${z[1]*100}%;width:${z[2]*100}%;height:${z[3]*100}%"></b>`).join('')}</div>`).join('');const r=b.getBoundingClientRect();fly.classList.add('on');fly.style.left=Math.max(4,Math.min(innerWidth-fly.offsetWidth-4,r.left-90))+'px';fly.style.top=r.bottom+4+'px'}
+const hideFly=()=>fly.classList.remove('on'),flyOut=()=>{clearTimeout(ft);ft=setTimeout(hideFly,250)};
+fly.onmouseenter=()=>clearTimeout(ft);fly.onmouseleave=flyOut;fly.onclick=e=>{const b=e.target.closest('b');if(b&&fw){snapTo(fw,SN[b.dataset.l][b.dataset.z]);hideFly()}};
+/* taskbar */
+const APPLIST=()=>Object.keys(APPS);
+function drawTask(){const p=$('#pins');p.querySelectorAll('[data-id]').forEach(x=>x.remove());const ids=[...PIN,...Object.keys(wins).filter(k=>!PIN.includes(k)&&wins[k].desk===cd)];
+ids.forEach(id=>{const q=wins[id]&&wins[id].desk===cd?wins[id]:null,b=E('button','tbn'+(q?' run':'')+(q&&act===q&&vis(q)?' on':''),APPS[id].i);b.dataset.id=id;b.title=APPS[id].n;p.append(b)})}
+$('#pins').onclick=e=>{const b=e.target.closest('[data-id]');if(!b)return;const id=b.dataset.id,w=wins[id];if(!w)open(id);else if(w.desk!==cd||!vis(w))show(w);else if(act===w)minimize(w);else focus(w)};
+/* pops */
+const pops=['#start','#qs','#cal','#ctx','#wd','#run','#tvw'];
+function closePops(except){pops.forEach(s=>{if(s!==except)$(s).classList.remove('on')});$('#pw').classList.remove('on')}
+function togglePop(s,fn){const e=$(s),was=e.classList.contains('on');closePops();if(!was){if(fn)fn();e.classList.add('on')}}
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('.pop,#task,#pw,#tvw'))closePops();if(!e.target.closest('#fly,.bx'))hideFly()});
+$('#sb').onclick=()=>togglePop('#start',()=>{$('#q').value='';drawStart('');if(innerWidth>700)setTimeout(()=>$('#q').focus(),30)});
+$('#sr').onclick=()=>{togglePop('#start',()=>{$('#q').value='';drawStart('')});setTimeout(()=>$('#q').focus(),30)};
+function files(o=fs,p=[],a=[]){Object.keys(o).forEach(k=>{if(k==='Recycle Bin')return;isD(o[k])?files(o[k],[...p,k],a):/^data:image\//.test(o[k])||a.push({n:k,p:[...p,k]})});return a}
+function drawStart(q){const sc=$('#sc');q=q.trim().toLowerCase();
+if(q){const A=APPLIST().filter(k=>APPS[k].n.toLowerCase().includes(q)),F=files().filter(f=>f.n.toLowerCase().includes(q)).slice(0,8);
+sc.innerHTML='<div class="sh">Best match</div>'+(A.map(k=>`<div class="rc" data-a="${k}"><span>${APPS[k].i}</span>${APPS[k].n}</div>`).join('')+F.map(f=>`<div class="rc" data-f="${esc(f.p.join('/'))}"><span>📄</span><div>${esc(f.n)}<small>${esc(f.p.slice(0,-1).join(' › ')||'Home')}</small></div></div>`).join('')||'<div class="rc">No results found.</div>');return}
+if(allMode){sc.innerHTML='<div class="sh">All apps<button class="bt" data-all="1" style="padding:2px 10px">‹ Back</button></div>'+APPLIST().sort((a,b)=>APPS[a].n.localeCompare(APPS[b].n)).map(k=>`<div class="rc" data-a="${k}"><span>${APPS[k].i}</span>${APPS[k].n}</div>`).join('');return}
+sc.innerHTML='<div class="sh">Pinned<button class="bt" data-all="1" style="padding:2px 10px">All apps ›</button></div><div class="pg">'+APPLIST().map(k=>`<button class="ap" data-a="${k}"><b>${APPS[k].i}</b>${APPS[k].n}</button>`).join('')+'</div><div class="sh" style="margin-top:18px">Recommended</div>'+(files().slice(0,4).map(f=>`<div class="rc" data-f="${esc(f.p.join('/'))}"><span>📄</span><div>${esc(f.n)}<small>${esc(f.p.slice(0,-1).join(' › '))}</small></div></div>`).join('')||'<div class="rc" style="color:var(--mut)">Files you create will show up here.</div>')}
+$('#q').oninput=e=>drawStart(e.target.value);$('#q').onkeydown=e=>{if(e.key==='Enter'){const f=$('#sc [data-a],#sc [data-f]');if(f)f.click()}};
+$('#sc').onclick=e=>{if(e.target.closest('[data-all]')){allMode=!allMode;drawStart('');return}const a=e.target.closest('[data-a]'),f=e.target.closest('[data-f]');if(a)open(a.dataset.a);else if(f)open('notepad',{path:f.dataset.f.split('/')})};
+$('#pb').onclick=()=>$('#pw').classList.toggle('on');
+$('#pw').onclick=e=>{const b=e.target.closest('button');if(!b)return;closePops();const q=b.dataset.p;if(q==='lock')lock();else if(q==='restart')restart();else off(q==='sleep'?'Sleeping… click to wake':'Your PC is off',q==='sleep')};
+function boot(ms){$('#boot').classList.add('on');setTimeout(()=>$('#boot').classList.remove('on'),ms)}
+function restart(){Object.values(wins).forEach(close);boot(1800)}
+
+
+function tickLock(){const d=new Date();$('#lt').textContent=d.toLocaleTimeString([],TF());$('#ld').textContent=d.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'})}
+/* quick settings */
+let Q;try{Q=JSON.parse(ST.get('w11.q','null'))}catch(e){}Q=Q||{wifi:1,bt:1,air:0,sav:0,night:0,bri:100,vol:60};
+const saveQ=()=>ST.set('w11.q',JSON.stringify(Q)),applyQ=()=>{document.body.style.filter=`brightness(${Q.bri/100}) sepia(${Q.night?.3:0})`;$('#sys').textContent=(Q.air?'✈️':Q.wifi?'📶':'⚠️')+' '+(Q.vol?'🔊':'🔇')+' '+(Q.sav?'🔋':'🔌')};
+function drawQS(){const T=[['wifi','📶','Wi‑Fi'],['bt','🔵','Bluetooth'],['air','✈️','Airplane'],['sav','🔋','Saver'],['night','🌙','Night light'],['dark','◐','Dark mode']];
+$('#qs').innerHTML='<div class="qg">'+T.map(t=>`<button class="qt${(t[0]==='dark'?dark():Q[t[0]])?' on':''}" data-q="${t[0]}"><b>${t[1]}</b>${t[2]}</button>`).join('')+`</div><div class="sl">☀️<input type="range" min="40" max="100" value="${Q.bri}" data-s="bri"></div><div class="sl">🔊<input type="range" min="0" max="100" value="${Q.vol}" data-s="vol"></div><div style="text-align:right"><button class="bt" data-gs="1">⚙️ All settings</button></div>`}
+$('#qs').onclick=e=>{if(e.target.closest('[data-gs]')){closePops();open('settings');return}const b=e.target.closest('[data-q]');if(!b)return;const k=b.dataset.q;if(k==='dark')setTheme(dark()?'light':'dark');else{Q[k]=Q[k]?0:1;if(k==='air'&&Q.air)Q.wifi=Q.bt=0}saveQ();applyQ();drawQS()};
+$('#qs').oninput=e=>{const k=e.target.dataset.s;if(k){Q[k]=+e.target.value;saveQ();applyQ()}};
+$('#sysb').onclick=()=>togglePop('#qs',drawQS);
+/* calendar */
+let cmo=0;function drawCal(){const n=new Date(),b=new Date(n.getFullYear(),n.getMonth()+cmo,1),y=b.getFullYear(),m=b.getMonth();let h=['S','M','T','W','T','F','S'].map(x=>`<div class="h">${x}</div>`).join('')+'<div></div>'.repeat(b.getDay());
+for(let d=1;d<=new Date(y,m+1,0).getDate();d++)h+=`<div class="${cmo===0&&d===n.getDate()?'t':''}">${d}</div>`;
+$('#cal').innerHTML=`<div style="font-size:28px">${n.toLocaleTimeString([],TF())}</div><div style="color:var(--mut)">${n.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'})}</div><div class="cn"><button data-c="-1">‹</button><b>${b.toLocaleString([],{month:'long',year:'numeric'})}</b><button data-c="1">›</button></div><div class="cg">${h}</div>${notiHTML()}`}
+$('#cal').onclick=e=>{const b=e.target.closest('[data-c]');if(b){cmo+=+b.dataset.c;drawCal()}else if(e.target.closest('[data-nc]')){NOTI.length=0;drawCal()}};
+$('#clk').onclick=()=>togglePop('#cal',()=>{cmo=0;drawCal()});
+const tick=()=>{const d=new Date();$('#clk').innerHTML=d.toLocaleTimeString([],TF())+'<br>'+d.toLocaleDateString()};tick();setInterval(tick,15000);
+/* desktop */
+
+$('#desk').addEventListener('pointerdown',e=>{if(e.target.id==='desk'||e.target.id==='icons')document.querySelectorAll('.di').forEach(x=>x.classList.remove('s'))});
+document.addEventListener('contextmenu',e=>{if(e.target.closest('.win,#task,.pop'))return;e.preventDefault();closePops();const c=$('#ctx');c.innerHTML='<div data-x="r">🔄 Refresh</div><div data-x="f">📁 New folder</div><div data-x="p">🎨 Personalize</div><div data-x="s">⚙️ Display settings</div>';c.classList.add('on');c.style.left=Math.min(e.clientX,innerWidth-200)+'px';c.style.top=Math.min(e.clientY,innerHeight-190)+'px'});
+$('#ctx').onclick=e=>{const x=e.target.dataset.x;closePops();if(x==='r'){drawDesk();toast('Desktop refreshed')}else if(x==='f'){const n=fs.Desktop;n[uniq(n,'New folder')]={};save();toast('Folder created on Desktop')}else if(x==='t')open('taskmgr');else if(x==='d')$('#sd').click();else if(x)open('settings')};
+/* apps */
+const APPS={
+files:{n:'File Explorer',i:'📁',w:720,h:460,r(w,arg){let p=[],sel=null;const bd=w.bd;bd.innerHTML='<div class="bar"><button data-a="up">↑</button><button data-a="nf">＋ Folder</button><button data-a="nt">＋ Text file</button><button data-a="cp">Copy</button><button data-a="ct">Cut</button><button data-a="ps">Paste</button><button data-a="rn">Rename</button><button data-a="dl">Delete</button><input class="fq" placeholder="Search this folder" style="flex:1;min-width:110px;padding:5px 10px;border:1px solid var(--ln);border-radius:4px;background:var(--card);outline:0"></div><div class="fx"><div class="fsb"></div><div class="fm"><div class="bar" id="crumb" style="border:0;color:var(--mut)"></div><div class="fl"></div></div></div>';
+const sb=bd.querySelector('.fsb'),fl=bd.querySelector('.fl'),cr=bd.querySelector('#crumb');sb.innerHTML='<div data-p="">🏠 Home</div>'+['Desktop','Documents','Downloads','Pictures','Music','Recycle Bin'].map(k=>`<div data-p="${k}">${k==='Recycle Bin'?'🗑️':'📁'} ${k}</div>`).join('');
+const draw=()=>{let n=node(p);if(!isD(n)){p=[];n=fs}sel=null;const ks=Object.keys(n).sort((a,b)=>(isD(n[b])-isD(n[a]))||a.localeCompare(b)).filter(k=>k.toLowerCase().includes(((bd.querySelector('.fq')||{}).value||'').toLowerCase()));cr.textContent=['Home',...p].join(' › ');w.tt.textContent=p[p.length-1]||'Home';fl.innerHTML=ks.map(k=>`<div class="fi" data-k="${esc(k)}"><span style="font-size:22px">${isD(n[k])?'📁':/^data:image/.test(n[k])?'🖼️':/^data:audio/.test(n[k])?'🎵':'📄'}</span>${esc(k)}</div>`).join('')||'<div style="color:var(--mut);padding:12px">This folder is empty.</div>'};
+const openIt=k=>{const n=node(p);if(isD(n[k])){p.push(k);draw()}else if(p[0]==='Pictures'&&/^data:image/.test(n[k]))open('photos',{name:k});else if(/^data:(image|audio)/.test(n[k]))toast('This file can’t be opened in Notepad');else open('notepad',{path:[...p,k]})};
+fl.onclick=e=>{const f=e.target.closest('.fi');if(!f)return;sel=f.dataset.k;fl.querySelectorAll('.fi').forEach(x=>x.classList.toggle('s',x===f));if(coarse.matches)openIt(sel)};
+fl.ondblclick=e=>{const f=e.target.closest('.fi');if(f&&!coarse.matches)openIt(f.dataset.k)};
+sb.onclick=e=>{const d=e.target.closest('[data-p]');if(d){p=d.dataset.p?[d.dataset.p]:[];draw()}};
+bd.querySelector('.bar').onclick=async e=>{const a=e.target.dataset.a;if(!a)return;const n=node(p);
+if(a==='up'){p.pop();draw()}
+else if(a==='nf'||a==='nt'){const nm=await ask(a==='nf'?'Folder name:':'File name:',a==='nf'?'New folder':'New file.txt');if(nm){const k=uniq(n,nm.replace(/[\/\\]/g,'-'));n[k]=a==='nf'?{}:'';save();draw()}}
+else if(a==='ps'){if(!clip||!node(clip.p)||!(clip.k in node(clip.p)))toast('Nothing to paste');else{const src=node(clip.p),k=uniq(n,clip.k);n[k]=JSON.parse(JSON.stringify(src[clip.k]));if(clip.cut){delete src[clip.k];clip=null}save();draw();toast('Pasted')}}
+else if(!sel)toast('Select an item first');
+else if(a==='cp'||a==='ct'){clip={p:[...p],k:sel,cut:a==='ct'};toast((a==='cp'?'Copied ':'Cut ')+sel)}
+else if(a==='rn'){const nm=await ask('Rename to:',sel);if(nm&&nm!==sel){const k=uniq(n,nm.replace(/[\/\\]/g,'-'));n[k]=n[sel];delete n[sel];save();draw()}}
+else if(a==='dl'){if(p[0]==='Recycle Bin'){if(await yes('Permanently delete '+sel+'?'))delete n[sel]}else{const b=fs['Recycle Bin'];b[uniq(b,sel)]=n[sel];delete n[sel];toast('Moved to Recycle Bin')}save();draw()}};
+bd.oninput=e=>{if(e.target.classList.contains('fq'))draw()};w.onarg=a=>{if(a&&a.go){p=a.go;draw()}};if(arg&&arg.go)p=arg.go;draw()}},
+notepad:{n:'Notepad',i:'📝',w:560,h:380,r(w,arg){let cur=null;const bd=w.bd;bd.innerHTML='<div class="bar"><button data-a="new">New</button><button data-a="save">Save</button></div><textarea class="np" placeholder="Start typing…"></textarea>';const ta=bd.querySelector('textarea');
+const load=p=>{const n=node(p.slice(0,-1)),v=n&&n[p[p.length-1]];if(typeof v==='string'){cur=p;ta.value=v;w.tt.textContent=p[p.length-1]+' — Notepad'}};
+w.onarg=a=>load(a.path);if(arg&&arg.path)load(arg.path);else ta.value=ST.get('w11.note','');
+ta.oninput=()=>{if(!cur)ST.set('w11.note',ta.value)};
+bd.querySelector('.bar').onclick=async e=>{const a=e.target.dataset.a;if(a==='new'){cur=null;ta.value='';ST.set('w11.note','');w.tt.textContent='Untitled — Notepad'}
+else if(a==='save'){if(!cur){const nm=await ask('Save as:','Note.txt');if(!nm)return;const d=fs.Documents,k=uniq(d,/\.\w+$/.test(nm)?nm:nm+'.txt');cur=['Documents',k];w.tt.textContent=k+' — Notepad'}const n=node(cur.slice(0,-1));n[cur[cur.length-1]]=ta.value;save();toast('Saved')}}}},
+calc:{n:'Calculator',i:'🧮',w:320,h:460,r(w){let cur='0',acc=null,op=null,fresh=true;const bd=w.bd,K=['%','C','⌫','÷','7','8','9','×','4','5','6','−','1','2','3','+','±','0','.','='];
+bd.innerHTML='<div class="cd"><small></small><div>0</div></div><div class="ck">'+K.map(k=>`<button class="${k==='='?'e':''}">${k}</button>`).join('')+'</div>';
+const fmt=n=>String(+n.toPrecision(12)),show=()=>{bd.querySelector('.cd div').textContent=cur;bd.querySelector('small').textContent=acc!=null&&op?fmt(acc)+' '+op:''};
+const f=(a,o,b)=>o==='+'?a+b:o==='−'?a-b:o==='×'?a*b:o==='÷'?a/b:b;
+const press=k=>{if(cur==='Error'&&k!=='C')return;
+if(/\d/.test(k)){cur=fresh||cur==='0'?k:cur+k;fresh=false}
+else if(k==='.'){if(fresh){cur='0.';fresh=false}else if(!cur.includes('.'))cur+='.'}
+else if(k==='C'){cur='0';acc=op=null;fresh=true}
+else if(k==='⌫'){cur=cur.length>1&&!fresh?cur.slice(0,-1):'0'}
+else if(k==='±'){if(cur!=='0')cur=cur[0]==='-'?cur.slice(1):'-'+cur}
+else if(k==='%')cur=fmt(parseFloat(cur)/100);
+else{const v=parseFloat(cur);if(op&&!fresh){const r=f(acc,op,v);if(!isFinite(r)){cur='Cannot divide by zero';acc=op=null;fresh=true;show();return}acc=r;cur=fmt(r)}else acc=v;
+if(k==='='){op=null;acc=null}else op=k;fresh=true}show()};
+bd.querySelector('.ck').onclick=e=>{if(e.target.tagName==='BUTTON')press(e.target.textContent)};
+w.key=e=>{const m={'*':'×','/':'÷','-':'−','Enter':'=','Backspace':'⌫','Escape':'C'},k=m[e.key]||e.key;if(K.includes(k)){e.preventDefault();press(k)}}}},
+term:{n:'Terminal',i:'⌨️',w:620,h:380,r(w){let cwd=['Documents'],hist=[],hi=0;const bd=w.bd;bd.innerHTML='<div class="tm">Windows Terminal — type <b>help</b></div><input class="ti2" autocomplete="off" spellcheck="false">';const out=bd.querySelector('.tm'),inp=bd.querySelector('input');
+const P=s=>{out.insertAdjacentHTML('beforeend','<div>'+esc(s)+'</div>');out.scrollTop=out.scrollHeight},pr=()=>'PS C:\\Users\\You'+(cwd.length?'\\'+cwd.join('\\'):'')+'>';
+const res=a=>{let p=/^[\\\/]/.test(a)?[]:[...cwd];for(const s of a.split(/[\\\/]/)){if(!s||s==='.')continue;if(s==='..'){p.pop();continue}const n=node(p);p.push((isD(n)&&Object.keys(n).find(k=>k.toLowerCase()===s.toLowerCase()))||s)}return p};
+const par=p=>node(p.slice(0,-1)),lst=p=>p[p.length-1];
+const M={files:'files',explorer:'files',notepad:'notepad',calc:'calc',terminal:'term',settings:'settings',browser:'browser',paint:'paint',photos:'photos',taskmgr:'taskmgr',clock:'clock',mines:'mines',weather:'weather',calendar:'calendar',media:'media',sticky:'sticky',camera:'camera',recorder:'recorder',snip:'snip'};
+const C={help:()=>P('help ls cd pwd cat mkdir touch rm echo [text] > file clear date whoami neofetch open <app|file>'),
+ls:a=>{const n=node(a[0]?res(a[0]):cwd);P(!isD(n)?'Cannot find path.':Object.keys(n).sort().map(k=>(isD(n[k])?'<DIR>  ':'       ')+k).join('\n')||'(empty)')},
+pwd:()=>P(pr().slice(0,-1)),cd:a=>{const p=res(a[0]||'');if(isD(node(p)))cwd=p;else P('Cannot find path.');inp.placeholder=pr()},
+cat:a=>{const p=res(a[0]||''),v=par(p)&&par(p)[lst(p)];P(typeof v==='string'?(/^data:image/.test(v)?'[image file]':v||'(empty file)'):'File not found.')},
+mkdir:a=>{const p=res(a[0]||''),n=par(p);if(a[0]&&isD(n)&&!(lst(p) in n)){n[lst(p)]={};save()}else P('Cannot create folder.')},
+touch:a=>{const p=res(a[0]||''),n=par(p);if(a[0]&&isD(n)){if(!(lst(p) in n)){n[lst(p)]='';save()}}else P('Cannot create file.')},
+rm:a=>{const p=res(a[0]||''),n=par(p),k=lst(p);if(a[0]&&isD(n)&&k in n){const b=fs['Recycle Bin'];b[uniq(b,k)]=n[k];delete n[k];save();P('Moved to Recycle Bin.')}else P('Not found.')},
+clear:()=>{out.innerHTML=''},date:()=>P(new Date().toLocaleString()),whoami:()=>P('windows11\\you'),
+neofetch:()=>P('  ▄▄▄▄▄ ▄▄▄▄▄   you@windows11\n  █████ █████   OS: Windows 11 Web\n  ▀▀▀▀▀ ▀▀▀▀▀   Apps: '+APPLIST().length+'\n  ▄▄▄▄▄ ▄▄▄▄▄   Theme: '+(dark()?'Dark':'Light')+'\n  █████ █████   Screen: '+innerWidth+'x'+innerHeight+'\n  ▀▀▀▀▀ ▀▀▀▀▀'),
+open:a=>{const k=(a[0]||'').toLowerCase();if(M[k]){open(M[k]);return}const p=res(a[0]||''),v=par(p)&&par(p)[lst(p)];if(typeof v==='string')open('notepad',{path:p});else P('Nothing to open. Try: open notepad')}};C.dir=C.ls;C.cls=C.clear;C.type=C.cat;
+const run=v=>{const m=v.match(/^echo\s+(.*?)\s*>\s*(\S+)$/i);if(m){const p=res(m[2]),n=par(p);if(isD(n)){n[lst(p)]=m[1].replace(/^"|"$/g,'');save()}else P('Cannot write file.');return}
+const t=(v.match(/"[^"]*"|\S+/g)||[]).map(x=>x.replace(/^"|"$/g,'')),c=(t.shift()||'').toLowerCase();if(c==='echo')P(t.join(' '));else if(C[c])C[c](t);else P("'"+c+"' is not recognized. Type help.")};
+inp.placeholder=pr();inp.onkeydown=e=>{if(e.key==='Enter'){const v=inp.value.trim();inp.value='';if(!v)return;P(pr()+' '+v);hist.push(v);hi=hist.length;run(v)}else if(e.key==='ArrowUp'){e.preventDefault();if(hi>0)inp.value=hist[--hi]}else if(e.key==='ArrowDown'){e.preventDefault();inp.value=hi<hist.length-1?hist[++hi]:(hi=hist.length,'')}};setTimeout(()=>inp.focus(),50)}},
+settings:{n:'Settings',i:'⚙️',w:560,h:480,r(w){const bd=w.bd;const draw=()=>{bd.innerHTML=`<div class="st"><h3 style="margin-top:0">Personalization</h3><div class="sw"><button class="bt" data-t="light">☀️ Light</button><button class="bt" data-t="dark">🌙 Dark</button></div><h3>Accent color</h3><div class="sw">${ACC.map(c=>`<i data-c="${c}" style="background:${c}" class="${c===ST.get('w11.acc',ACC[0])?'on':''}"></i>`).join('')}</div><h3>Background</h3><div class="sw">${WP.map((g,i)=>`<i class="w${i===(+ST.get('w11.wp',0)||0)?' on':''}" data-w="${i}" style="background:${g.replace(/"/g,'')}"></i>`).join('')}</div><h3>Taskbar alignment</h3><div class="sw"><button class="bt" data-al="c">Center</button><button class="bt" data-al="l">Left</button></div><h3>Accounts</h3><div class="sw"><button class="bt" data-un="1">Change name</button><button class="bt" data-pw="1">Lock password</button></div><h3>Time &amp; language</h3><div class="sw"><button class="bt" data-h24="1">${ST.get('w11.h24','')?'✓ ':''}24-hour clock</button></div><h3>Accessibility</h3><div class="sw"><button class="bt" data-zm="100">Text 100%</button><button class="bt" data-zm="125">125%</button><button class="bt" data-zm="150">150%</button><button class="bt" data-rm="1">${ST.get('w11.rm','')?'✓ ':''}Reduce motion</button></div><h3>System</h3><div style="color:var(--mut)">Windows 11 Web · ${APPLIST().length} apps · files and settings are saved in this browser</div><p><button class="bt" data-r="1">Reset this PC</button></p></div>`};draw();
+bd.onclick=async e=>{const d=e.target.dataset;if(d.t){setTheme(d.t);drawQS()}else if(d.c)setAcc(d.c);else if(d.w!=null)setWP(+d.w);else if(d.al){$('#task').classList.toggle('l',d.al==='l');document.body.classList.toggle('l',d.al==='l');ST.set('w11.al',d.al)}
+else if(d.h24){ST.set('w11.h24',ST.get('w11.h24','')?'':'1');tick()}else if(d.zm)setZoom(+d.zm);else if(d.rm){ST.set('w11.rm',ST.get('w11.rm','')?'':'1');applyRM()}
+else if(d.un){const v=await ask('Your name:',ST.get('w11.user','User'));if(v&&v.trim()){ST.set('w11.user',v.trim());$('#un').textContent='👤 '+v.trim()}}
+else if(d.pw){const v=await ask('New lock password (leave empty to remove):','','password');if(v!==null){ST.set('w11.pw',v);toast(v?'Password set':'Password removed')}}
+else if(d.r&&await yes('Erase all files and settings on this virtual PC?')){try{localStorage.clear()}catch(x){}location.reload()}draw()}}}
+};
+const J=(k,d)=>{try{return JSON.parse(ST.get(k,''))||d}catch(e){return d}};
+Object.assign(APPS,{
+browser:{n:'Browser',i:'🌐',w:760,h:500,r(w){const bd=w.bd;let H=J('w11.bh',[]),B=J('w11.bm',['https://duckduckgo.com','https://en.wikipedia.org','https://news.ycombinator.com']),st=['about:home'],sp=0;
+bd.innerHTML='<div class="bar"><button data-a="b">←</button><button data-a="f">→</button><button data-a="h">⌂</button><input class="bi" style="flex:1;min-width:120px;padding:6px 12px;border:1px solid var(--ln);border-radius:16px;background:var(--card);outline:0" placeholder="Search or enter address"><button data-a="s" title="Bookmark">☆</button><button data-a="p" title="Bookmarks and history">☰</button></div><div class="bw" style="flex:1;overflow:auto;padding:24px;user-select:text"></div>';
+const bi=bd.querySelector('.bi'),bw=bd.querySelector('.bw'),host=u=>{try{return new URL(u).hostname}catch(e){return u}},lk=u=>`<a class="bt" style="display:inline-block;text-decoration:none;margin:4px" href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(host(u))}</a>`;
+const norm=v=>{v=v.trim();if(!v)return'about:home';if(/^about:/.test(v))return v;if(/^https?:\/\//i.test(v))return v;if(/^[\w-]+(\.[\w-]+)+(\/\S*)?$/.test(v))return'https://'+v;return'https://duckduckgo.com/?q='+encodeURIComponent(v)};
+const saveH=()=>{ST.set('w11.bh',JSON.stringify(H.slice(-100)));ST.set('w11.bm',JSON.stringify(B))};
+const draw=()=>{const u=st[sp];bi.value=u==='about:home'?'':u;w.tt.textContent=(u==='about:home'?'New tab':host(u))+' — Browser';
+if(u==='about:home')bw.innerHTML='<h2 style="font-weight:400">Search the web</h2><p style="color:var(--mut)">Type in the address bar. Sites open in a new browser tab.</p><div>'+B.map(lk).join('')+'</div>';
+else if(u==='about:history')bw.innerHTML='<h3>History</h3>'+(H.slice().reverse().map(x=>lk(x)).join('<br>')||'<span style="color:var(--mut)">Nothing here yet.</span>')+'<p><button class="bt" data-a="ch">Clear history</button></p>';
+else if(u==='about:bookmarks')bw.innerHTML='<h3>Bookmarks</h3>'+(B.map((x,i)=>`<div>${lk(x)} <button class="bt" data-d="${i}">Remove</button></div>`).join('')||'<span style="color:var(--mut)">No bookmarks yet. Press ☆ on a page.</span>');
+else bw.innerHTML=`<h2 style="font-weight:400">${esc(host(u))}</h2><p style="color:var(--mut);max-width:520px">Browsers don’t let other websites load inside this page, so this link opens in a new tab.</p><p>${lk(u).replace('>'+esc(host(u))+'<','>Open '+esc(host(u))+' ↗<')}</p><p style="color:var(--mut)">${esc(u)}</p>`;
+bd.querySelector('[data-a=s]').textContent=B.includes(u)?'★':'☆'};
+const go=v=>{const u=norm(v);st=st.slice(0,sp+1);st.push(u);sp++;if(/^https?:/.test(u)&&H[H.length-1]!==u){H.push(u);saveH()}draw()};
+bi.onkeydown=e=>{if(e.key==='Enter')go(bi.value)};
+bd.onclick=e=>{const t=e.target,a=t.dataset.a;if(a==='b'&&sp>0){sp--;draw()}else if(a==='f'&&sp<st.length-1){sp++;draw()}else if(a==='h')go('about:home');else if(a==='p')go(st[sp]==='about:bookmarks'?'about:history':'about:bookmarks');
+else if(a==='s'&&/^https?:/.test(st[sp])){const i=B.indexOf(st[sp]);if(i<0)B.push(st[sp]);else B.splice(i,1);saveH();draw()}else if(a==='ch'){H=[];saveH();draw()}else if(t.dataset.d!=null){B.splice(+t.dataset.d,1);saveH();draw()}};
+w.onarg=a=>{if(a&&a.url)go(a.url)};draw();if(arg&&arg.url)go(arg.url);else setTimeout(()=>bi.focus(),60)}},
+paint:{n:'Paint',i:'🎨',w:620,h:440,r(w){const bd=w.bd;bd.innerHTML='<div class="bar" id="ptb"></div><div id="pwrap" style="flex:1;min-height:0;overflow:auto;background:#fff"><canvas style="display:block;touch-action:none;cursor:crosshair"></canvas></div>';const tb=bd.querySelector('#ptb'),c=bd.querySelector('canvas'),x=c.getContext('2d',{willReadFrequently:true}),wr=bd.querySelector('#pwrap');
+let tool='pen',col='#000000',size=4,d=0,sx=0,sy=0,base,undo=[];
+tb.innerHTML=[['pen','✏️'],['eraser','🧽'],['line','／'],['rect','▭'],['oval','◯'],['fill','🪣']].map(t=>`<button data-t="${t[0]}" title="${t[0]}">${t[1]}</button>`).join('')+'<input type="color" value="#000000" data-k="col"><input type="range" min="1" max="40" value="4" style="width:80px" data-k="sz"><button data-a="un">↶</button><button data-a="cl">Clear</button><button data-a="sv">Save</button>';
+const mark=()=>tb.querySelectorAll('[data-t]').forEach(b=>b.style.outline=b.dataset.t===tool?'2px solid var(--acc)':'');mark();
+const snap=()=>{undo.push(x.getImageData(0,0,c.width,c.height));if(undo.length>25)undo.shift()};
+tb.onclick=e=>{const b=e.target,a=b.dataset.a;if(b.dataset.t){tool=b.dataset.t;mark()}else if(a==='un'){const q=undo.pop();if(q)x.putImageData(q,0,0)}else if(a==='cl'){snap();x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height)}else if(a==='sv'){fs.Pictures=fs.Pictures||{};const k=uniq(fs.Pictures,'Paint '+new Date().toLocaleDateString().replace(/[\/\\]/g,'-')+' '+new Date().toLocaleTimeString([],TF()).replace(/:/g,'.')+'.png');fs.Pictures[k]=c.toDataURL('image/png');save();toast((ST.get('w11.fs','').includes(k)?'Saved to Pictures':'Saved for this session only (storage is full)'))}};
+tb.oninput=e=>{if(e.target.dataset.k==='col')col=e.target.value;else if(e.target.dataset.k==='sz')size=+e.target.value};
+const fit=()=>{const W=Math.max(c.width,wr.clientWidth,300),H=Math.max(c.height,wr.clientHeight,250);if(W===c.width&&H===c.height)return;const o=c.width?x.getImageData(0,0,c.width,c.height):null;c.width=W;c.height=H;x.fillStyle='#fff';x.fillRect(0,0,W,H);if(o)x.putImageData(o,0,0)};
+new ResizeObserver(fit).observe(wr);fit();
+const pos=e=>{const r=c.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]},st=()=>{x.lineCap=x.lineJoin='round';x.lineWidth=size;x.strokeStyle=x.fillStyle=tool==='eraser'?'#fff':col};
+const flood=(px,py)=>{const W=c.width,H=c.height;if(px<0||py<0||px>=W||py>=H)return;const im=x.getImageData(0,0,W,H),u=new Uint32Array(im.data.buffer),t=document.createElement('canvas').getContext('2d');t.fillStyle=col;t.fillRect(0,0,1,1);const q=new Uint32Array(t.getImageData(0,0,1,1).data.buffer)[0],o=u[py*W+px];if(o===q)return;const s=[px+py*W];while(s.length){const i=s.pop(),cx=i%W,cy=(i-cx)/W;if(u[i]!==o)continue;let l=cx,r=cx;while(l>0&&u[cy*W+l-1]===o)l--;while(r<W-1&&u[cy*W+r+1]===o)r++;for(let k=l;k<=r;k++){u[cy*W+k]=q;if(cy>0&&u[(cy-1)*W+k]===o)s.push((cy-1)*W+k);if(cy<H-1&&u[(cy+1)*W+k]===o)s.push((cy+1)*W+k)}}x.putImageData(im,0,0)};
+c.onpointerdown=e=>{e.preventDefault();c.setPointerCapture(e.pointerId);[sx,sy]=pos(e);snap();if(tool==='fill'){flood(Math.round(sx),Math.round(sy));return}d=1;st();base=x.getImageData(0,0,c.width,c.height);x.beginPath();x.moveTo(sx,sy);x.lineTo(sx+.01,sy);x.stroke()};
+c.onpointermove=e=>{if(!d)return;const[px,py]=pos(e);st();if(tool==='pen'||tool==='eraser'){x.lineTo(px,py);x.stroke();return}x.putImageData(base,0,0);x.beginPath();if(tool==='line'){x.moveTo(sx,sy);x.lineTo(px,py)}else if(tool==='rect')x.rect(sx,sy,px-sx,py-sy);else x.ellipse((sx+px)/2,(sy+py)/2,Math.abs(px-sx)/2,Math.abs(py-sy)/2,0,0,7);x.stroke()};
+c.onpointerup=c.onpointercancel=()=>d=0}},
+photos:{n:'Photos',i:'🖼️',w:640,h:440,r(w,arg){const bd=w.bd;let cur=arg&&arg.name||null;const imgs=()=>Object.keys(fs.Pictures||{}).filter(k=>/^data:image\//.test(fs.Pictures[k]));
+const draw=()=>{const I=imgs();if(cur&&!I.includes(cur))cur=null;bd.innerHTML=cur?`<div class="bar"><button data-a="back">← Gallery</button><button data-a="prev">‹</button><button data-a="next">›</button><button data-a="del">Delete</button><span style="color:var(--mut)">${esc(cur)}</span></div><div style="flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;background:#111"><img src="${fs.Pictures[cur]}" style="max-width:100%;max-height:100%;background:#fff"></div>`:`<div class="bar"><span style="color:var(--mut)">${I.length} photo${I.length===1?'':'s'} in Pictures</span></div><div style="flex:1;overflow:auto;padding:10px;display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;align-content:start">`+(I.map(k=>`<img data-k="${esc(k)}" src="${fs.Pictures[k]}" style="width:100%;height:100px;object-fit:cover;border-radius:6px;cursor:pointer;background:#fff">`).join('')||'<div style="color:var(--mut)">No photos yet. Draw something in Paint and press Save.</div>')+'</div>'};
+bd.onclick=e=>{const t=e.target,a=t.dataset.a,I=imgs();if(t.dataset.k){cur=t.dataset.k}else if(a==='back')cur=null;else if(a==='prev')cur=I[(I.indexOf(cur)-1+I.length)%I.length];else if(a==='next')cur=I[(I.indexOf(cur)+1)%I.length];else if(a==='del'){const b=fs['Recycle Bin'];b[uniq(b,cur)]=fs.Pictures[cur];delete fs.Pictures[cur];save();cur=null;toast('Moved to Recycle Bin')}else return;draw()};
+w.onarg=a=>{cur=a.name;draw()};draw()}},
+taskmgr:{n:'Task Manager',i:'📊',w:480,h:400,r(w){const bd=w.bd,hist=Array(40).fill(8),tabs='<div class="bar"><button data-t="p">Processes</button><button data-t="f">Performance</button></div>';let tab='p',n=0;
+const draw=()=>{const ids=Object.keys(wins);if(tab==='p')bd.innerHTML=tabs+'<div style="padding:8px;overflow:auto">'+ids.map(id=>`<div class="rc"><span>${APPS[id].i}</span><div style="flex:1">${APPS[id].n}<small>${(id.length*3+Math.floor(Date.now()/3000))%12+1}% CPU</small></div>${id==='taskmgr'?'':`<button class="bt" data-x="${id}">End task</button>`}</div>`).join('')+'</div>';
+else{const o=ids.length,c=Math.max(2,Math.min(95,Math.round(hist[39]*.7+(6+o*5+Math.random()*12)*.3))),m=Math.min(92,26+o*6);hist.push(c);hist.shift();bd.innerHTML=tabs+`<div style="padding:14px">CPU <b>${c}%</b><svg viewBox="0 0 195 60" style="width:100%;height:80px;background:var(--card);border-radius:6px"><polyline fill="none" stroke="var(--acc)" stroke-width="1.5" points="${hist.map((v,i)=>i*5+','+(60-v*.6)).join(' ')}"/></svg><p>Memory <b>${m}%</b></p><div style="height:8px;background:var(--card);border-radius:4px"><div style="height:8px;width:${m}%;background:var(--acc);border-radius:4px"></div></div><p>Open apps <b>${o}</b></p></div>`}};
+bd.onclick=e=>{const d=e.target.dataset;if(d.t){tab=d.t;draw()}else if(d.x&&wins[d.x]){close(wins[d.x]);draw()}};
+const iv=setInterval(()=>{if(!w.e.isConnected){clearInterval(iv);return}if(tab==='f'||++n%3===0)draw()},1000);draw()}},
+clock:{n:'Clock',i:'⏰',w:380,h:380,r(w){const bd=w.bd;let t0=0,el=0,run=0,laps=[],tl=0,ti=0,mode='s';
+const fmt=ms=>{const s=Math.floor(ms/1000);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')+'.'+String(Math.floor(ms%1000/10)).padStart(2,'0')},cur=()=>el+(run?Date.now()-t0:0);
+const upd=()=>{const d=bd.querySelector('#cd');if(d)d.textContent=mode==='s'?fmt(cur()):fmt(ti?Math.max(0,tl-Date.now()):0)};
+const view=()=>{bd.innerHTML='<div class="bar"><button data-m="s">Stopwatch</button><button data-m="t">Timer</button></div><div style="padding:20px;text-align:center;overflow:auto"><div id="cd" style="font-size:54px;font-weight:300"></div>'+(mode==='s'?`<p><button class="bt" data-a="go">${run?'Stop':'Start'}</button> <button class="bt" data-a="lap">Lap</button> <button class="bt" data-a="rs">Reset</button></p>`+laps.map((l,i)=>`<div>Lap ${i+1} — ${l}</div>`).reverse().join(''):`<p><input id="tmin" type="number" min="1" max="999" value="5" style="width:70px;padding:6px;border:1px solid var(--ln);background:var(--card)"> minutes</p><p><button class="bt" data-a="tgo">${ti?'Cancel':'Start'}</button></p>`)+'</div>';upd()};
+bd.onclick=e=>{const d=e.target.dataset;if(d.m)mode=d.m;else if(d.a==='go'){if(run){el+=Date.now()-t0;run=0}else{t0=Date.now();run=1}}else if(d.a==='lap'){if(cur())laps.push(fmt(cur()))}else if(d.a==='rs'){run=0;el=0;laps=[]}else if(d.a==='tgo'){if(ti)ti=0;else{tl=Date.now()+Math.max(1,+bd.querySelector('#tmin').value||5)*60000;ti=1}}else return;view()};
+const iv=setInterval(()=>{if(!w.e.isConnected){clearInterval(iv);return}upd();if(ti&&Date.now()>=tl){ti=0;toast('⏰ Timer finished');try{const a=new AudioContext(),o=a.createOscillator();o.connect(a.destination);o.start();setTimeout(()=>{o.stop();a.close()},600)}catch(x){}if(mode==='t')view()}},100);view()}},
+mines:{n:'Minesweeper',i:'💣',w:340,h:440,r(w){const bd=w.bd,R=9,MN=10,NC=['','#00f','#080','#f00','#008','#800','#088','#000','#555'];let g,over,first,t0,flag=0;
+const nb=i=>{const r=i/R|0,c=i%R,o=[];for(let a=-1;a<2;a++)for(let b=-1;b<2;b++){const y=r+a,x=c+b;if((a||b)&&y>=0&&y<R&&x>=0&&x<R)o.push(y*R+x)}return o};
+const reveal=i=>{const s=[i];while(s.length){const j=s.pop(),c=g[j];if(c.o||c.f)continue;c.o=1;if(c.m){over=-1;continue}if(!c.n)nb(j).forEach(k=>s.push(k))}};
+const draw=()=>{const left=MN-g.filter(c=>c.f).length;bd.innerHTML=`<div style="padding:12px;overflow:auto"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font:18px Consolas,monospace"><span>💣 ${left}</span><button class="bt" data-a="new" style="font-size:20px">${over===1?'😎':over===-1?'😵':'🙂'}</button><button class="bt" data-a="flag" style="${flag?'background:#ffd37a;color:#222':''}">🚩 ${flag?'On':'Off'}</button><span id="mt">⏱ ${t0&&over===0?Math.floor((Date.now()-t0)/1000):0}</span></div><div style="display:grid;grid-template-columns:repeat(${R},1fr);gap:2px">`+g.map((c,i)=>`<button data-i="${i}" style="aspect-ratio:1;font:bold 16px Consolas,monospace;padding:0;cursor:pointer;color:${NC[c.n]||'#222'};background:${c.o?(c.m?'#f66':'#e6e6e6'):'#a8a8a8'};border:1px solid #777;border-radius:3px">${c.o?(c.m?'💣':c.n||''):c.f?'🚩':over===-1&&c.m?'💣':''}</button>`).join('')+'</div></div>'};
+const ng=()=>{g=Array.from({length:R*R},()=>({m:0,o:0,f:0,n:0}));over=0;first=1;t0=0;draw()};
+bd.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.a==='new')return ng();if(b.dataset.a==='flag'){flag=!flag;return draw()}const i=+b.dataset.i;if(over||g[i].o)return;if(flag){g[i].f=!g[i].f;return draw()}if(g[i].f)return;
+if(first){let k=0;while(k<MN){const j=Math.random()*R*R|0;if(j===i||g[j].m)continue;g[j].m=1;k++}g.forEach((c,q)=>c.n=nb(q).filter(j=>g[j].m).length);first=0;t0=Date.now()}
+reveal(i);if(over!==-1&&g.every(c=>c.m||c.o)){over=1;toast('You win! 🎉')}draw()};
+bd.oncontextmenu=e=>{e.preventDefault();const b=e.target.closest('[data-i]');if(!b||over)return;const c=g[+b.dataset.i];if(!c.o){c.f=!c.f;draw()}};
+const iv=setInterval(()=>{if(!w.e.isConnected){clearInterval(iv);return}const t=bd.querySelector('#mt');if(t&&over===0&&t0)t.textContent='⏱ '+Math.floor((Date.now()-t0)/1000)},500);ng()}}
+});
+/* ===== shell v3 ===== */
+let allMode=false;
+const pw=()=>ST.get('w11.pw',''),dkey=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const evs=()=>J('w11.events',{}),saveEv=o=>ST.set('w11.events',JSON.stringify(o));
+const ask=(q,def,type)=>new Promise(res=>{const o=E('div','dlg',`<div class="dlgb"><p style="margin-top:0">${esc(q)}</p>${def===undefined?'':`<input type="${type||'text'}" value="${esc(def)}">`}<div style="text-align:right;margin-top:14px"><button class="bt" data-v="0">Cancel</button> <button class="bt" data-v="1" style="background:var(--acc);color:#fff">OK</button></div></div>`);document.body.append(o);const i=o.querySelector('input');if(i){i.focus();i.select()}
+const done=v=>{o.remove();res(v)};o.onclick=e=>{const v=e.target.dataset.v;if(v==='1')done(i?i.value:true);else if(v==='0'||e.target===o)done(i?null:false)};o.onkeydown=e=>{if(e.key==='Enter')done(i?i.value:true);else if(e.key==='Escape')done(i?null:false)}});
+const yes=q=>ask(q);
+/* weather (sample data) */
+const CITIES={'New York':[14,26],London:[8,18],Tokyo:[12,24],Sydney:[16,25],Paris:[9,20],Cairo:[20,34],Rio:[22,30],Moscow:[-3,8]},COND=[['☀️','Sunny'],['⛅','Partly cloudy'],['☁️','Cloudy'],['🌧️','Rain'],['⛈️','Storms'],['🌤️','Mostly sunny']];
+const hsh=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return h};
+let WXC=ST.get('w11.city','New York'),WXU=ST.get('w11.unit','C');if(!CITIES[WXC])WXC='New York';
+const wx=(city,off)=>{const d=new Date();d.setDate(d.getDate()+off);const[lo,hi]=CITIES[city],h=hsh(city+d.toDateString()),c=COND[h%6],l=lo+(h>>3)%4,hh=hi-(h>>5)%4;return{i:c[0],c:c[1],l,h:hh,t:Math.round((l+hh)/2),d}};
+const tu=c=>WXU==='F'?Math.round(c*9/5+32)+'°F':c+'°C';
+Object.assign(APPS,{
+weather:{n:'Weather',i:'🌤️',w:520,h:480,r(w){const bd=w.bd,draw=()=>{const t=wx(WXC,0);bd.innerHTML=`<div class="bar"><select data-s="1" style="padding:5px;background:var(--card);border:1px solid var(--ln);border-radius:4px">${Object.keys(CITIES).map(c=>`<option${c===WXC?' selected':''}>${c}</option>`).join('')}</select><button data-u="C">°C</button><button data-u="F">°F</button><span style="color:var(--mut)">Sample data (offline)</span></div><div style="padding:20px;overflow:auto"><div style="font-size:64px">${t.i} ${tu(t.t)}</div><div style="font-size:18px">${t.c} · H ${tu(t.h)} · L ${tu(t.l)}</div><h3>5-day forecast</h3><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">${[1,2,3,4,5].map(o=>{const f=wx(WXC,o);return`<div class="wc" style="text-align:center;padding:10px 4px"><div style="color:var(--mut)">${f.d.toLocaleDateString([],{weekday:'short'})}</div><div style="font-size:26px">${f.i}</div><b>${tu(f.h)}</b><div style="color:var(--mut)">${tu(f.l)}</div></div>`}).join('')}</div></div>`};
+bd.onchange=e=>{if(e.target.dataset.s){WXC=e.target.value;ST.set('w11.city',WXC);draw()}};bd.onclick=e=>{const u=e.target.dataset.u;if(u){WXU=u;ST.set('w11.unit',u);draw()}};draw()}},
+calendar:{n:'Calendar',i:'📅',w:640,h:480,r(w){const bd=w.bd;let m=0,sel=dkey(new Date());
+const draw=()=>{const n=new Date(),b=new Date(n.getFullYear(),n.getMonth()+m,1),y=b.getFullYear(),mo=b.getMonth(),Ev=evs(),tk=dkey(n);let h=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(x=>`<b style="text-align:center;color:var(--mut)">${x}</b>`).join('')+'<div></div>'.repeat(b.getDay());
+for(let d=1;d<=new Date(y,mo+1,0).getDate();d++){const k=dkey(new Date(y,mo,d));h+=`<div data-d="${k}" style="padding:10px 2px;text-align:center;border:1px solid ${k===sel?'var(--acc)':'var(--ln)'};border-radius:6px;cursor:pointer;${k===tk?'background:var(--acc);color:#fff;':''}">${d}${Ev[k]?'<div style="font-size:9px">●</div>':''}</div>`}
+bd.innerHTML=`<div class="bar"><button data-m="-1">‹</button><b style="flex:1;text-align:center">${b.toLocaleString([],{month:'long',year:'numeric'})}</b><button data-m="1">›</button><button data-m="0">Today</button></div><div style="padding:12px;overflow:auto"><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px">${h}</div><div style="margin-top:14px"><b>${sel}</b><div style="display:flex;gap:6px;margin:8px 0"><input id="ei" placeholder="Add an event" style="flex:1;padding:7px;border:1px solid var(--ln);background:var(--card);border-radius:4px;outline:0"><button class="bt" data-a="add">Add</button></div>`+(Ev[sel]||[]).map((t,i)=>`<div class="rc"><span>🗓️</span><div style="flex:1">${esc(t)}</div><button class="bt" data-x="${i}">✕</button></div>`).join('')+'</div></div>'};
+bd.onclick=e=>{const d=e.target.closest('[data-d]'),t=e.target.dataset;if(d)sel=d.dataset.d;else if(t.m!=null)m=t.m==='0'?0:m+ +t.m;else if(t.a==='add'){const v=bd.querySelector('#ei').value.trim();if(!v)return;const Ev=evs();(Ev[sel]=Ev[sel]||[]).push(v);saveEv(Ev)}else if(t.x!=null){const Ev=evs();Ev[sel].splice(+t.x,1);if(!Ev[sel].length)delete Ev[sel];saveEv(Ev)}else return;draw()};draw()}},
+media:{n:'Media Player',i:'🎵',w:560,h:420,r(w){const bd=w.bd;let L=[],cur=-1;bd.innerHTML='<div class="bar"><label class="bt" style="cursor:pointer">＋ Open files<input type="file" accept="audio/*,video/*" multiple hidden></label><span style="color:var(--mut)">Plays files from your device</span></div><div class="fx"><div class="fsb" style="width:170px"></div><div class="fm" style="background:#111;align-items:center;justify-content:center"><video controls style="max-width:100%;max-height:100%;width:100%"></video></div></div>';
+const v=bd.querySelector('video'),sb=bd.querySelector('.fsb'),list=()=>sb.innerHTML=L.map((f,i)=>`<div data-i="${i}" style="${i===cur?'background:var(--card);outline:1px solid var(--acc)':''}">${f.type.startsWith('video')?'🎬':'🎵'} ${esc(f.name)}</div>`).join('')||'<div style="color:var(--mut)">No files yet.</div>';
+const play=i=>{if(!L[i])return;cur=i;v.src=URL.createObjectURL(L[i]);v.play().catch(()=>{});w.tt.textContent=L[i].name+' — Media Player';list()};
+bd.querySelector('input').onchange=e=>{L=L.concat([...e.target.files]);if(cur<0)play(0);else list();e.target.value=''};sb.onclick=e=>{const d=e.target.closest('[data-i]');if(d)play(+d.dataset.i)};v.onended=()=>play(cur+1);list()}},
+sticky:{n:'Sticky Notes',i:'🗒️',w:520,h:420,r(w){const bd=w.bd,C=['#fff7a8','#ffd1dc','#cde7ff','#d4f5d4'];let N=J('w11.sticky',[{t:'',c:0}]);const sv=()=>ST.set('w11.sticky',JSON.stringify(N));
+const draw=()=>{bd.innerHTML='<div class="bar"><button data-a="add">＋ New note</button></div><div style="flex:1;overflow:auto;padding:10px;display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;align-content:start">'+N.map((n,i)=>`<div style="background:${C[n.c%4]};color:#222;border-radius:6px;padding:6px;display:flex;flex-direction:column;box-shadow:0 2px 6px rgba(0,0,0,.2)"><div style="display:flex;justify-content:space-between"><button data-c="${i}" style="border:0;background:none">🎨</button><button data-x="${i}" style="border:0;background:none">✕</button></div><textarea data-i="${i}" placeholder="Take a note…" style="height:130px;border:0;outline:0;resize:none;background:none;color:#222;font:14px system-ui">${esc(n.t)}</textarea></div>`).join('')+'</div>'};
+bd.oninput=e=>{const i=e.target.dataset.i;if(i!=null){N[i].t=e.target.value;sv()}};bd.onclick=e=>{const d=e.target.dataset;if(d.a==='add')N.push({t:'',c:N.length});else if(d.c!=null)N[d.c].c++;else if(d.x!=null)N.splice(d.x,1);else return;sv();draw()};draw()}}
+});
+/* notification history in the calendar panel */
+const notiHTML=()=>NOTI.length?'<div class="cn"><b>Notifications</b><button class="bt" data-nc="1" style="font-size:12px">Clear all</button></div>'+NOTI.map(n=>`<div class="rc"><span>🔔</span><div>${esc(n.t)}<small>${n.at.toLocaleTimeString([],TF())}</small></div></div>`).join(''):'<div style="color:var(--mut);text-align:center">No new notifications</div>';
+/* desktop icons (includes files on the Desktop) */
+const dk=E('div','');dk.id='icons';$('#desk').append(dk);
+function drawDesk(){const it=[['files','This PC','💻'],['recycle','Recycle Bin','🗑️']],D=fs.Desktop||{};Object.keys(D).sort().forEach(k=>it.push(['d:'+k,k,isD(D[k])?'📁':'📄']));dk.innerHTML=it.map(([id,n,i])=>`<div class="di" data-id="${esc(id)}"><b>${i}</b>${esc(n)}</div>`).join('')}
+const goI=id=>{if(id==='files')open('files',{go:[]});else if(id==='recycle')open('files',{go:['Recycle Bin']});else{const k=id.slice(2),v=fs.Desktop[k];if(isD(v))open('files',{go:['Desktop',k]});else open('notepad',{path:['Desktop',k]})}};
+dk.onclick=e=>{const d=e.target.closest('.di');document.querySelectorAll('.di').forEach(x=>x.classList.toggle('s',x===d));if(d&&coarse.matches)goI(d.dataset.id)};dk.ondblclick=e=>{const d=e.target.closest('.di');if(d&&!coarse.matches)goI(d.dataset.id)};
+onSave=drawDesk;drawDesk();
+/* task view and virtual desktops */
+function drawTV(){const ws=Object.values(wins).filter(w=>w.desk===cd);$('#tvw').innerHTML='<div class="tvh">'+Array.from({length:nd},(_,i)=>`<button class="bt${i+1===cd?' cur':''}" data-d="${i+1}">Desktop ${i+1}</button>`).join('')+'<button class="bt" data-nd="1">＋ New desktop</button></div><div class="tvg">'+(ws.map(w=>`<div class="tvc" data-w="${w.id}"><div class="tvt"><span>${APPS[w.id].i} ${APPS[w.id].n}</span><button data-x="${w.id}">✕</button></div><div class="tvp">${APPS[w.id].i}</div></div>`).join('')||'<div style="opacity:.85">No windows on this desktop.</div>')+'</div>'}
+function sw(n){cd=n;act=null;Object.values(wins).forEach(w=>w.e.classList.toggle('dk',w.desk!==cd));const v=Object.values(wins).filter(w=>w.desk===cd&&vis(w)).sort((a,b)=>b.e.style.zIndex-a.e.style.zIndex)[0];if(v)focus(v);else drawTask()}
+function openTV(){closePops();drawTV();$('#tvw').classList.add('on')}
+$('#tv').onclick=()=>$('#tvw').classList.contains('on')?closePops():openTV();
+$('#tvw').onclick=e=>{const d=e.target.closest('[data-d]'),x=e.target.closest('[data-x]'),c=e.target.closest('[data-w]');if(d){sw(+d.dataset.d);drawTV()}else if(e.target.closest('[data-nd]')){nd++;sw(nd);drawTV()}else if(x){const w=wins[x.dataset.x];if(w)close(w);drawTV()}else if(c){const w=wins[c.dataset.w];if(w){closePops();show(w)}}else if(e.target.id==='tvw')closePops()};
+/* widgets */
+function drawWd(){const n=new Date(),t=wx(WXC,0),Ev=evs(),tm=new Date(n);tm.setDate(n.getDate()+1);const ev=[...(Ev[dkey(n)]||[]).map(x=>'Today · '+x),...(Ev[dkey(tm)]||[]).map(x=>'Tomorrow · '+x)].slice(0,4),st=J('w11.sticky',[]).filter(x=>x.t.trim()).slice(0,2);
+$('#wd').innerHTML=`<div class="wc"><div style="font-size:34px">${n.toLocaleTimeString([],TF())}</div><div style="color:var(--mut)">${n.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'})}</div></div><div class="wc" data-o="weather" style="cursor:pointer"><span style="font-size:30px">${t.i}</span> <b style="font-size:26px">${tu(t.t)}</b> ${t.c}<div style="color:var(--mut)">${WXC} · H ${tu(t.h)} · L ${tu(t.l)} · sample data</div></div><div class="wc" data-o="calendar" style="cursor:pointer"><b>Upcoming</b>${ev.map(x=>`<div>${esc(x)}</div>`).join('')||'<div style="color:var(--mut)">No events. Open Calendar to add one.</div>'}</div><div class="wc" data-o="sticky" style="cursor:pointer"><b>Sticky Notes</b>${st.map(x=>`<div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(x.t)}</div>`).join('')||'<div style="color:var(--mut)">No notes yet.</div>'}</div>`}
+$('#wb').onclick=()=>togglePop('#wd',drawWd);$('#wd').onclick=e=>{const o=e.target.closest('[data-o]');if(o)open(o.dataset.o)};
+/* run dialog */
+function openRun(){togglePop('#run',()=>{$('#ri').value=''});setTimeout(()=>$('#ri').focus(),40)}
+function runCmd(v){v=v.trim().toLowerCase();if(!v)return;const A={explorer:'files',files:'files',notepad:'notepad',calc:'calc',calculator:'calc',cmd:'term',terminal:'term',powershell:'term',control:'settings',settings:'settings',taskmgr:'taskmgr','task manager':'taskmgr',mspaint:'paint',paint:'paint',browser:'browser',chrome:'browser',edge:'browser',weather:'weather',calendar:'calendar',clock:'clock',media:'media',sticky:'sticky',photos:'photos',minesweeper:'mines',camera:'camera',recorder:'recorder','voice recorder':'recorder',snip:'snip','snipping tool':'snip'};closePops();
+if(A[v])open(A[v]);else if(v==='shutdown')off('Your PC is off');else if(v==='lock')lock();else if(v==='restart')restart();else if(/^https?:\/\/|\.\w{2,}(\/|$)/.test(v))open('browser',{url:v});else toast("Windows cannot find '"+v+"'.")}
+$('#ri').onkeydown=e=>{if(e.key==='Enter')runCmd(e.target.value)};$('#rok').onclick=()=>runCmd($('#ri').value);
+/* power, lock, show desktop */
+function off(msg,sleep){const o=$('#off');if(!sleep)Object.values(wins).forEach(close);o.firstChild.textContent=msg;o.dataset.s=sleep?'1':'';o.classList.add('on')}
+$('#off').onclick=()=>{const o=$('#off'),s=o.dataset.s;o.classList.remove('on');if(!s)boot(1100)};
+function lock(){tickLock();const i=$('#lpw');$('#lock').classList.add('on');i.style.display=pw()?'':'none';i.value='';$('#lh').textContent=pw()?'Enter your password':'Click anywhere to unlock';if(pw())setTimeout(()=>i.focus(),50)}
+const unlock=()=>$('#lock').classList.remove('on');
+$('#lock').onclick=()=>{if(!pw())unlock()};$('#lpw').onclick=e=>e.stopPropagation();$('#lpw').onkeydown=e=>{if(e.key==='Enter'){if(e.target.value===pw())unlock();else{$('#lh').textContent='Incorrect password. Try again.';e.target.value=''}}e.stopPropagation()};
+document.addEventListener('keydown',e=>{if($('#lock').classList.contains('on')&&!pw())unlock()});
+let sdH=[];$('#sd').onclick=()=>{const v=Object.values(wins).filter(w=>w.desk===cd&&vis(w));if(v.length){sdH=v;v.forEach(w=>w.e.style.display='none');act=null;drawTask()}else{sdH.filter(w=>wins[w.id]===w).forEach(w=>w.e.style.display='');if(sdH.length)focus(sdH[sdH.length-1]);sdH=[]}};
+document.addEventListener('contextmenu',e=>{if(!e.target.closest('#task'))return;e.preventDefault();closePops();const c=$('#ctx');c.innerHTML='<div data-x="t">📊 Task Manager</div><div data-x="s">⚙️ Taskbar settings</div><div data-x="d">🖥️ Show desktop</div>';c.classList.add('on');c.style.left=Math.min(e.clientX,innerWidth-200)+'px';c.style.top=Math.max(4,innerHeight-150)+'px'});
+/* shortcuts */
+let mu=0;function cycle(){const v=Object.values(wins).filter(w=>w.desk===cd&&vis(w)).sort((a,b)=>a.e.style.zIndex-b.e.style.zIndex);if(v.length>1)focus(v[0])}
+function hot(e){const k=e.key.toLowerCase();if(e.metaKey&&k!=='meta'){mu=1;const m={e:()=>open('files'),r:openRun,d:()=>$('#sd').click(),l:lock,tab:openTV,w:()=>$('#wb').click(),a:()=>$('#sysb').click(),i:()=>open('settings')}[k];if(m){e.preventDefault();m()}}else if(e.ctrlKey&&e.shiftKey&&k==='escape'){e.preventDefault();open('taskmgr')}else if(e.altKey&&k==='f4'&&act){e.preventDefault();close(act)}else if(e.altKey&&k==='tab'){e.preventDefault();cycle()}}
+document.addEventListener('keyup',e=>{if(e.key==='Meta'){if(!mu)$('#sb').click();mu=0}});
+/* personalization */
+const setZoom=z=>{R.style.setProperty('--zm',z/100);ST.set('w11.zm',z)},applyRM=()=>document.body.classList.toggle('rm',!!ST.get('w11.rm',''));
+setZoom(+ST.get('w11.zm',100)||100);applyRM();$('#un').textContent='👤 '+ST.get('w11.user','User');
+
+/* ===== v4: Store, games, full Settings, previews ===== */
+let clip=null;
+const SK={h24:'w11.h24',rm:'w11.rm'},getF=k=>!!ST.get(SK[k]||'w11.f.'+k,''),applyHC=()=>document.body.classList.toggle('hc',!!ST.get('w11.f.hc',''));applyHC();
+function snakeR(w){const bd=w.bd,S=18,Z=15;bd.innerHTML=`<div class="bar"><b id="sc2">Score 0</b><span style="flex:1"></span><span style="color:var(--mut)" id="bs"></span><button data-a="new">New game</button></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;overflow:auto"><canvas width="${S*Z}" height="${S*Z}" style="background:var(--card);border:1px solid var(--ln);border-radius:6px"></canvas><div style="display:flex;gap:8px"><button class="bt" data-d="L">◀</button><button class="bt" data-d="U">▲</button><button class="bt" data-d="D">▼</button><button class="bt" data-d="R">▶</button></div></div>`;
+const c=bd.querySelector('canvas'),x=c.getContext('2d'),V={U:[0,-1],D:[0,1],L:[-1,0],R:[1,0]},opp={U:'D',D:'U',L:'R',R:'L'};let sn,dir,nxt,food,sc,over,best=+ST.get('w11.snake',0)||0;
+const put=()=>{do{food=[Math.random()*S|0,Math.random()*S|0]}while(sn.some(s=>s[0]===food[0]&&s[1]===food[1]))};
+const draw=()=>{x.clearRect(0,0,c.width,c.height);x.fillStyle='#e81123';x.fillRect(food[0]*Z+1,food[1]*Z+1,Z-2,Z-2);const a=getComputedStyle(R).getPropertyValue('--acc');sn.forEach((s,i)=>{x.fillStyle=i?a:'#107c10';x.fillRect(s[0]*Z+1,s[1]*Z+1,Z-2,Z-2)});bd.querySelector('#sc2').textContent='Score '+sc+(over?' — Game over':'');bd.querySelector('#bs').textContent='Best '+best};
+const ng=()=>{sn=[[9,9],[8,9],[7,9]];dir=nxt='R';sc=0;over=0;put();draw()};
+const step=()=>{if(over)return;dir=nxt;const h=[sn[0][0]+V[dir][0],sn[0][1]+V[dir][1]];if(h[0]<0||h[1]<0||h[0]>=S||h[1]>=S||sn.some(s=>s[0]===h[0]&&s[1]===h[1])){over=1;draw();return}sn.unshift(h);if(h[0]===food[0]&&h[1]===food[1]){sc++;if(sc>best){best=sc;ST.set('w11.snake',best)}put()}else sn.pop();draw()};
+const turn=d=>{if(d&&opp[d]!==dir)nxt=d};w.key=e=>{const m={ArrowUp:'U',ArrowDown:'D',ArrowLeft:'L',ArrowRight:'R',w:'U',s:'D',a:'L',d:'R'}[e.key];if(m){e.preventDefault();turn(m)}};
+bd.onclick=e=>{const d=e.target.dataset;if(d.d)turn(d.d);else if(d.a==='new')ng()};const iv=setInterval(()=>{if(!w.e.isConnected){clearInterval(iv);return}step()},120);ng()}
+function g48(w){const bd=w.bd;let g,sc=0,over=0,sx=0,sy=0;bd.innerHTML='<div class="bar"><b id="s48">Score 0</b><span style="flex:1"></span><button data-a="new">New game</button></div><div id="bg" style="flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:14px;touch-action:none;align-content:center"></div>';
+const CL=['#cdc1b4','#eee4da','#ede0c8','#f2b179','#f59563','#f67c5f','#f65e3b','#edcf72','#edcc61','#edc850','#edc53f','#edc22e'];
+const draw=()=>{bd.querySelector('#bg').innerHTML=g.map(v=>`<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:6px;font:bold ${v>=1024?20:26}px system-ui;background:${CL[v?Math.min(11,Math.log2(v)):0]};color:${v>4?'#fff':'#776e65'}">${v||''}</div>`).join('');bd.querySelector('#s48').textContent='Score '+sc+(over?' — Game over':'')};
+const add=()=>{const e=g.map((v,i)=>v?-1:i).filter(i=>i>=0);if(e.length)g[e[Math.random()*e.length|0]]=Math.random()<.9?2:4},ng=()=>{g=Array(16).fill(0);sc=0;over=0;add();add();draw()};
+const line=a=>{const t=a.filter(Boolean),o=[];for(let i=0;i<t.length;i++){if(t[i]===t[i+1]){o.push(t[i]*2);sc+=t[i]*2;i++}else o.push(t[i])}while(o.length<4)o.push(0);return o};
+const mv=d=>{if(over)return;const o=g.slice();for(let k=0;k<4;k++){const ix=[0,1,2,3].map(j=>d==='L'?k*4+j:d==='R'?k*4+3-j:d==='U'?j*4+k:(3-j)*4+k),r=line(ix.map(i=>g[i]));ix.forEach((i,j)=>g[i]=r[j])}
+if(g.some((v,i)=>v!==o[i])){add();if(!g.includes(0)&&![...Array(16).keys()].some(i=>(i%4<3&&g[i]===g[i+1])||(i<12&&g[i]===g[i+4])))over=1}draw()};
+w.key=e=>{const m={ArrowUp:'U',ArrowDown:'D',ArrowLeft:'L',ArrowRight:'R'}[e.key];if(m){e.preventDefault();mv(m)}};bd.onclick=e=>{if(e.target.dataset.a==='new')ng()};
+bd.onpointerdown=e=>{sx=e.clientX;sy=e.clientY};bd.onpointerup=e=>{const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.max(Math.abs(dx),Math.abs(dy))>30)mv(Math.abs(dx)>Math.abs(dy)?(dx>0?'R':'L'):(dy>0?'D':'U'))};ng()}
+function ttt(w){const bd=w.bd,L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];let b,over;const win=(b,p)=>L.some(l=>l.every(i=>b[i]===p));
+const draw=()=>{const m=win(b,'X')?'You win! 🎉':win(b,'O')?'Computer wins':!b.includes('')?'Draw':'Your move (X)';over=m!=='Your move (X)';bd.innerHTML=`<div class="bar"><b>${m}</b><span style="flex:1"></span><button data-a="new">New game</button></div><div style="flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:16px;align-content:center">${b.map((v,i)=>`<button data-i="${i}" style="aspect-ratio:1;font:bold 40px system-ui;border:1px solid var(--ln);background:var(--card);border-radius:8px;color:${v==='X'?'var(--acc)':'#c42b1c'}">${v}</button>`).join('')}</div>`};
+const ai=()=>{const e=b.map((v,i)=>v?-1:i).filter(i=>i>=0);for(const p of['O','X'])for(const i of e){b[i]=p;const ok=win(b,p);b[i]='';if(ok)return i}return b[4]===''?4:e[Math.random()*e.length|0]};
+bd.onclick=e=>{const d=e.target.dataset;if(d.a==='new'){b=Array(9).fill('');draw()}else if(d.i!=null&&!over&&!b[+d.i]){b[+d.i]='X';draw();if(!over){b[ai()]='O';draw()}}};b=Array(9).fill('');draw()}
+const CAT={snake:{n:'Snake',i:'🐍',d:'Classic arcade game. Arrow keys or the on-screen pad.',w:340,h:480,r:snakeR},g2048:{n:'2048',i:'🔢',d:'Slide and merge tiles. Swipe or use arrow keys.',w:360,h:480,r:g48},ttt:{n:'Tic-Tac-Toe',i:'⭕',d:'Beat the computer.',w:320,h:400,r:ttt}};
+let INST=J('w11.inst',[]);INST=INST.filter(id=>CAT[id]);INST.forEach(id=>{APPS[id]=CAT[id]});
+const saveInst=()=>ST.set('w11.inst',JSON.stringify(INST));
+function inst(id){if(!INST.includes(id)){INST.push(id);APPS[id]=CAT[id];saveInst();toast(CAT[id].n+' installed')}}
+function unin(id){if(wins[id])close(wins[id]);delete APPS[id];INST=INST.filter(x=>x!==id);saveInst();toast('Uninstalled')}
+APPS.store={n:'Microsoft Store',i:'🛍️',w:660,h:480,r(w){const bd=w.bd,draw=()=>{bd.innerHTML='<div style="padding:16px;overflow:auto"><h2 style="margin:0 0 4px">Apps &amp; games</h2><div style="color:var(--mut);margin-bottom:14px">Free, offline and installed in this browser.</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px">'+Object.keys(CAT).map(id=>{const c=CAT[id],on=INST.includes(id);return`<div class="wc" style="display:flex;flex-direction:column;gap:6px"><div style="font-size:40px">${c.i}</div><b>${c.n}</b><div style="color:var(--mut);flex:1">${c.d}</div>${on?`<div style="display:flex;gap:6px"><button class="bt" data-o="${id}">Open</button><button class="bt" data-u="${id}">Uninstall</button></div>`:`<button class="bt" data-i="${id}" style="background:var(--acc);color:#fff">Get</button>`}</div>`}).join('')+'</div></div>'};
+bd.onclick=e=>{const d=e.target.dataset;if(d.i)inst(d.i);else if(d.u)unin(d.u);else if(d.o){open(d.o);return}else return;draw()};draw()}};
+/* Settings */
+APPS.settings={n:'Settings',i:'⚙️',w:760,h:520,r(w,arg){const bd=w.bd;let pg='system',qs='',upd=0;
+const tg=k=>`<span class="tg${(k in Q?Q[k]:getF(k))?' on':''}" data-k="${k}"></span>`,row=(t,s,r)=>`<div class="sr"><div>${t}${s?`<div style="color:var(--mut);font-size:12px">${s}</div>`:''}</div><div>${r||''}</div></div>`,bt=(a,l)=>`<button class="bt" ${a}>${l}</button>`;
+const BTD=['Wireless Keyboard','Mouse','Headphones'],NETS=['Home Wi‑Fi','Coffee Shop','Library Guest','Office 5G'];
+const SP={
+system:['🖥️','System',()=>row('Brightness','',`<input type="range" min="40" max="100" value="${Q.bri}" data-sl="bri">`)+row('Night light','Warmer colors in the evening',tg('night'))+row('Volume','',`<input type="range" min="0" max="100" value="${Q.vol}" data-sl="vol">`)+row('Battery saver','Reduce background activity',tg('sav'))+row('Focus assist','Hide notifications while you work',tg('focus'))+row('Storage',((JSON.stringify(fs).length)/1024).toFixed(1)+' KB of files saved in this browser')+row('About','Windows 11 Web · '+APPLIST().length+' apps · '+innerWidth+'×'+innerHeight+' display')+row('Reset this PC','Erases all files and settings',bt('data-r="1"','Reset'))],
+bluetooth:['🔵','Bluetooth & devices',()=>{const m=J('w11.btd',{});return row('Bluetooth','',tg('bt'))+(Q.bt?BTD.map(d=>row(d,m[d]?'Connected':'Paired',bt(`data-bd="${d}"`,m[d]?'Disconnect':'Connect'))).join(''):row('Bluetooth is off','Turn it on to see your devices'))}],
+network:['📶','Network & internet',()=>{const n=ST.get('w11.net','Home Wi‑Fi');return row('Wi‑Fi','',tg('wifi'))+row('Airplane mode','Turns off Wi‑Fi and Bluetooth',tg('air'))+(Q.wifi?NETS.map(x=>row(x,x===n?'Connected, secured':'Available',x===n?'✓':bt(`data-net="${x}"`,'Connect'))).join(''):row('Wi‑Fi is off','Turn it on to see networks'))}],
+personal:['🎨','Personalization',()=>row('Theme','',bt('data-t="light"','☀️ Light')+' '+bt('data-t="dark"','🌙 Dark'))+'<div class="sr"><div class="sw">'+ACC.map(c=>`<i data-c="${c}" style="background:${c}" class="${c===ST.get('w11.acc',ACC[0])?'on':''}"></i>`).join('')+'</div></div><div class="sr"><div class="sw">'+WP.map((g,i)=>`<i class="w${i===(+ST.get('w11.wp',0)||0)?' on':''}" data-w="${i}" style="background:${g}"></i>`).join('')+'</div></div>'+row('Taskbar alignment','',bt('data-al="c"','Center')+' '+bt('data-al="l"','Left'))],
+apps:['📦','Apps',()=>row('Microsoft Store','Get more apps and games',bt('data-st="1"','Open Store'))+APPLIST().map(id=>row(APPS[id].i+' '+APPS[id].n,'',CAT[id]?bt(`data-ui="${id}"`,'Uninstall'):'')).join('')],
+accounts:['👤','Accounts',()=>row(esc(ST.get('w11.user','User')),'Local account',bt('data-un="1"','Change name'))+row('Lock password',pw()?'Password is set':'No password',bt('data-ap="set"','Set')+' '+(pw()?bt('data-ap="rm"','Remove'):''))],
+time:['🕐','Time & language',()=>row('24-hour clock','',tg('h24'))+row('Time zone',Intl.DateTimeFormat().resolvedOptions().timeZone)+row('Date and time',new Date().toLocaleString())],
+gaming:['🎮','Gaming',()=>row('Game Mode','Optimize for games',tg('game'))+row('Games','Find games in the Store',bt('data-st="1"','Open Store'))],
+access:['♿','Accessibility',()=>row('Text size','',bt('data-zm="100"','100%')+' '+bt('data-zm="125"','125%')+' '+bt('data-zm="150"','150%'))+row('Reduce motion','Turn off animations',tg('rm'))+row('High contrast','',tg('hc'))],
+privacy:['🔒','Privacy & security',()=>row('Location','',tg('loc'))+row('Camera','',tg('cam'))+row('Microphone','',tg('mic'))+row('Windows Security','Your device is protected')],
+update:['🔄','Windows Update',()=>row(upd===1?'Checking for updates…':"You're up to date",ST.get('w11.upd','')?'Last checked: '+ST.get('w11.upd',''):'Never checked',upd===1?'<span class="spin" style="width:20px;height:20px;border-width:2px;display:inline-block"></span>':bt('data-up="1"','Check for updates'))]};
+const nav=()=>Object.keys(SP).filter(k=>SP[k][1].toLowerCase().includes(qs.toLowerCase())).map(k=>`<div data-pg="${k}" class="${k===pg?'cur':''}">${SP[k][0]} ${SP[k][1]}</div>`).join('')||'<div style="color:var(--mut)">No results</div>';
+const draw=()=>{const P=SP[pg];bd.innerHTML=`<div class="sx"><div class="snav"><input class="sq" placeholder="Find a setting" value="${esc(qs)}"><div id="nl">${nav()}</div></div><div class="spg"><h2 style="margin:0 0 12px;font-weight:600">${P[1]}</h2>${P[2]()}</div></div>`};
+bd.oninput=e=>{const s=e.target.dataset.sl;if(s){Q[s]=+e.target.value;saveQ();applyQ()}else if(e.target.classList.contains('sq')){qs=e.target.value;bd.querySelector('#nl').innerHTML=nav()}};
+bd.onclick=async e=>{const d=e.target.dataset;
+if(d.pg){pg=d.pg;upd=0}
+else if(d.k){const k=d.k;if(k in Q){Q[k]=Q[k]?0:1;if(k==='air'&&Q.air)Q.wifi=Q.bt=0;if((k==='wifi'||k==='bt')&&Q[k])Q.air=0;saveQ();applyQ()}else{const sk=SK[k]||'w11.f.'+k;ST.set(sk,ST.get(sk,'')?'':'1');if(k==='h24')tick();if(k==='rm')applyRM();if(k==='hc')applyHC()}}
+else if(d.bd){const m=J('w11.btd',{});m[d.bd]=!m[d.bd];ST.set('w11.btd',JSON.stringify(m))}
+else if(d.net){ST.set('w11.net',d.net);toast('Connected to '+d.net)}
+else if(d.t)setTheme(d.t);else if(d.c)setAcc(d.c);else if(d.w!=null)setWP(+d.w);
+else if(d.al){$('#task').classList.toggle('l',d.al==='l');document.body.classList.toggle('l',d.al==='l');ST.set('w11.al',d.al)}
+else if(d.zm)setZoom(+d.zm);else if(d.ui)unin(d.ui);else if(d.st){open('store');return}
+else if(d.un){const v=await ask('Your name:',ST.get('w11.user','User'));if(v&&v.trim()){ST.set('w11.user',v.trim());$('#un').textContent='👤 '+v.trim()}}
+else if(d.ap==='set'){const v=await ask('New lock password:','','password');if(v){ST.set('w11.pw',v);toast('Password set')}}
+else if(d.ap==='rm'){ST.set('w11.pw','');toast('Password removed')}
+else if(d.up){upd=1;draw();await new Promise(r=>setTimeout(r,1400));upd=2;ST.set('w11.upd',new Date().toLocaleString())}
+else if(d.r&&await yes('Erase all files and settings on this virtual PC?')){try{localStorage.clear()}catch(x){}location.reload();return}else return;
+if(w.e.isConnected)draw()};
+w.onarg=a=>{if(a&&SP[a.page]){pg=a.page;draw()}};if(arg&&SP[arg.page])pg=arg.page;draw()}};
+/* taskbar previews */
+const pv=E('div','pop');pv.id='pv';document.body.append(pv);let pvt=0;
+$('#pins').addEventListener('mouseover',e=>{const b=e.target.closest('[data-id]');if(!b||!matchMedia('(hover:hover)').matches)return;const w=wins[b.dataset.id];if(!w||w.desk!==cd)return;clearTimeout(pvt);pv.innerHTML=`<div class="pvc" data-w="${w.id}"><div class="pvt"><span>${APPS[w.id].i} ${esc(w.tt.textContent)}</span><button data-x="${w.id}">✕</button></div><div class="pvb">${APPS[w.id].i}</div></div>`;pv.classList.add('on');const r=b.getBoundingClientRect();pv.style.left=Math.max(4,Math.min(innerWidth-pv.offsetWidth-4,r.left+r.width/2-pv.offsetWidth/2))+'px';pv.style.bottom=innerHeight-r.top+8+'px'});
+const pvOff=()=>{pvt=setTimeout(()=>pv.classList.remove('on'),200)};$('#pins').addEventListener('mouseout',pvOff);pv.onmouseenter=()=>clearTimeout(pvt);pv.onmouseleave=pvOff;
+pv.onclick=e=>{const x=e.target.closest('[data-x]'),c=e.target.closest('[data-w]');if(x&&wins[x.dataset.x])close(wins[x.dataset.x]);else if(c&&wins[c.dataset.w])show(wins[c.dataset.w]);pv.classList.remove('on')};
+
+/* ===== v5: Camera, Voice Recorder, Snipping Tool, touch ===== */
+function savePic(pre,url,ext){fs.Pictures=fs.Pictures||{};const k=uniq(fs.Pictures,pre+' '+new Date().toLocaleDateString().replace(/[\/\\]/g,'-')+' '+new Date().toLocaleTimeString([],TF()).replace(/:/g,'.')+'.'+ext);fs.Pictures[k]=url;save();toast(ST.get('w11.fs','').includes(k)?'Saved to Pictures':'Saved for this session only (storage is full)');return k}
+const REC=[];
+Object.assign(APPS,{
+camera:{n:'Camera',i:'📷',w:520,h:460,r(w){const bd=w.bd;let st=null,facing='user';bd.innerHTML='<div class="bar"><button data-a="snap">📸 Take photo</button><button data-a="flip">🔄 Switch camera</button><span id="cs" style="color:var(--mut)"></span></div><div style="flex:1;background:#111;display:flex;align-items:center;justify-content:center;min-height:0"><video autoplay playsinline muted style="max-width:100%;max-height:100%"></video></div>';
+const v=bd.querySelector('video'),msg=bd.querySelector('#cs'),stop=()=>{if(st)st.getTracks().forEach(t=>t.stop());st=null};
+const start=async()=>{stop();msg.textContent='Starting camera…';try{st=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing}});v.srcObject=st;msg.textContent=''}catch(e){msg.textContent='Camera unavailable. Allow camera access for this page in your browser.'}};
+bd.onclick=e=>{const a=e.target.dataset.a;if(a==='flip'){facing=facing==='user'?'environment':'user';start()}else if(a==='snap'){if(!v.videoWidth){msg.textContent='Camera is not ready yet.';return}const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);savePic('Camera',c.toDataURL('image/jpeg',.85),'jpg');v.style.opacity=.3;setTimeout(()=>v.style.opacity=1,120)}};
+const iv=setInterval(()=>{if(!w.e.isConnected){clearInterval(iv);stop()}},500);start()}},
+recorder:{n:'Voice Recorder',i:'🎙️',w:420,h:440,r(w){const bd=w.bd;let mr=null,chunks=[],t0=0,tm=0;bd.innerHTML='<div style="padding:20px;text-align:center"><div id="rt" style="font-size:46px;font-weight:300">00:00</div><p><button class="bt" id="rb" style="font-size:18px;padding:10px 22px">🔴 Record</button></p><div id="rm2" style="color:var(--mut)"></div></div><div id="rl" style="flex:1;overflow:auto;padding:8px"></div>';
+const rl=bd.querySelector('#rl'),rb=bd.querySelector('#rb'),rt=bd.querySelector('#rt'),rm=bd.querySelector('#rm2');
+const list=()=>{rl.innerHTML=REC.map((r,i)=>`<div class="sr"><div style="flex:1;min-width:0">${esc(r.name)}<audio controls src="${r.url}" style="width:100%;margin-top:6px"></audio></div><div style="display:flex;flex-direction:column;gap:4px"><button class="bt" data-s="${i}">Save</button><button class="bt" data-x="${i}">✕</button></div></div>`).join('')||'<div style="color:var(--mut);text-align:center;padding:16px">No recordings yet.</div>'};
+rb.onclick=async()=>{if(mr&&mr.state==='recording'){mr.stop();return}try{const s=await navigator.mediaDevices.getUserMedia({audio:true});mr=new MediaRecorder(s);chunks=[];mr.ondataavailable=e=>chunks.push(e.data);
+mr.onstop=()=>{s.getTracks().forEach(t=>t.stop());clearInterval(tm);const b=new Blob(chunks,{type:mr.mimeType||'audio/webm'});REC.unshift({name:'Recording '+(REC.length+1)+(b.type.includes('mp4')?'.m4a':'.webm'),url:URL.createObjectURL(b),blob:b});rb.textContent='🔴 Record';if(w.e.isConnected)list()};
+mr.start();t0=Date.now();rm.textContent='';rb.textContent='⏹ Stop';tm=setInterval(()=>{const q=Math.floor((Date.now()-t0)/1000);rt.textContent=String(Math.floor(q/60)).padStart(2,'0')+':'+String(q%60).padStart(2,'0')},250)}catch(e){rm.textContent='Microphone unavailable. Allow microphone access for this page in your browser.'}};
+rl.onclick=e=>{const d=e.target.dataset;if(d.x!=null){REC.splice(+d.x,1);list()}else if(d.s!=null){const r=REC[+d.s],fr=new FileReader();fr.onload=()=>{if(fr.result.length>1.5e6){toast('Too large to save (over 1.5 MB)');return}fs.Music=fs.Music||{};fs.Music[uniq(fs.Music,r.name)]=fr.result;save();toast('Saved to Music')};fr.readAsDataURL(r.blob)}};
+const iv=setInterval(()=>{if(!w.e.isConnected){clearInterval(iv);if(mr&&mr.state==='recording')mr.stop()}},500);list()}},
+snip:{n:'Snipping Tool',i:'✂️',w:620,h:460,r(w){const bd=w.bd;bd.innerHTML='<div class="bar"><button data-a="cap">📸 New snip</button><button data-a="save">Save</button><span id="sm" style="color:var(--mut)">Press New snip, then drag to select an area.</span></div><div style="flex:1;overflow:auto;background:var(--cont)"><canvas style="display:block;touch-action:none;cursor:crosshair"></canvas></div>';
+const c=bd.querySelector('canvas'),x=c.getContext('2d'),sm=bd.querySelector('#sm');let src=null,a=null,sel=null;
+const h2c=()=>window.html2canvas?Promise.resolve(window.html2canvas):new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';s.onload=()=>window.html2canvas?res(window.html2canvas):rej();s.onerror=()=>rej();document.head.append(s)});
+const paint=()=>{if(!src)return;x.drawImage(src,0,0);if(sel&&sel[2]>0&&sel[3]>0){x.fillStyle='rgba(0,0,0,.45)';x.fillRect(0,0,c.width,c.height);x.drawImage(src,sel[0],sel[1],sel[2],sel[3],sel[0],sel[1],sel[2],sel[3]);x.strokeStyle='#fff';x.setLineDash([6,4]);x.strokeRect(sel[0]+.5,sel[1]+.5,sel[2],sel[3]);x.setLineDash([])}};
+const cap=async()=>{sm.textContent='Capturing…';try{const f=await h2c();w.e.style.visibility='hidden';await new Promise(r=>setTimeout(r,200));const cv=await f(document.body,{backgroundColor:null,logging:false,ignoreElements:el=>el===w.e||el.id==='toast'});w.e.style.visibility='';src=cv;c.width=cv.width;c.height=cv.height;sel=null;paint();sm.textContent='Drag to select an area, or Save for the whole screen.'}catch(e){w.e.style.visibility='';sm.textContent='Could not capture. Snipping needs an internet connection to load its helper script.'}};
+c.onpointerdown=e=>{if(!src)return;c.setPointerCapture(e.pointerId);const r=c.getBoundingClientRect();a=[e.clientX-r.left,e.clientY-r.top]};
+c.onpointermove=e=>{if(!a)return;const r=c.getBoundingClientRect(),px=e.clientX-r.left,py=e.clientY-r.top;sel=[Math.min(a[0],px),Math.min(a[1],py),Math.abs(px-a[0]),Math.abs(py-a[1])];paint()};
+c.onpointerup=()=>{a=null;if(sel&&(sel[2]<4||sel[3]<4)){sel=null;paint()}};
+bd.querySelector('.bar').onclick=e=>{const k=e.target.dataset.a;if(k==='cap')cap();else if(k==='save'){if(!src){sm.textContent='Take a snip first.';return}const s=sel&&sel[2]>3?sel:[0,0,c.width,c.height],o=document.createElement('canvas');o.width=s[2];o.height=s[3];o.getContext('2d').drawImage(src,s[0],s[1],s[2],s[3],0,0,s[2],s[3]);savePic('Snip',o.toDataURL('image/jpeg',.85),'jpg')}}}}
+});
+
+document.addEventListener('keydown',e=>{if(act&&act.key&&!e.target.closest('input,textarea'))act.key(e);if(e.key==='Escape')closePops();hot(e)});
+const al=ST.get('w11.al','c');$('#task').classList.toggle('l',al==='l');document.body.classList.toggle('l',al==='l');
+applyQ();drawTask();boot(1100);
+})();
+</script><script>
+(()=>{
+'use strict';
+const $=s=>document.querySelector(s), E=(t,c)=>{const x=document.createElement(t);if(c)x.className=c;return x};
+const toast2=m=>{try{toast(m)}catch{let t=$('#toast');if(t){t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1800)}}};
+/* Windows-like desktop context menu */
+const ctx=E('div');ctx.id='w11ctx';document.body.append(ctx);
+const items=[['↻','Refresh',()=>location.reload()],['📁','New folder',()=>toast2('Use File Explorer to create a folder')],['⚙️','Display settings',()=>toast2('Open Settings → System → Display')],['🎨','Personalize',()=>toast2('Open Settings → Personalization')],['📋','Paste',()=>toast2('Clipboard paste')]];
+ctx.innerHTML=items.map((x,i)=>`<div class="wctxi" data-c="${i}"><span>${x[0]}</span><span>${x[1]}</span></div>`).join('');
+ctx.onclick=e=>{const d=e.target.closest('[data-c]');if(d){items[+d.dataset.c][2]();ctx.classList.remove('on')}};
+const hideCtx=()=>ctx.classList.remove('on');
+$('#desk')?.addEventListener('contextmenu',e=>{e.preventDefault();ctx.style.left=Math.min(innerWidth-225,e.clientX)+'px';ctx.style.top=Math.min(innerHeight-250,e.clientY)+'px';ctx.classList.add('on')});
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('#w11ctx'))hideCtx()});
+/* Snap layouts */
+const snap=E('div');snap.id='w11snap';snap.innerHTML='<div class="w11zone z1"></div><div class="w11zone z2"></div><div class="w11zone z3"></div><div class="w11zone z4"></div>';document.body.append(snap);
+let drag=null;
+function snapWin(w,kind){if(!w||!w.e)return;const e=w.e;const W=innerWidth,H=innerHeight-48; e.classList.remove('max');let x=0,y=0,ww=W,hh=H;
+ if(kind==='left'){ww=W/2}else if(kind==='right'){x=W/2;ww=W/2}else if(kind==='tl'){ww=W/2;hh=H/2}else if(kind==='tr'){x=W/2;ww=W/2;hh=H/2}else if(kind==='bl'){y=H/2;ww=W/2;hh=H/2}else if(kind==='br'){x=W/2;y=H/2;ww=W/2;hh=H/2}else if(kind==='max'){e.classList.add('max');return}
+ e.style.left=x+'px';e.style.top=y+'px';e.style.width=ww+'px';e.style.height=hh+'px';e.dataset.snap=kind;try{focus(w)}catch{}}
+function zoneKind(x,y){const edge=54, W=innerWidth,H=innerHeight-48;if(y<edge)return x<W*.5?'tl':'tr';if(y>H-edge)return x<W*.5?'bl':'br';if(x<edge)return 'left';if(x>W-edge)return 'right';return null}
+document.addEventListener('pointerdown',e=>{const tb=e.target.closest('.tb');if(!tb)return;const win=tb.closest('.win');if(!win)return;drag={win,startX:e.clientX,startY:e.clientY,ox:parseFloat(win.style.left)||0,oy:parseFloat(win.style.top)||0,active:false};});
+document.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.startX,dy=e.clientY-drag.startY;if(Math.abs(dx)+Math.abs(dy)>5)drag.active=true;if(!drag.active)return;const k=zoneKind(e.clientX,e.clientY);document.querySelectorAll('.w11zone').forEach(z=>z.classList.remove('on'));if(k){const z=snap.querySelector(k==='left'?'.z1':k==='right'?'.z2':k==='tl'?'.z1':k==='tr'?'.z2':k==='bl'?'.z3':'.z4');if(z)z.classList.add('on');snap.style.display='block'}else snap.style.display='none';drag.win.e.style.left=(drag.ox+dx)+'px';drag.win.e.style.top=(drag.oy+dy)+'px';});
+document.addEventListener('pointerup',e=>{if(!drag)return;const k=zoneKind(e.clientX,e.clientY);if(drag.active&&k)snapWin(drag.win,k);snap.style.display='none';document.querySelectorAll('.w11zone').forEach(z=>z.classList.remove('on'));drag=null});
+/* Power menu */
+const power=E('div');power.id='w11power';power.innerHTML='<div class="w11pow" data-p="lock">🔒 Lock</div><div class="w11pow" data-p="sleep">🌙 Sleep</div><div class="w11pow" data-p="restart">↻ Restart</div><div class="w11pow" data-p="shutdown">⏻ Shut down</div>';document.body.append(power);
+power.onclick=e=>{const p=e.target.dataset.p;if(!p)return;if(p==='lock')lock();else if(p==='restart'){toast2('Restarting Windows Web…');setTimeout(()=>location.reload(),800)}else if(p==='shutdown'){document.body.style.filter='brightness(.1)';toast2('Windows Web is shut down — refresh to start again')}else{toast2('Sleep mode');document.body.style.filter='brightness(.35)';setTimeout(()=>document.body.style.filter='',1400)}power.classList.remove('on')};
+/* Lock screen */
+const lockEl=E('div');lockEl.id='w11lock';lockEl.innerHTML='<div class="w11lockbox"><div id="w11lt" style="font-size:58px;font-weight:300"></div><div id="w11ld" style="font-size:18px;opacity:.85"></div><div style="font-size:42px;margin:22px 0 4px">👤</div><div id="w11lu" style="font-size:20px">User</div><input id="w11lp" type="password" placeholder="PIN or password"><button id="w11lb" class="bt" style="padding:10px 25px">Sign in</button><div id="w11le" style="color:#ffb4ab;margin-top:10px"></div></div>';document.body.append(lockEl);
+function lock(){lockEl.classList.add('on');const u=(()=>{try{return ST.get('w11.user','User')}catch{return 'User'}})();$('#w11lu').textContent=u;$('#w11lp').value='';$('#w11lp').focus()}
+function unlock(){const want=(()=>{try{return ST.get('w11.pw','')}catch{return ''}})();const got=$('#w11lp').value;if(!want||got===want){lockEl.classList.remove('on');$('#w11le').textContent=''}else $('#w11le').textContent='Wrong password'}
+$('#w11lb').onclick=unlock;$('#w11lp').onkeydown=e=>{if(e.key==='Enter')unlock()};
+setInterval(()=>{const d=new Date();$('#w11lt').textContent=d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});$('#w11ld').textContent=d.toLocaleDateString([], {weekday:'long',month:'long',day:'numeric'})},500);
+/* Keyboard shortcuts */
+document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea,[contenteditable]'))return;const k=e.key.toLowerCase(), win=e.metaKey||e.ctrlKey&&e.altKey;
+ if(e.key==='Escape')hideCtx();
+ if(e.altKey&&e.key==='F4'){e.preventDefault();if(typeof act!=='undefined'&&act){try{close(act)}catch{}}else{const a=Object.values(wins||{}).filter(w=>w.e?.classList.contains('on'));if(a.length)try{close(a[a.length-1])}catch{}}return}
+ if(e.key==='F11'){e.preventDefault();document.fullscreenElement?document.exitFullscreen?.():document.documentElement.requestFullscreen?.();return}
+ if(e.metaKey||e.key==='Meta')return;
+ if(e.key==='l'&&e.ctrlKey===false&&e.altKey===false&&e.shiftKey===false){/* no-op */}
+ if(e.ctrlKey&&e.shiftKey&&k==='escape'){e.preventDefault();try{open('taskmgr')}catch{toast2('Task Manager')}}
+ if(e.ctrlKey&&e.altKey&&k==='d'){e.preventDefault();try{openTV()}catch{}}
+ if(e.altKey&&e.key==='Tab'){e.preventDefault();const a=Object.values(wins||{}).filter(w=>w.desk===cd&&vis(w));if(a.length){const i=Math.max(0,a.findIndex(w=>w.id===act?.id));try{show(a[(i+1)%a.length])}catch{}}}
+ if(e.ctrlKey&&e.key==='l'){e.preventDefault();lock()}
+ if(e.key==='F2'&&typeof act!=='undefined'&&act?.id==='explorer')toast2('Rename selected item in File Explorer');
+});
+/* Taskbar show-desktop button and tray power button */
+const tray=$('#tray');if(tray){const b=E('button');b.title='Show desktop';b.textContent='▏';b.style.cssText='margin-left:3px;width:14px;border-left:1px solid var(--ln)';b.onclick=()=>{const arr=Object.values(wins||{}).filter(w=>w.desk===cd&&vis(w));if(arr.some(w=>!w.e.classList.contains('min'))){arr.forEach(w=>w.e.classList.add('min'))}else arr.forEach(w=>w.e.classList.remove('min'));drawTask?.()};tray.append(b);const p=E('button');p.title='Power';p.textContent='⏻';p.onclick=()=>power.classList.toggle('on');tray.append(p)}
+/* Right-click taskbar for alignment/power */
+$('#task')?.addEventListener('contextmenu',e=>{e.preventDefault();ctx.innerHTML='<div class="wctxi" data-q="center">▣ Center taskbar</div><div class="wctxi" data-q="left">▤ Left taskbar</div><div class="wctxi" data-q="lock">🔒 Lock</div><div class="wctxi" data-q="power">⏻ Power</div>';ctx.style.left=Math.min(innerWidth-225,e.clientX)+'px';ctx.style.top=Math.max(8,e.clientY-180)+'px';ctx.classList.add('on');ctx.onclick=ev=>{const q=ev.target.closest('[data-q]')?.dataset.q;if(!q)return;if(q==='left'){document.body.classList.add('l');$('#task').classList.add('l');try{ST.set('w11.al','l')}catch{}}if(q==='center'){document.body.classList.remove('l');$('#task').classList.remove('l');try{ST.set('w11.al','c')}catch{}}if(q==='lock')lock();if(q==='power')power.classList.add('on');hideCtx()}});
+/* Window snap keyboard helpers */
+document.addEventListener('keydown',e=>{if(!(e.metaKey||e.ctrlKey)||!e.altKey&&!(e.metaKey))return;const w=typeof act!=='undefined'?act:null;if(!w)return;if(e.key==='ArrowLeft'){e.preventDefault();snapWin(w,'left')}if(e.key==='ArrowRight'){e.preventDefault();snapWin(w,'right')}if(e.key==='ArrowUp'){e.preventDefault();snapWin(w,'max')}if(e.key==='ArrowDown'){e.preventDefault();if(w.e.classList.contains('max')){w.e.classList.remove('max');}else snapWin(w,'bl')}});
+})();
+</script><script id="uw-upgrade-js">
+(()=>{
+'use strict';
+const U=s=>document.querySelector(s), UE=(t,c,h='')=>{const e=document.createElement(t);if(c)e.className=c;e.innerHTML=h;return e};
+const announce=m=>{try{toast(m)}catch{}};
+/* Real show-desktop behavior */
+let uwDeskHidden=false,uwDeskPrev=[];
+const uwShowDesktop=()=>{
+ const a=Object.values(wins||{}).filter(w=>w&&w.desk===cd&&vis(w));
+ if(!a.length)return;
+ if(!uwDeskHidden){uwDeskPrev=a.map(w=>[w,w.e.style.display]);a.forEach(w=>w.e.style.display='none');uwDeskHidden=true;act=null;drawTask?.();}
+ else{uwDeskPrev.forEach(([w,d])=>{if(w?.e?.isConnected)w.e.style.display=d||''});uwDeskHidden=false;drawTask?.();}
+};
+const sd=U('#sd');if(sd){sd.title='Show desktop';sd.onclick=uwShowDesktop}
+/* Rich desktop menu, capture phase prevents the old basic menu */
+let um=U('#uw-menu');if(!um){um=UE('div','uw-menu');um.id='uw-menu';um.innerHTML=`
+<div class="uw-item" data-u="refresh">🔄 <span>Refresh</span></div>
+<div class="uw-item" data-u="folder">📁 <span>New folder</span></div>
+<div class="uw-item" data-u="text">📄 <span>New text document</span></div>
+<div class="uw-sep"></div>
+<div class="uw-item" data-u="terminal">⌨️ <span>Open Terminal</span></div>
+<div class="uw-item" data-u="explorer">📂 <span>Open File Explorer</span></div>
+<div class="uw-sep"></div>
+<div class="uw-item" data-u="settings">⚙️ <span>Display settings</span></div>
+<div class="uw-item" data-u="personal">🎨 <span>Personalize</span></div>`;document.body.append(um)}
+const hideUM=()=>um.classList.remove('on');
+document.addEventListener('contextmenu',e=>{
+ if(e.target.closest('.win,#task,.pop,#ctx,.uw-menu'))return;
+ e.preventDefault();e.stopImmediatePropagation();
+ um.style.left=Math.min(e.clientX,innerWidth-245)+'px';um.style.top=Math.min(e.clientY,innerHeight-365)+'px';um.classList.add('on');
+},true);
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('#uw-menu'))hideUM()},true);
+um.onclick=async e=>{const a=e.target.closest('[data-u]')?.dataset.u;if(!a)return;hideUM();
+ if(a==='refresh'){drawDesk();announce('Desktop refreshed')}
+ else if(a==='folder'){const n=fs.Desktop,k=uniq(n,'New folder');n[k]={};save();drawDesk();announce('New folder created')}
+ else if(a==='text'){const n=fs.Desktop,k=uniq(n,'New Text Document.txt');n[k]='';save();drawDesk();announce('Text document created')}
+ else if(a==='terminal')open('term');else if(a==='explorer')open('files');else if(a==='settings')open('settings',{page:'display'});else if(a==='personal')open('settings',{page:'personalization'});
+};
+/* Start menu live search with apps + files */
+const st=U('#start'),q=U('#q');
+let sr=U('#uw-search-results');
+if(st&&q&&!sr){sr=UE('div','uw-search-results');sr.id='uw-search-results';st.append(sr)}
+const drawUWSearch=()=>{
+ if(!sr||!q)return;const v=q.value.trim().toLowerCase();
+ if(!v){sr.innerHTML='';return}
+ const apps=Object.keys(APPS).filter(k=>APPS[k].n.toLowerCase().includes(v)||k.includes(v)).slice(0,8);
+ const found=[];const walk=(obj,path)=>{if(!obj||found.length>=10)return;for(const k of Object.keys(obj)){if(k.toLowerCase().includes(v))found.push({k,path:[...path,k],dir:isD(obj[k])});if(isD(obj[k]))walk(obj[k],[...path,k]);if(found.length>=10)break}};walk(fs,[]);
+ sr.innerHTML=apps.map(k=>`<div class="uw-result" data-app="${esc(k)}"><span style="font-size:22px">${APPS[k].i}</span><span>${esc(APPS[k].n)}<small>App</small></span></div>`).join('')+found.map(f=>`<div class="uw-result" data-file="${esc(f.path.join('/'))}"><span style="font-size:22px">${f.dir?'📁':'📄'}</span><span>${esc(f.k)}<small>${esc(f.path.slice(0,-1).join(' › ')||'Home')}</small></span></div>`).join('')||'<div style="padding:12px;color:var(--mut)">No results</div>';
+};
+q?.addEventListener('input',drawUWSearch);q?.addEventListener('keydown',e=>{if(e.key==='Escape'){sr.innerHTML='';return}if(e.key==='Enter'){const x=sr.querySelector('.uw-result');if(x)x.click()}});
+sr?.addEventListener('click',e=>{const a=e.target.closest('[data-app]')?.dataset.app,f=e.target.closest('[data-file]')?.dataset.file;if(a){open(a);closePops();}else if(f){open('notepad',{path:f.split('/')});closePops()}});
+/* Notification center */
+let nb=U('#uw-notify');if(!nb){nb=UE('div','uw-notify');nb.id='uw-notify';nb.innerHTML='<div class="uw-nhead"><span>Notifications</span><button class="bt" data-clear>Clear all</button></div><div id="uw-notes"></div>';document.body.append(nb)}
+const drawN=()=>{const box=U('#uw-notes');if(!box)return;box.innerHTML=NOTI.length?NOTI.slice(0,15).map(n=>`<div class="uw-note">${esc(n.t)}<small>${new Date(n.at).toLocaleTimeString([],TF())}</small></div>`).join(''):'<div style="padding:12px;color:var(--mut)">No new notifications.</div>'};
+nb.onclick=e=>{if(e.target.closest('[data-clear]')){NOTI.length=0;drawN()}};
+const tray=U('#tray');if(tray&&!U('#uw-notify-btn')){const b=document.createElement('button');b.id='uw-notify-btn';b.className='tbn';b.title='Notifications';b.textContent='🔔';b.style.position='relative';b.onclick=()=>{nb.classList.toggle('on');if(nb.classList.contains('on'))drawN()};tray.insertBefore(b,tray.firstChild)}
+/* Recoverable shutdown screen */
+let po=U('#uw-poweroff');if(!po){po=UE('div');po.id='uw-poweroff';po.innerHTML='<div class="uw-power-logo">⊞</div><div style="font-size:20px">Windows Web is off</div><button class="bt" data-on>Power on</button>';document.body.append(po)}
+po.querySelector('[data-on]').onclick=()=>{po.style.display='none';try{boot(700)}catch{}announce('Windows Web started')};
+window.uwPowerOff=()=>{po.style.display='flex'};
+/* Extra Windows-like shortcuts */
+document.addEventListener('keydown',e=>{
+ if(e.target.matches('input,textarea,[contenteditable]'))return;
+ if(e.key==='Escape'){hideUM();nb.classList.remove('on');return}
+ if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='e'){e.preventDefault();open('files')}
+ if((e.metaKey||e.ctrlKey)&&e.shiftKey&&e.key.toLowerCase()==='t'){e.preventDefault();open('term')}
+ if((e.metaKey||e.ctrlKey)&&e.shiftKey&&e.key.toLowerCase()==='n'){e.preventDefault();open('notepad')}
+ if(e.key==='PrintScreen'){e.preventDefault();try{open('snip')}catch{}}
+});
+/* Keep taskbar state fresh */
+setInterval(()=>{try{drawTask();drawN()}catch{}},1500);
+})();
+</script></body></html>
