@@ -1,668 +1,286 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Windows 10 Web Desktop</title>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Windows 11</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:"Segoe UI",Arial,sans-serif;background:#0879b8;color:#fff}
-button,input{font:inherit}button{border:0;color:inherit}
-}
-#login{position:fixed;inset:0;background:linear-gradient(#087bc0,#0065a3);z-index:99998;display:none;align-items:center;justify-content:center;text-align:center}.avatar{width:110px;height:110px;border-radius:50%;background:#eee;color:#777;display:flex;align-items:center;justify-content:center;font-size:54px;margin:auto}.loginbox{width:min(350px,90vw)}.loginbox h2{font-weight:400}.loginbox input{width:100%;padding:13px;border:1px solid #aaa;background:#fff;color:#222}.loginbox button{margin-top:10px;padding:11px 25px;background:#1677b9;cursor:pointer}.loginerr{height:22px;color:#ffd7d7;font-size:13px}
-#desktop{position:fixed;inset:0;background:linear-gradient(135deg,#086fa9,#155ca1 50%,#092d72);background-size:cover}
-.ctx{padding:9px 14px;cursor:pointer}.ctx:hover{background:#e5f1fb}
-
-.wallpaper-glow{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,#ffffff12,transparent 35%)}
-#desktopIcons{position:absolute;left:0;top:0;right:0;bottom:55px;display:block} .deskicon{position:absolute;left:8px;top:8px;width:76px;text-align:center;padding:5px 3px;border-radius:3px;cursor:grab;font-size:12px;text-shadow:1px 1px 2px #000;user-select:none} .deskicon:active{cursor:grabbing} .deskicon.dragging{opacity:.55;z-index:9999}.deskicon:hover{background:#ffffff22}.ico{font-size:30px;height:36px}
-#taskbar{position:absolute;left:0;right:0;bottom:0;height:48px;background:#171717eF;display:flex;align-items:center;z-index:9000}.tbbtn{height:48px;min-width:48px;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer}.tbbtn:hover{background:#ffffff18}.startlogo{font-size:24px}.search{height:36px;width:210px;background:#fff;color:#333;border:0;margin:0 5px;padding:0 10px}.taskapps{display:flex;height:100%;align-items:center;gap:2px}.taskapp{height:44px;min-width:46px;background:transparent;cursor:pointer;font-size:22px}.taskapp:hover,.taskapp.active{background:#ffffff16;border-bottom:2px solid #2aa9ff}.tray{margin-left:auto;height:100%;display:flex;align-items:center}.tray button{height:100%;padding:0 9px;background:transparent;cursor:pointer}.clock{font-size:12px;min-width:75px;text-align:center}
-#startMenu{position:absolute;bottom:48px;left:0;width:min(640px,100vw);height:min(570px,calc(100vh - 48px));background:#202020f5;display:none;z-index:8999;box-shadow:0 0 18px #0008}.start-inner{display:flex;height:100%}.start-left{width:65px;display:flex;flex-direction:column;justify-content:flex-end}.start-left button{height:52px;background:transparent;cursor:pointer;font-size:21px}.start-left button:hover{background:#ffffff16}.tiles{flex:1;padding:16px;overflow:auto}.tiles h3{font-weight:400;font-size:14px}.tilegrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.tile{min-height:80px;background:#0879c9;padding:9px;text-align:left;cursor:pointer}.tile:hover{filter:brightness(1.15)}.tile.wide{grid-column:span 2}
-.window{position:absolute;min-width:300px;min-height:180px;width:650px;height:430px;background:#f3f3f3;color:#222;box-shadow:0 8px 35px #0009;border:1px solid #555;display:none;z-index:100}.titlebar{height:38px;background:#fff;color:#333;display:flex;align-items:center;padding-left:12px;user-select:none}.titletext{flex:1;font-size:13px}.wincontrols{display:flex;height:100%}.wincontrols button{width:45px;background:transparent;color:#333;cursor:pointer}.wincontrols button:hover{background:#ddd}.wincontrols .close:hover{background:#e81123;color:#fff}.content{height:calc(100% - 38px);overflow:auto}.maxed{left:0!important;top:0!important;width:100%!important;height:calc(100% - 48px)!important}
-.explorer{height:100%;display:flex;flex-direction:column}.explorerbar{height:42px;background:#fafafa;border-bottom:1px solid #ddd;display:flex;align-items:center;gap:5px;padding:5px}.explorerbar button{background:transparent;color:#444;padding:7px;cursor:pointer}.path{flex:1;background:#fff;border:1px solid #ccc;padding:6px;color:#555}.explorerbody{display:flex;flex:1}.side{width:180px;border-right:1px solid #ddd;padding:8px;background:#f8f8f8}.side div{padding:8px;cursor:pointer}.side div:hover{background:#e5f1fb}.files{padding:15px;display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));align-content:start;gap:10px;flex:1}.file{padding:10px;text-align:center;cursor:pointer;border-radius:3px}.file:hover{background:#e5f1fb}.file .fi{font-size:38px}
-.browser{height:100%;display:flex;flex-direction:column}.browserbar{height:45px;background:#eee;display:flex;gap:5px;padding:6px}.browserbar button{color:#333;background:transparent;padding:5px;cursor:pointer}.url{flex:1;border:1px solid #aaa;padding:7px;color:#222}.webpage{flex:1;background:#fff;color:#222;padding:25px;overflow:auto}.webpage h1{color:#0078d4;font-weight:400}.webpage .card{border:1px solid #ddd;padding:15px;margin:12px 0}.webpage a{color:#06c;cursor:pointer}
-.settings{height:100%;display:flex;background:#fff}.setnav{width:180px;background:#f3f3f3;border-right:1px solid #ddd;padding:10px}.setnav button{display:block;width:100%;text-align:left;color:#333;background:transparent;padding:11px;cursor:pointer}.setnav button.active,.setnav button:hover{background:#ddd}.setpage{padding:25px;color:#222;flex:1;overflow:auto}.setting-card{border:1px solid #ddd;padding:15px;margin:12px 0}.toggle{float:right;width:44px;height:24px;border-radius:12px;background:#888;cursor:pointer}.toggle.on{background:#0078d7}.toggle:after{content:"";display:block;width:20px;height:20px;margin:2px;background:#fff;border-radius:50%;transition:.2s}.toggle.on:after{margin-left:22px}
-.notes{height:100%;display:flex;flex-direction:column}.notes textarea{flex:1;border:0;resize:none;padding:15px;color:#222;font-size:15px;outline:0}.notesbar{padding:6px;background:#eee;color:#333;font-size:12px}
-.calc{height:100%;background:#202020;padding:12px;display:flex;flex-direction:column}.calcdisplay{height:65px;background:#202020;color:#fff;text-align:right;font-size:34px;padding:12px;overflow:hidden}.calckeys{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;flex:1}.calckeys button{background:#333;color:#fff;font-size:18px;cursor:pointer}.calckeys button:hover{background:#444}.calckeys .op{background:#555}
-.toast{position:absolute;right:15px;bottom:62px;background:#222;color:#fff;padding:13px 17px;box-shadow:0 3px 15px #0008;display:none;z-index:10000}
-
-/* Windows 10 motion + polish */
-html,body{scroll-behavior:smooth}
-button,.tbbtn,.taskapp,.tile,.file,.side div,.setnav button,.setting-card,.deskicon,.ctx,.window,.titlebar,.toggle,.search{transition:background-color .16s ease,color .16s ease,opacity .16s ease,transform .16s ease,box-shadow .16s ease,border-color .16s ease}
-#desktop{transition:background .35s ease,filter .25s ease}
-#desktopIcons{transition:opacity .2s ease}
-.deskicon:hover{transform:translateY(-1px) scale(1.02);box-shadow:0 2px 8px #0003}
-.window{transform-origin:center top;animation:winIn .18s cubic-bezier(.2,.8,.2,1);will-change:transform,opacity}
-.window.maxed{animation:none}
-@keyframes winIn{from{opacity:0;transform:scale(.97) translateY(7px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.titlebar{cursor:grab}.titlebar:active{cursor:grabbing}
-#taskbar{backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 -2px 14px #0004;transition:transform .22s cubic-bezier(.2,.8,.2,1),height .22s ease,width .22s ease,background .2s ease}
-#taskbar:hover{box-shadow:0 -3px 20px #0005}
-#taskbar .tbbtn:hover,.taskapp:hover{transform:translateY(-1px)}
-#taskbar .startlogo{transition:transform .2s ease}.tbbtn:hover .startlogo{transform:scale(1.12) rotate(-2deg)}
-#startMenu{transform-origin:left bottom;animation:startIn .18s cubic-bezier(.2,.8,.2,1);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
-@keyframes startIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
-.start-inner,.tiles{animation:startContent .22s ease both}@keyframes startContent{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-.tile:hover{transform:translateY(-2px);box-shadow:0 5px 12px #0004}
-.tile:active,.taskapp:active,.tbbtn:active{transform:scale(.94)}
-#settings .content{background:#f5f5f5}
-.settings{background:#f5f5f5}
-.setnav{background:#eeeeee;padding:12px 8px}
-.setnav button{border-left:3px solid transparent;border-radius:2px;font-size:13px}
-.setnav button.active{background:#fff;border-left-color:#0078d7;box-shadow:0 1px 4px #0002}
-.setnav button:hover{background:#e4e4e4}
-.setpage{padding:28px 32px;background:#fff;animation:setPageIn .18s ease}
-@keyframes setPageIn{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}
-.setting-card{background:#fff;border:1px solid #e1e1e1;box-shadow:0 1px 2px #0001;border-radius:2px}
-.setting-card:hover{border-color:#c9c9c9;box-shadow:0 3px 10px #0002;transform:translateY(-1px)}
-.toggle{transition:background .18s ease,transform .18s ease}.toggle:after{transition:margin-left .18s cubic-bezier(.2,.8,.2,1),transform .18s ease}
-#toast{animation:toastIn .18s ease}@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-#actionCenter,#searchPanel,#virtualView,#trayoverflow,#taskbarContext{animation:panelIn .16s ease}@keyframes panelIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
-/* respect the user's animation setting */
-body.no-motion *,body.no-motion *::before,body.no-motion *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
-
-@media(max-width:700px){.search{width:130px}.window{width:94vw;height:72vh}.side{width:125px}.setnav{width:125px}.tilegrid{grid-template-columns:repeat(3,1fr)}}
-
-#actionCenter{position:absolute;right:0;bottom:48px;width:min(360px,100vw);height:430px;background:#202020f5;z-index:15000;display:none;box-shadow:0 0 22px #0009;padding:14px}
-.ac-title{font-size:18px;margin-bottom:12px}.quickgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.quick{background:#333;padding:14px;cursor:pointer}.quick:hover{background:#444}.quick.on{background:#0879c9}.notification{background:#333;padding:12px;margin-top:10px}.volume{width:100%}
-#virtualView{position:absolute;left:50%;bottom:48px;transform:translateX(-50%);background:#202020f5;padding:10px;z-index:15000;display:none;box-shadow:0 0 18px #0009}.deskThumb{display:inline-block;width:150px;height:85px;margin:5px;background:#145d91;padding:8px;cursor:pointer;border:2px solid transparent}.deskThumb.active{border-color:#fff}
-.dialogOverlay{position:absolute;inset:0;background:#0008;z-index:16000;display:none;align-items:center;justify-content:center}.dialog{width:min(420px,92vw);background:#f3f3f3;color:#222;padding:20px;box-shadow:0 5px 25px #000}.dialog input{width:100%;padding:9px;border:1px solid #999;color:#222}.dialog button{padding:8px 18px;margin-left:7px;color:#222;cursor:pointer}
-
-#taskbar{user-select:none}
-#taskbar .taskapp{position:relative}
-#taskbar .taskapp.active:after{content:"";position:absolute;bottom:0;left:10px;right:10px;height:3px;background:#4cc2ff}
-#taskbar .taskapp.minimized{opacity:.55}
-#taskbarContext{position:absolute;display:none;z-index:25000;background:#fff;color:#222;min-width:210px;border:1px solid #aaa;box-shadow:0 5px 18px #0007;padding:4px 0;font-size:13px}
-#taskbarContext div{padding:9px 14px;cursor:pointer}
-#taskbarContext div:hover{background:#e5f1fb}
-#clockPanel{position:absolute;right:0;bottom:48px;width:310px;background:#202020f5;color:#fff;display:none;z-index:18000;padding:18px;box-shadow:0 0 20px #0009}
-#clockBig{font-size:38px}.calmini{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:12px}.calmini div{text-align:center;padding:7px;font-size:12px}.calmini .today{background:#0078d7}
-#searchPanel{position:absolute;left:0;bottom:48px;width:min(430px,100vw);height:500px;background:#202020f5;display:none;z-index:18000;box-shadow:0 0 20px #0009;padding:16px}
-#searchPanel input{width:100%;padding:11px;border:0;color:#222}.searchResult{padding:12px;margin-top:5px;background:#333;cursor:pointer}.searchResult:hover{background:#444}
-#showDesktop{margin-left:2px;width:8px;height:48px;border-left:1px solid #555;background:transparent;cursor:pointer}
-#showDesktop:hover{background:#ffffff18}
-
-/* ===== NEXT-LEVEL WINDOWS FEATURES ===== */
-.jumpmenu,.thumbpreview,.trayoverflow{position:fixed;z-index:30000;background:#202020f7;color:#fff;border:1px solid #555;box-shadow:0 8px 28px #0009;border-radius:2px}
-.jumpmenu{width:270px;padding:6px}.jumpmenu .jmhead{padding:10px;border-bottom:1px solid #444;font-weight:600}.jumpmenu button,.trayoverflow button{display:block;width:100%;padding:9px 10px;border:0;background:transparent;color:#fff;text-align:left}.jumpmenu button:hover,.trayoverflow button:hover{background:#0866ad}
-.thumbpreview{display:flex;gap:6px;padding:7px;max-width:520px}.thumb{width:145px;height:95px;background:#111;border:1px solid #555;overflow:hidden;position:relative;cursor:pointer}.thumb .mini{transform:scale(.18);transform-origin:top left;width:550px;height:360px;pointer-events:none}.thumb label{position:absolute;left:0;right:0;bottom:0;background:#000b;padding:4px;font-size:11px}
-.tb.dragging{opacity:.45}.tb.dropTarget{outline:2px solid #39f}.badge{position:absolute;top:4px;right:5px;background:#e81123;color:#fff;border-radius:10px;min-width:16px;height:16px;line-height:16px;font-size:10px;padding:0 4px}.tb{position:relative}
-.startapps{margin-top:14px;border-top:1px solid #444;padding-top:12px}.startapps input{width:100%;background:#333;color:#fff;border:1px solid #555;padding:9px}.applist{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:7px}.applist button{border:0;background:transparent;color:#fff;text-align:left;padding:8px}.applist button:hover{background:#333}
-.trayoverflow{width:190px;padding:6px}.tray-more{font-size:16px!important;min-width:32px!important}.desktop.snap-left{outline:3px solid #fff2}.snapzone{position:fixed;top:0;bottom:40px;width:50px;z-index:25000;display:none}.snapzone.left{left:0}.snapzone.right{right:0}.snapzone.top{left:20%;right:20%;height:45px;bottom:auto;width:auto}.snapzone.show{display:block;background:#1984ff18;border:1px solid #1984ff55}
-</style>
-</head>
-<body>
-
-
-<div id="login"><div class="loginbox"><div class="avatar">👤</div><h2>Windows Web</h2><input id="pw" type="password" placeholder="Password"><div class="loginerr" id="loginerr"></div><button onclick="login()">Sign in ➜</button><p style="font-size:12px;opacity:.8">Default password: <b>1234</b></p></div></div>
-
-<div id="desktop">
-<div class="wallpaper-glow"></div>
-<div id="contextMenu" style="display:none;position:absolute;z-index:20000;width:210px;background:#fff;color:#222;border:1px solid #aaa;box-shadow:0 4px 16px #0006;font-size:13px;padding:4px 0">
-<div class="ctx" onclick="openApp('explorer');hideContext()">Open File Explorer</div>
-<div class="ctx" onclick="openApp('settings');hideContext()">Personalize</div>
-<div class="ctx" onclick="refreshDesktop()">Refresh</div>
-<div class="ctx" onclick="showToast('Display settings');hideContext()">Display settings</div>
-</div>
-<div id="desktopIcons">
-  <div class="deskicon" ondblclick="openApp('explorer')"><div class="ico">📁</div>File Explorer</div>
-  <div class="deskicon" ondblclick="openApp('browser')"><div class="ico">🌐</div>Browser</div>
-  <div class="deskicon" ondblclick="openApp('settings')"><div class="ico">⚙️</div>Settings</div>
-  <div class="deskicon" ondblclick="openApp('notes')"><div class="ico">📝</div>Notes</div>
-  <div class="deskicon" ondblclick="openApp('calc')"><div class="ico">🧮</div>Calculator</div>
-  <div class="deskicon" ondblclick="openApp('taskmgr')"><div class="ico">📊</div>Task Manager</div>
-  <div class="deskicon" ondblclick="openApp('runbox')"><div class="ico">▶️</div>Run</div>
-  <div class="deskicon" id="desktopRecycle" ondblclick="openApp('recycle')" ondragover="event.preventDefault()" ondrop="dropOnRecycle(event)"><div class="ico">🗑️</div>Recycle Bin</div>
-  <div class="deskicon" ondblclick="openApp('calendar')"><div class="ico">📅</div>Calendar</div>
-  <div class="deskicon" ondblclick="openApp('paint')"><div class="ico">🎨</div>Paint</div>
-  <div class="deskicon" ondblclick="openApp('media')"><div class="ico">🎵</div>Media Player</div>
-  <div class="deskicon" ondblclick="openApp('photos')"><div class="ico">🖼️</div>Photos</div>
-  <div class="deskicon" ondblclick="openApp('terminal')"><div class="ico">⌨️</div>Terminal</div>
-  <div class="deskicon" ondblclick="openApp('weather')"><div class="ico">☀️</div>Weather</div>
-  <div class="deskicon" ondblclick="openApp('spotify')"><div class="ico">🟢</div>Spotify</div>
-  <div class="deskicon" ondblclick="openApp('geforcenow')"><div class="ico">🟩</div>GeForce NOW</div>
-</div>
-
-<div id="startMenu"><div class="start-inner"><div class="start-left">
-<button onclick="openApp('settings');toggleStart()">☰</button><button onclick="lock()">🔒</button><button onclick="shutdown()">⏻</button>
-</div><div class="tiles"><h3>START</h3><div class="tilegrid">
-<div class="tile wide" onclick="openApp('browser');toggleStart()">🌐<br>Browser</div>
-<div class="tile" onclick="openApp('explorer');toggleStart()">📁<br>Explorer</div>
-<div class="tile" onclick="openApp('settings');toggleStart()">⚙️<br>Settings</div>
-<div class="tile" onclick="openApp('notes');toggleStart()">📝<br>Notes</div>
-<div class="tile" onclick="openApp('calc');toggleStart()">🧮<br>Calculator</div>
-<div class="tile" onclick="openApp('taskmgr');toggleStart()">📊<br>Task Manager</div>
-<div class="tile" onclick="openApp('runbox');toggleStart()">▶️<br>Run</div>
-<div class="tile" onclick="openApp('recycle');toggleStart()">🗑️<br>Recycle Bin</div>
-<div class="tile" onclick="openApp('calendar');toggleStart()">📅<br>Calendar</div>
-<div class="tile" onclick="openApp('paint');toggleStart()">🎨<br>Paint</div>
-<div class="tile" onclick="openApp('media');toggleStart()">🎵<br>Media Player</div>
-<div class="tile" onclick="openApp('photos');toggleStart()">🖼️<br>Photos</div>
-<div class="tile" onclick="openApp('terminal');toggleStart()">⌨️<br>Terminal</div>
-<div class="tile" onclick="openApp('weather');toggleStart()">☀️<br>Weather</div>
-<div class="tile wide" onclick="showToast('Windows Web is running!')">💻<br>About this PC</div>
-<div class="tile" onclick="showToast('Shortcuts: Esc closes menus')">⌨️<br>Tips</div>
-</div></div></div></div>
-
-
-
-<div id="taskbarContext">
-<div onclick="taskbarNewWindow()">Open new window</div>
-<div onclick="toggleTaskbarLock()">Lock the taskbar</div>
-<div onclick="openApp('settings');hideTaskbarContext()">Taskbar settings</div>
-<div onclick="hideTaskbarContext()">Close menu</div>
-</div>
-<div id="clockPanel">
-<div id="clockBig"></div><div id="clockDate"></div>
-<div class="calmini" id="miniCal"></div>
-<div style="margin-top:14px"><button onclick="openApp('settings');hideClock()" style="padding:8px;color:#222">Date & time settings</button></div>
-</div>
-<div id="searchPanel">
-<input id="panelSearch" placeholder="Search apps, settings, and files" oninput="liveSearch(this.value)">
-<div id="searchResults"></div>
-</div>
-<div id="actionCenter">
-<div class="ac-title">Notifications</div>
-<div class="quickgrid">
-<div class="quick on" onclick="this.classList.toggle('on')">📶 Wi‑Fi</div>
-<div class="quick on" onclick="this.classList.toggle('on')">🔵 Bluetooth</div>
-<div class="quick" onclick="this.classList.toggle('on')">✈️ Airplane mode</div>
-<div class="quick" onclick="toggleNight()">🌙 Night light</div>
-</div>
-<div class="notification"><b>Windows Web</b><br><small>Everything is up to date.</small></div>
-<div class="notification"><b>Tip</b><br><small>Use Win-style shortcuts like Ctrl+Shift+Esc for Task Manager.</small></div>
-<p>🔊 Volume</p><input class="volume" type="range" min="0" max="100" value="70" oninput="showToast('Volume '+this.value+'%')">
-</div>
-<div id="virtualView"><b>Virtual desktops</b><br><div class="deskThumb active" onclick="switchDesk(1)">🖥️ Desktop 1</div><div class="deskThumb" onclick="switchDesk(2)">🖥️ Desktop 2</div><br><button onclick="addDesktop()" style="padding:7px;color:#222">＋ New desktop</button></div>
-<div id="taskbar">
-<button class="tbbtn" onclick="toggleStart()"><span class="startlogo">⊞</span></button>
-<input class="search" id="taskSearch" placeholder="Type here to search" onfocus="openSearchPanel()" oninput="liveSearch(this.value)" onkeydown="if(event.key==='Enter')doSearch(this.value)">
-<div class="taskapps"><button class="taskapp" id="tb-addapp" title="Add an app" onclick="openAddApp()">＋</button>
-<button class="taskapp" id="tb-explorer" onclick="openApp('explorer')">📁</button>
-<button class="taskapp" id="tb-browser" onclick="openApp('browser')">🌐</button>
-<button class="taskapp" id="tb-settings" onclick="openApp('settings')">⚙️</button>
-<button class="taskapp" id="tb-notes" onclick="openApp('notes')">📝</button>
-<button class="taskapp" id="tb-calc" onclick="openApp('calc')">🧮</button>
-<button class="taskapp" id="tb-taskmgr" onclick="openApp('taskmgr')">📊</button>
-<button class="taskapp" id="tb-calendar" onclick="openApp('calendar')">📅</button>
-<button class="taskapp" id="tb-paint" onclick="openApp('paint')">🎨</button>
-<button class="taskapp" id="tb-media" onclick="openApp('media')">🎵</button>
-<button class="taskapp" id="tb-terminal" onclick="openApp('terminal')">⌨️</button>
-</div><button class="tbbtn" onclick="toggleVirtual()">🖥️</button><button class="tbbtn" onclick="toggleAction()">🔔</button><button id="showDesktop" title="Show desktop" onclick="showDesktop()"></button><div class="tray"><button onclick="toggleAction()">🔔</button><button onclick="showToast('Network connected')">📶</button><button class="tray-more" id="traymore" onclick="toggleTrayOverflow(event)">⌃</button><button class="clock" id="clock" onclick="showClock()"></button></div>
-</div>
-
-<div class="window" id="explorer"><div class="titlebar"><span class="titletext">📁 File Explorer</span><div class="wincontrols"><button onclick="minimize('explorer')">—</button><button onclick="maximize('explorer')">□</button><button class="close" onclick="closeApp('explorer')">✕</button></div></div><div class="content"><div class="explorer"><div class="explorerbar"><button onclick="showToast('Back')">←</button><button onclick="showToast('Forward')">→</button><div class="path">This PC</div><button onclick="showNewDialog()">＋</button><button onclick="sortFiles()">↕</button><button onclick="showToast('Search is ready')">🔍</button></div><div class="explorerbody"><div class="side"><div onclick="showFolder('Quick access')">⭐ Quick access</div><div onclick="showFolder('Desktop')">🖥️ Desktop</div><div onclick="showFolder('Documents')">📄 Documents</div><div onclick="showFolder('Downloads')">⬇️ Downloads</div><div onclick="showFolder('This PC')">💻 This PC</div></div><div class="files" id="files"></div></div></div></div></div>
-
-<div class="window" id="browser"><div class="titlebar"><span class="titletext">🌐 Browser</span><div class="wincontrols"><button onclick="minimize('browser')">—</button><button onclick="maximize('browser')">□</button><button class="close" onclick="closeApp('browser')">✕</button></div></div><div class="content"><div class="browser"><div class="browserbar"><button onclick="browserHome()">⌂</button><button onclick="showToast('Back')">←</button><input class="url" id="url" value="https://www.example.com" onkeydown="if(event.key==='Enter')navigate()"><button onclick="navigate()">↵</button></div><div class="webpage" id="webpage"></div></div></div></div>
-
-<div class="window" id="settings"><div class="titlebar"><span class="titletext">⚙️ Settings</span><div class="wincontrols"><button onclick="minimize('settings')">—</button><button onclick="maximize('settings')">□</button><button class="close" onclick="closeApp('settings')">✕</button></div></div><div class="content"><div class="settings"><div class="setnav">
-<button class="active" onclick="setPage(this,'system')">🖥️ System</button><button onclick="setPage(this,'personal')">🎨 Personalization</button><button onclick="setPage(this,'privacy')">🔒 Privacy</button><button onclick="setPage(this,'update')">🔄 Update & Security</button><button onclick="setPage(this,'accounts')">👤 Accounts</button><button onclick="setPage(this,'network')">🌐 Network & Internet</button><button onclick="setPage(this,'apps')">📦 Apps</button><button onclick="setPage(this,'gaming')">🎮 Gaming</button><button onclick="setPage(this,'access')">♿ Accessibility</button><button onclick="setPage(this,'time')">🕐 Time & Language</button><button onclick="setPage(this,'devices')">🖨️ Devices</button><button onclick="setPage(this,'storage')">💾 Storage</button>
-</div><div class="setpage" id="setpage"></div></div></div></div>
-
-<div class="window" id="notes"><div class="titlebar"><span class="titletext">📝 Notepad</span><div class="wincontrols"><button onclick="minimize('notes')">—</button><button onclick="maximize('notes')">□</button><button class="close" onclick="closeApp('notes')">✕</button></div></div><div class="content"><div class="notes"><textarea id="noteText" placeholder="Start typing..."></textarea><div class="notesbar">Saved automatically in this browser</div></div></div></div>
-
-<div class="window" id="calc"><div class="titlebar"><span class="titletext">🧮 Calculator</span><div class="wincontrols"><button onclick="minimize('calc')">—</button><button onclick="maximize('calc')">□</button><button class="close" onclick="closeApp('calc')">✕</button></div></div><div class="content"><div class="calc"><div class="calcdisplay" id="calcdisplay">0</div><div class="calckeys">
-<button onclick="calcClear()">C</button><button onclick="calcAdd('(')">(</button><button onclick="calcAdd(')')">)</button><button class="op" onclick="calcAdd('/')">÷</button>
-<button onclick="calcAdd('7')">7</button><button onclick="calcAdd('8')">8</button><button onclick="calcAdd('9')">9</button><button class="op" onclick="calcAdd('*')">×</button>
-<button onclick="calcAdd('4')">4</button><button onclick="calcAdd('5')">5</button><button onclick="calcAdd('6')">6</button><button class="op" onclick="calcAdd('-')">−</button>
-<button onclick="calcAdd('1')">1</button><button onclick="calcAdd('2')">2</button><button onclick="calcAdd('3')">3</button><button class="op" onclick="calcAdd('+')">+</button>
-<button onclick="calcAdd('0')">0</button><button onclick="calcAdd('.')">.</button><button onclick="calcBack()">⌫</button><button class="op" onclick="calcEqual()">=</button>
-</div></div></div></div>
-</div>
-
-
-<div class="window" id="taskmgr"><div class="titlebar"><span class="titletext">📊 Task Manager</span><div class="wincontrols"><button onclick="minimize('taskmgr')">—</button><button onclick="maximize('taskmgr')">□</button><button class="close" onclick="closeApp('taskmgr')">✕</button></div></div><div class="content">
-<div style="height:100%;background:#fff;color:#222">
-<div style="display:flex;border-bottom:1px solid #ddd"><button class="tmnav" onclick="tmPage(this,'processes')">Processes</button><button class="tmnav" onclick="tmPage(this,'performance')">Performance</button><button class="tmnav" onclick="tmPage(this,'startup')">Startup</button></div>
-<div id="tmcontent" style="padding:15px"></div>
-</div></div></div>
-
-<div class="window" id="runbox"><div class="titlebar"><span class="titletext">▶️ Run</span><div class="wincontrols"><button onclick="minimize('runbox')">—</button><button class="close" onclick="closeApp('runbox')">✕</button></div></div><div class="content">
-<div style="padding:25px;color:#222"><h2 style="font-weight:400">Run</h2><p>Type the name of a program, folder, document, or website.</p><input id="runinput" style="width:100%;padding:10px;border:1px solid #aaa;color:#222" placeholder="explorer, settings, calc, browser..."><div style="text-align:right;margin-top:15px"><button onclick="runCommand()" style="padding:9px 22px;background:#0078d7;color:#fff;cursor:pointer">OK</button></div></div>
-</div></div>
-
-<div class="window" id="recycle"><div class="titlebar"><span class="titletext">🗑️ Recycle Bin</span><div class="wincontrols"><button onclick="minimize('recycle')">—</button><button class="close" onclick="closeApp('recycle')">✕</button></div></div><div class="content">
-<div style="padding:18px;color:#222"><h2 style="font-weight:400">Recycle Bin</h2><div id="trashitems" style="border:1px solid #ddd;min-height:130px;padding:15px">Recycle Bin is empty.</div><button onclick="emptyTrash()" style="margin-top:12px;padding:8px 14px;color:#222">Empty Recycle Bin</button></div>
-</div></div>
-
-
-<div class="dialogOverlay" id="newDialog"><div class="dialog"><h3>Create new item</h3><p>Choose a name:</p><input id="newName" value="New Folder"><div style="text-align:right;margin-top:15px"><button onclick="closeDialog()">Cancel</button><button onclick="createItem()">Create</button></div></div></div>
-
-<div class="window" id="calendar"><div class="titlebar"><span class="titletext">📅 Calendar</span><div class="wincontrols"><button onclick="minimize('calendar')">—</button><button onclick="maximize('calendar')">□</button><button class="close" onclick="closeApp('calendar')">✕</button></div></div><div class="content"><div style="padding:20px;color:#222"><h1 id="calTitle" style="font-weight:400"></h1><div id="calGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px"></div></div></div></div>
-
-<div class="window" id="paint"><div class="titlebar"><span class="titletext">🎨 Paint</span><div class="wincontrols"><button onclick="minimize('paint')">—</button><button onclick="maximize('paint')">□</button><button class="close" onclick="closeApp('paint')">✕</button></div></div><div class="content"><div style="height:100%;display:flex;flex-direction:column;background:#ddd"><div style="height:45px;padding:6px;background:#f4f4f4"><button onclick="clearPaint()" style="color:#222;padding:6px">Clear</button> <input id="paintColor" type="color" value="#000000"></div><canvas id="paintCanvas" style="background:white;flex:1;touch-action:none"></canvas></div></div></div>
-
-<div class="window" id="media"><div class="titlebar"><span class="titletext">🎵 Media Player</span><div class="wincontrols"><button onclick="minimize('media')">—</button><button onclick="maximize('media')">□</button><button class="close" onclick="closeApp('media')">✕</button></div></div><div class="content"><div style="height:100%;background:#171717;color:#fff;padding:25px;text-align:center"><div style="font-size:80px">🎵</div><h2 id="trackName">Windows Web Radio</h2><p>Ready to play local audio</p><input id="audioFile" type="file" accept="audio/*" style="max-width:100%"><audio id="audioPlayer" controls style="width:100%;margin-top:20px"></audio></div></div></div>
-
-<div class="window" id="photos"><div class="titlebar"><span class="titletext">🖼️ Photos</span><div class="wincontrols"><button onclick="minimize('photos')">—</button><button onclick="maximize('photos')">□</button><button class="close" onclick="closeApp('photos')">✕</button></div></div><div class="content"><div style="padding:18px;color:#222"><input id="photoFiles" type="file" accept="image/*" multiple><div id="photoGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:15px"></div></div></div></div>
-
-<div class="window" id="terminal"><div class="titlebar"><span class="titletext">⌨️ Windows Web Terminal</span><div class="wincontrols"><button onclick="minimize('terminal')">—</button><button onclick="maximize('terminal')">□</button><button class="close" onclick="closeApp('terminal')">✕</button></div></div><div class="content"><div id="termOut" style="height:calc(100% - 45px);background:#0c0c0c;color:#eee;padding:12px;overflow:auto;font-family:Consolas,monospace;font-size:13px">Windows Web Terminal<br>Type <b>help</b> for commands.<br></div><div style="height:45px;background:#0c0c0c;padding:7px"><input id="termInput" autocomplete="off" style="width:100%;background:#0c0c0c;border:0;outline:0;color:#fff;font-family:Consolas,monospace" placeholder="C:\\Windows>"></div></div></div>
-
-<div class="window" id="weather"><div class="titlebar"><span class="titletext">☀️ Weather</span><div class="wincontrols"><button onclick="minimize('weather')">—</button><button onclick="maximize('weather')">□</button><button class="close" onclick="closeApp('weather')">✕</button></div></div><div class="content"><div style="padding:30px;color:#222"><h1 style="font-weight:400">☀️ Weather</h1><h2>Windows Web Forecast</h2><div class="setting-card">Today <b style="float:right">☀️ 72°F</b><br><small>Clear skies</small></div><div class="setting-card">Tomorrow <b style="float:right">⛅ 74°F</b><br><small>Partly cloudy</small></div><button onclick="showToast('Weather refreshed')" style="padding:8px;color:#222">Refresh</button></div></div></div>
-<div class="window" id="spotify" style="width:900px;height:600px;left:90px;top:55px"><div class="titlebar"><span class="titletext">🟢 Spotify</span><div class="wincontrols"><button onclick="minimize('spotify')">—</button><button onclick="maximize('spotify')">□</button><button class="close" onclick="closeApp('spotify')">✕</button></div></div><div class="content" style="background:#111"><iframe src="https://open.spotify.com/" style="width:100%;height:100%;border:0" title="Spotify"></iframe></div></div>
-<div class="window" id="geforcenow" style="width:900px;height:600px;left:120px;top:70px"><div class="titlebar"><span class="titletext">🟩 GeForce NOW</span><div class="wincontrols"><button onclick="minimize('geforcenow')">—</button><button onclick="maximize('geforcenow')">□</button><button class="close" onclick="closeApp('geforcenow')">✕</button></div></div><div class="content" style="background:#111"><iframe src="https://play.geforcenow.com/" style="width:100%;height:100%;border:0" title="GeForce NOW"></iframe></div></div>
-<div class="toast" id="toast"></div>
-<div class="dialogOverlay" id="addAppDialog"><div class="dialog" style="max-width:430px"><h3>＋ Add an app</h3><p>Add a website/app to this Windows desktop.</p><input id="appName" placeholder="App name" style="width:100%;box-sizing:border-box;padding:9px;margin:5px 0"><input id="appUrl" placeholder="https://example.com" style="width:100%;box-sizing:border-box;padding:9px;margin:5px 0"><input id="appIcon" placeholder="Icon emoji (optional)" value="🌐" style="width:100%;box-sizing:border-box;padding:9px;margin:5px 0"><label style="display:block;margin:8px 0;color:#333"><input id="appPin" type="checkbox" checked> Pin to taskbar</label><div style="text-align:right;margin-top:14px"><button onclick="closeAddApp()">Cancel</button> <button onclick="installCustomApp()">Add app</button></div><hr><div id="customAppLibrary" style="max-height:150px;overflow:auto"></div></div></div>
+:root{--acc:#0067c0;--win:#f3f3f3;--cont:#fbfbfb;--card:rgba(0,0,0,.05);--txt:#1a1a1a;--mut:#616161;--ln:rgba(0,0,0,.1);--tk:rgba(243,243,243,.82);--sh:0 8px 32px rgba(0,0,0,.28);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--win:#202020;--cont:#272727;--card:rgba(255,255,255,.07);--txt:#fff;--mut:#a8a8a8;--ln:rgba(255,255,255,.1);--tk:rgba(28,28,28,.82)}}
+:root[data-theme=dark]{--win:#202020;--cont:#272727;--card:rgba(255,255,255,.07);--txt:#fff;--mut:#a8a8a8;--ln:rgba(255,255,255,.1);--tk:rgba(28,28,28,.82)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;height:100%;overflow:hidden;font:14px "Segoe UI Variable","Segoe UI",system-ui,sans-serif;color:var(--txt);background:#0b1230;user-select:none;touch-action:manipulation}
+button,input,textarea{font:inherit;color:inherit}
+#wall{position:fixed;inset:0;background:var(--wp);background-size:cover}
+#desk{position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);bottom:calc(48px + env(safe-area-inset-bottom,0px))}
+.di{position:absolute;left:6px;width:84px;padding:8px 2px;text-align:center;color:#fff;font-size:12px;text-shadow:0 1px 3px #000;border-radius:6px}.di b{display:block;font-size:34px;font-weight:400}.di:hover,.di.s{background:rgba(255,255,255,.16)}
+.win{position:absolute;background:var(--win);border:1px solid var(--ln);border-radius:8px;box-shadow:var(--sh);display:flex;flex-direction:column;overflow:hidden;min-width:260px;min-height:160px;max-width:100%;animation:pop .18s cubic-bezier(.2,.8,.2,1)}
+@keyframes pop{from{opacity:0;transform:scale(.96)}}
+@media (prefers-reduced-motion:reduce){.win{animation:none}}
+.win.max{inset:0!important;width:auto!important;height:auto!important;border-radius:0}
+.tb{height:36px;display:flex;align-items:center;gap:8px;padding-left:12px;touch-action:none;flex:none}
+.tt{flex:1;font-weight:400;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.win:not(.on) .tb{opacity:.6}
+.tc{display:flex;height:100%}.tc button{width:46px;border:0;background:none;font-size:12px}.tc button:hover{background:var(--ln)}.tc .bc:hover{background:#c42b1c;color:#fff}
+.bd{flex:1;min-height:0;display:flex;flex-direction:column;background:var(--cont);user-select:text}
+.rz{position:absolute;right:0;bottom:0;width:18px;height:18px;cursor:nwse-resize;touch-action:none}
+#task{position:fixed;left:0;right:0;bottom:0;height:calc(48px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:var(--tk);backdrop-filter:blur(30px) saturate(1.5);-webkit-backdrop-filter:blur(30px) saturate(1.5);border-top:1px solid var(--ln);display:flex;align-items:center;justify-content:center;z-index:9000}
+#task.l{justify-content:flex-start;padding-left:6px}
+#pins{display:flex;align-items:center;max-width:calc(100% - 96px);overflow-x:auto;scrollbar-width:none}
+.tbn{flex:none;width:44px;height:40px;margin:0 2px;border:0;border-radius:6px;background:none;font-size:22px;position:relative;display:flex;align-items:center;justify-content:center}
+.tbn:hover{background:var(--card)}.tbn:active{transform:scale(.9)}
+.tbn.run::after{content:"";position:absolute;bottom:2px;left:50%;width:6px;height:3px;margin-left:-3px;border-radius:2px;background:var(--mut);transition:.2s}
+.tbn.on::after{width:16px;margin-left:-8px;background:var(--acc)}
+.lg{display:grid;grid-template-columns:1fr 1fr;gap:2px;width:20px}.lg i{height:9px;background:var(--acc)}
+#tray{position:absolute;right:6px;top:0;bottom:env(safe-area-inset-bottom,0px);display:flex;align-items:center}
+#tray button{border:0;background:none;height:40px;border-radius:6px;padding:0 8px;font-size:12px;line-height:1.25;text-align:right}#tray button:hover{background:var(--card)}
+.pop{position:fixed;display:none;background:var(--win);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:1px solid var(--ln);border-radius:12px;box-shadow:var(--sh);z-index:9500}
+.pop.on{display:flex}
+#start{left:50%;transform:translateX(-50%);bottom:calc(58px + env(safe-area-inset-bottom,0px));width:min(620px,calc(100% - 16px));height:min(620px,calc(100% - 80px));flex-direction:column;padding:18px 22px 0;overflow:hidden}
+body.l #start{left:8px;transform:none}
+.si{width:100%;padding:10px 14px;border:1px solid var(--ln);border-bottom:2px solid var(--acc);border-radius:20px;background:var(--card);outline:0}
+.sc{flex:1;overflow:auto;margin:14px -8px 0;padding:0 8px}.sh{display:flex;justify-content:space-between;font-weight:600;margin:6px 0 10px}
+.pg{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}.ap{border:0;background:none;border-radius:6px;padding:10px 2px;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:6px}.ap b{font-size:28px;font-weight:400}.ap:hover,.rc:hover{background:var(--card)}
+.rc{display:flex;align-items:center;gap:10px;padding:8px;border-radius:6px;cursor:default}.rc span{font-size:22px}.rc small{display:block;color:var(--mut)}
+.sf{display:flex;align-items:center;justify-content:space-between;height:64px;margin:0 -22px;padding:0 28px;background:var(--card);border-top:1px solid var(--ln)}.sf button{border:0;background:none;font-size:20px;border-radius:6px;padding:6px 10px}.sf button:hover{background:var(--card)}
+#pw{position:absolute;right:20px;bottom:60px;background:var(--win);border:1px solid var(--ln);border-radius:8px;box-shadow:var(--sh);display:none;flex-direction:column;padding:4px;z-index:2}#pw.on{display:flex}#pw button{text-align:left;font-size:14px;padding:8px 20px}
+#qs,#cal{right:8px;bottom:calc(58px + env(safe-area-inset-bottom,0px));width:min(360px,calc(100% - 16px));flex-direction:column;padding:16px;gap:12px}
+.qg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.qt{border:1px solid var(--ln);background:var(--card);border-radius:6px;padding:12px 4px;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:4px}.qt b{font-size:20px;font-weight:400}.qt.on{background:var(--acc);color:#fff;border-color:transparent}
+.sl{display:flex;align-items:center;gap:10px}.sl input{flex:1;accent-color:var(--acc)}
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}.cg div{padding:8px 0;border-radius:50%}.cg .t{background:var(--acc);color:#fff}.cg .h{color:var(--mut);font-size:12px}
+.cn{display:flex;align-items:center;justify-content:space-between}.cn button{border:0;background:none;font-size:18px;padding:4px 12px;border-radius:6px}.cn button:hover{background:var(--card)}
+#fly{z-index:9600;gap:8px;padding:8px}.lay{position:relative;width:64px;height:44px;background:var(--card);border-radius:4px}.lay b{position:absolute;border:2px solid var(--win);background:var(--ln);border-radius:4px}.lay b:hover{background:var(--acc)}
+#ctx{z-index:9700;flex-direction:column;padding:4px;min-width:180px}#ctx div{padding:8px 14px;border-radius:4px}#ctx div:hover{background:var(--card)}
+#boot,#lock{position:fixed;inset:0;z-index:20000;display:none;align-items:center;justify-content:center;flex-direction:column;gap:22px;color:#fff;background:#000}#boot.on,#lock.on{display:flex}
+#lock{background:var(--wp);background-size:cover;font-size:18px}#lock b{font-size:84px;font-weight:300}
+.spin{width:28px;height:28px;border:3px solid #444;border-top-color:#fff;border-radius:50%;animation:s 1s linear infinite}@keyframes s{to{transform:rotate(360deg)}}
+#toast{position:fixed;left:50%;bottom:calc(64px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--win);border:1px solid var(--ln);border-radius:8px;padding:10px 16px;box-shadow:var(--sh);z-index:9800;display:none}
+/* apps */
+.bar{display:flex;gap:6px;padding:6px 8px;border-bottom:1px solid var(--ln);align-items:center;flex-wrap:wrap}.bar button,.bt{border:1px solid var(--ln);background:var(--card);border-radius:4px;padding:5px 12px}.bar button:hover,.bt:hover{filter:brightness(.95)}
+.fx{flex:1;display:flex;min-height:0}.fsb{width:150px;padding:8px;border-right:1px solid var(--ln);overflow:auto}.fsb div,.fi{padding:7px 10px;border-radius:6px}.fsb div:hover,.fi:hover{background:var(--card)}.fm{flex:1;display:flex;flex-direction:column;min-width:0}.fl{flex:1;overflow:auto;padding:6px}.fi{display:flex;gap:10px;align-items:center}.fi.s{background:var(--card);outline:1px solid var(--acc)}
+@media(max-width:640px){.fsb{display:none}.pg{grid-template-columns:repeat(3,1fr)}#sysb{display:none}#task{justify-content:flex-start}}
+textarea.np{flex:1;border:0;outline:0;resize:none;padding:12px;background:var(--cont);font:14px Consolas,monospace;user-select:text}
+.cd{padding:14px 16px 6px;text-align:right}.cd small{display:block;height:16px;color:var(--mut)}.cd div{font-size:40px;overflow:hidden}.ck{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:2px}.ck button{border:0;background:var(--card);border-radius:4px;font-size:18px;min-height:40px}.ck button:hover{filter:brightness(.9)}.ck .e{background:var(--acc);color:#fff}
+.st{padding:16px;overflow:auto}.st h3{margin:14px 0 8px;font-weight:600}.sw{display:flex;flex-wrap:wrap;gap:8px}.sw i{width:34px;height:34px;border-radius:50%;border:3px solid transparent;cursor:pointer}.sw i.on{border-color:var(--txt)}.sw .w{border-radius:6px;width:64px}
+.tm{flex:1;background:#0c0c0c;color:#ddd;font:13px Consolas,monospace;padding:10px;overflow:auto;user-select:text}.tm div{white-space:pre-wrap}.ti2{border:0;outline:0;background:#0c0c0c;color:#fff;font:13px Consolas,monospace;padding:8px 10px;border-top:1px solid #333}
+</style></head><body>
+<div id="wall"></div><div id="desk"></div>
+<div class="pop" id="start"><input class="si" id="q" placeholder="Search for apps, settings, and documents" autocomplete="off"><div class="sc" id="sc"></div><div class="sf"><span>👤 User</span><button id="pb" title="Power">⏻</button></div><div id="pw"><button data-p="lock">🔒 Lock</button><button data-p="restart">🔄 Restart</button></div></div>
+<div class="pop" id="qs"></div><div class="pop" id="cal"></div><div class="pop" id="fly"></div><div class="pop" id="ctx"></div>
+<div id="task"><div id="pins"><button class="tbn" id="sb" title="Start"><span class="lg"><i></i><i></i><i></i><i></i></span></button><button class="tbn" id="sr" title="Search">🔍</button></div><div id="tray"><button id="sysb" title="Quick settings"><span id="sys">📶 🔊 🔋</span></button><button id="clk"></button></div></div>
+<div id="toast"></div>
+<div id="lock"><b id="lt"></b><div id="ld"></div><div style="opacity:.8;font-size:14px">Click anywhere to unlock</div></div>
+<div id="boot"><div style="font-size:64px">⊞</div><div class="spin"></div></div>
 <script>
-const apps=['explorer','browser','settings','notes','calc','taskmgr','runbox','recycle','calendar','paint','media','photos','terminal','weather','spotify','geforcenow'];let z=100;let calcExpr='';
-const $=id=>document.getElementById(id);
-function showToast(s){$('toast').textContent=s;$('toast').style.display='block';clearTimeout(showToast.t);showToast.t=setTimeout(()=>$('toast').style.display='none',1800)}
-function toast(title,msg){showToast(msg?title+': '+msg:title)}
-function toggleStart(){let s=$('startMenu');s.style.display=s.style.display==='block'?'none':'block'}
-function appId(id){const m={edge:'browser',notepad:'notes',run:'runbox'};return m[id]||id}
-function openWin(id){return openApp(appId(id))}
-function openApp(id){id=appId(id);let w=$(id);if(w.style.display==='block'&&w.style.zIndex==z){w.style.display='none';w.dataset.wasopen='1';updateTaskStates();return}w.style.display='block';delete w.dataset.wasopen;w.style.zIndex=++z;$(id).classList.remove('maxed');$('tb-'+id)?.classList.add('active');if(id==='explorer')showFolder('This PC');if(id==='browser')browserHome();if(id==='settings')setPage(document.querySelector('.setnav button.active'),'system');if(id==='notes')$('noteText').value=localStorage.note||'';updateTaskStates();if(id==='taskmgr')tmPage(null,'processes');if(id==='recycle')showTrash();if(id==='calendar')setupCalendar();if(id==='paint')setupPaint();if(id==='terminal')setupTerminal()}
-function closeApp(id){id=appId(id);if(!$(id))return;$(id).style.display='none';delete $(id).dataset.wasopen;updateTaskStates();}
-function minimize(id){id=appId(id);if(!$(id))return;$(id).style.display='none';$(id).dataset.wasopen='1';updateTaskStates()}
-function maximize(id){id=appId(id);if(!$(id))return;$(id).classList.toggle('maxed');$(id).style.zIndex=++z}
-document.querySelectorAll('.window').forEach(w=>{w.addEventListener('mousedown',()=>w.style.zIndex=++z);let bar=w.querySelector('.titlebar');let dragging=false,ox=0,oy=0;bar.addEventListener('pointerdown',e=>{if(e.target.closest('.wincontrols')||w.classList.contains('maxed'))return;dragging=true;ox=e.clientX-w.offsetLeft;oy=e.clientY-w.offsetTop;bar.setPointerCapture(e.pointerId)});bar.addEventListener('pointermove',e=>{if(!dragging)return;w.style.left=Math.max(0,e.clientX-ox)+'px';w.style.top=Math.max(0,e.clientY-oy)+'px'});bar.addEventListener('pointerup',()=>dragging=false)});
-function showFolder(name){
-  const files=[
-    ['📁','Desktop'],['📄','Documents'],['⬇️','Downloads'],['🖼️','Pictures'],
-    ['🎵','Music'],['🎬','Videos'],['💾','Local Disk (C:)'],['📦','New Folder']
-  ];
-  $('files').innerHTML=files.map(x=>`<div class="file" ondblclick="fileAction('${x[1]}')"><div class="fi">${x[0]}</div>${x[1]}</div>`).join('');
-  document.querySelector('#explorer .path').textContent=name;
-}
-function fileAction(name){
-  if(name==='New Folder'){showToast('Folder opened');return}
-  if(name==='Documents'||name==='Downloads'||name==='Desktop')showToast(name+' opened');
-  else showToast(name);
-}
-let trash=[];try{trash=JSON.parse(localStorage.getItem('win10.trash')||'[]')}catch(e){trash=[]}
-function saveTrash(){localStorage.setItem('win10.trash',JSON.stringify(trash))}
-function showTrash(){if(!$('trashitems'))return;$('trashitems').innerHTML=trash.length?trash.map((x,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:8px;border-bottom:1px solid #eee;color:#222"><span>${esc(x.icon||'📦')}</span><span style="flex:1">${esc(x.name)}</span><button onclick="restoreTrash(${i})">Restore</button><button onclick="deleteTrash(${i})">Delete</button></div>`).join(''):'Recycle Bin is empty.'}
-function moveToTrash(id){const a=getCustomApps().find(x=>x.id===id);if(!a)return;trash.push({type:'custom',...a});saveTrash();removeCustomApp(id);showTrash();showToast(a.name+' moved to Recycle Bin')}
-function restoreTrash(i){const x=trash[i];if(!x)return;if(x.type==='custom'){const a=getCustomApps();if(!a.some(y=>y.id===x.id))a.push(x);saveCustomApps(a);buildCustomApps();renderCustomAppLibrary();}trash.splice(i,1);saveTrash();showTrash();showToast(x.name+' restored')}
-function deleteTrash(i){trash.splice(i,1);saveTrash();showTrash();showToast('Item permanently deleted')}
-
-function browserHome(){ $('url').value='https://www.example.com';$('webpage').innerHTML='<h1>Windows Web Browser</h1><p>This is a working local browser interface for your Windows Web desktop.</p><div class="card"><b>Quick links</b><p><a onclick="demoPage(\'home\')">Home</a> · <a onclick="demoPage(\'about\')">About</a> · <a onclick="demoPage(\'help\')">Help</a></p></div><p>Type a URL or search phrase in the address bar. Network pages may be limited by browser security when running from a local HTML file.</p>'}
-function navigate(){let v=$('url').value.trim();if(!v)return;if(!/^https?:\/\//i.test(v)){demoPage(v);return} $('webpage').innerHTML='<h1>Loading…</h1><p>'+esc(v)+'</p><p style="font-size:13px">If this page blocks embedding, use the address bar in your normal browser.</p>'}
-function demoPage(v){$('url').value=v;$('webpage').innerHTML='<h1>'+esc(v==='about'?'About Windows Web':v==='help'?'Help':'Windows Web')+'</h1><p>Everything on this desktop is running from one HTML file.</p><div class="card">Try File Explorer, Settings, Notes, Calculator, the Start menu, search, window controls and the lock screen.</div>'}
-function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-const pages={
-system:['System','Display, sound, notifications, storage and device options.'],
-personal:['Personalization','Customize the desktop, Start menu, taskbar and colors.'],
-privacy:['Privacy','Control local app permissions and privacy options.'],
-update:['Update & Security','Check updates, recovery and security tools.'],
-accounts:['Accounts','Manage the local Windows Web account and sign-in.'],
-network:['Network & Internet','Manage Wi‑Fi, Ethernet and browser connectivity.'],
-apps:['Apps','Manage installed apps, defaults and optional features.'],
-gaming:['Gaming','Game Mode, controller settings and game features.'],
-access:['Accessibility','Make Windows Web easier to see, hear and use.'],
-time:['Time & Language','Date, time, region, keyboard and language settings.'],
-devices:['Devices','Bluetooth, printers, mouse, keyboard and connected devices.'],
-storage:['Storage','See storage usage and manage temporary files.']};
-function settingRow(title,desc,action){return '<div class="setting-card"><b>'+title+'</b>'+(action||'')+'<br><small>'+desc+'</small></div>'}
-function toggleSetting(key,label,desc,def=true){let on=localStorage.getItem('setting_'+key)!=='off'&&def;return settingRow(label,desc,'<span class="toggle '+(on?'on':'')+'" onclick="toggleSaved(this,\''+key+'\')"></span>')}
-function toggleSaved(el,key){let on=el.classList.toggle('on');localStorage.setItem('setting_'+key,on?'on':'off');showToast(key.replaceAll('_',' ')+' '+(on?'enabled':'disabled'))}
-function setPage(btn,key){document.querySelectorAll('.setnav button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');let h='<h1>'+pages[key][0]+'</h1><p>'+pages[key][1]+'</p>';
-if(key==='system')h+=toggleSetting('wifi','Wi‑Fi','Connected to Windows Web network.')+toggleSetting('notifications','Notifications','Allow desktop notifications.')+toggleSetting('sound','Sound','System sounds and media volume.')+toggleSetting('darkmode','Dark mode','Use a darker appearance for the desktop.',false)+settingRow('Display','Scale, brightness and screen effects.','<button style="float:right" onclick="displaySettings()">Configure</button>')+settingRow('Night light','Reduce blue light for evening use.','<button style="float:right" onclick="toggleSaved(this,\'nightlight\')">Toggle</button>')+settingRow('Windows Web password','Startup sign-in password.','<button style="float:right" onclick="changePassword()">Change</button>');
-else if(key==='personal')h+=toggleSetting('animations','Animations','Smooth window and taskbar animations.')+toggleSetting('transparency','Transparency','Transparent taskbar and panels.')+settingRow('Desktop background','Choose a built-in background.','<button style="float:right" onclick="cycleWallpaper()">Change</button>')+settingRow('Accent color','Choose the desktop accent color.','<button style="float:right" onclick="cycleAccent()">Change</button>')+settingRow('Taskbar','Choose taskbar behavior and position.','<button style="float:right" onclick="taskbarSettings()">Configure</button>')+toggleSetting('start_full','Full-screen Start','Open Start as a larger menu.',false);
-else if(key==='privacy')h+=toggleSetting('location','Location','Allow location-aware features.',false)+toggleSetting('camera','Camera','Allow camera features.',false)+toggleSetting('microphone','Microphone','Allow microphone features.',false)+toggleSetting('diagnostics','Diagnostics','Send basic usage diagnostics.',false)+toggleSetting('clipboard','Clipboard history','Keep copied items available.',true)+toggleSetting('activity','Activity history','Remember recent app activity.',false)+settingRow('Permissions','Review app permission controls.','<button style="float:right" onclick="privacyAudit()">Review</button>');
-else if(key==='network')h+=toggleSetting('wifi','Wi‑Fi','Connected')+toggleSetting('bluetooth','Bluetooth','Allow nearby device connections.')+settingRow('Airplane mode','Disable wireless connections.','<button style="float:right" onclick="toggleSaved(this,\'airplane\')">Toggle</button>')+settingRow('Data usage','View simulated network usage.','<button style="float:right" onclick="networkUsage()">View</button>')+settingRow('Proxy','Configure browser proxy settings.','<button style="float:right" onclick="showToast(\'Proxy settings opened\')">Open</button>');
-else if(key==='apps')h+=settingRow('Installed apps','View the apps available on this desktop.','<button style="float:right" onclick="appManager()">Manage</button>')+toggleSetting('app_notifications','App notifications','Allow apps to notify you.')+toggleSetting('background_apps','Background apps','Allow apps to run background tasks.',true)+settingRow('Default browser','Windows Web Browser','<button style="float:right" onclick="openApp(\'browser\')">Open</button>')+settingRow('App installer','Install a custom web app.','<button style="float:right" onclick="openAddApp()">Add app</button>');
-else if(key==='gaming')h+=toggleSetting('gamemode','Game Mode','Prioritize interactive apps.')+toggleSetting('gamebar','Game Bar','Enable game shortcuts.')+toggleSetting('game_dvr','Game capture','Save screenshots and recordings.',false)+settingRow('Performance','View desktop performance counters.','<button style="float:right" onclick="openApp(\'taskmgr\')">View</button>')+settingRow('Controller','Test keyboard/controller input.','<button style="float:right" onclick="controllerTest()">Test</button>');
-else if(key==='access')h+=toggleSetting('large_text','Larger text','Increase interface readability.')+toggleSetting('contrast','High contrast','Increase visual contrast.',false)+toggleSetting('reduced_motion','Reduce motion','Reduce animations.',false)+toggleSetting('sticky_keys','Sticky Keys','Make keyboard shortcuts easier.')+toggleSetting('filter_keys','Filter Keys','Ignore repeated keystrokes.')+settingRow('Narrator','Screen reader controls.','<button style="float:right" onclick="narratorTest()">Test</button>');
-else if(key==='time')h+=settingRow('Date & time','Use the computer clock.','<button style="float:right" onclick="showClock()">View</button>')+toggleSetting('24hour','24-hour clock','Use 24-hour taskbar time.',false)+toggleSetting('auto_time','Set time automatically','Use the browser clock.',true)+settingRow('Language','English (United States)','<button style="float:right" onclick="languagePicker()">Change</button>')+settingRow('Region','United States','<button style="float:right" onclick="showToast(\'Region: United States\')">Change</button>');
-else if(key==='devices')h+=toggleSetting('bluetooth','Bluetooth','Allow nearby devices.')+toggleSetting('device_discovery','Device discovery','Allow device discovery.')+settingRow('Printers','Manage printers and scanners.','<button style="float:right" onclick="showToast(\'No printers configured\')">Manage</button>')+settingRow('Mouse','Pointer and button settings.','<button style="float:right" onclick="mouseSettings()">Open</button>')+settingRow('Keyboard','Keyboard repeat and shortcuts.','<button style="float:right" onclick="showToast(\'Keyboard settings opened\')">Open</button>');
-else if(key==='storage')h+=settingRow('Local storage','Browser storage is used for your desktop data.','<button style="float:right" onclick="storageInfo()">Analyze</button>')+settingRow('Temporary files','Remove cached desktop data.','<button style="float:right" onclick="clearTempData()">Clean</button>')+settingRow('Downloads','Files and generated data stored locally.','<button style="float:right" onclick="openApp(\'explorer\')">Open</button>')+settingRow('Storage sense','Automatically clean temporary data.','<button style="float:right" onclick="toggleSaved(this,\'storage_sense\')">Toggle</button>');
-else if(key==='update')h+=settingRow('Windows Web Update','Your local desktop is ready to use.','<button style="float:right" onclick="checkUpdates()">Check for updates</button>')+toggleSetting('security','Windows Web Security','Basic local security features.')+toggleSetting('firewall','Windows Web Firewall','Protect simulated network connections.')+settingRow('Recovery','Reset local settings.','<button style="float:right" onclick="resetSettings()">Reset</button>')+settingRow('Advanced startup','Restart into the lock screen.','<button style="float:right" onclick="lockScreen()">Restart</button>');
-else if(key==='accounts')h+=settingRow('Your account','Local Windows Web account','<button style="float:right" onclick="accountInfo()">Manage</button>')+settingRow('Password','Protect the startup screen.','<button style="float:right" onclick="changePassword()">Change</button>')+settingRow('Sign-in','Lock this desktop now.','<button style="float:right" onclick="lockScreen()">Lock</button>')+toggleSetting('autologin','Automatic sign-in','Skip password prompt when possible.',false);
-$('setpage').innerHTML=h}
-function displaySettings(){let scale=prompt('Display scale (80-150):',localStorage.displayScale||'100');let n=parseInt(scale);if(n>=80&&n<=150){localStorage.displayScale=n;document.documentElement.style.fontSize=(n/100)+'em';showToast('Display scale: '+n+'%')}else showToast('Enter a number from 80 to 150')}
-function cycleAccent(){let a=['#0078d7','#107c10','#8764b8','#d83b01','#e81123'];let i=(+(localStorage.accentIndex||0)+1)%a.length;localStorage.accentIndex=i;document.documentElement.style.setProperty('--accent',a[i]);document.querySelectorAll('.toggle.on').forEach(x=>x.style.background=a[i]);showToast('Accent color changed')}
-function taskbarSettings(){let pos=prompt('Taskbar position: bottom, top, left, right',localStorage.taskbarPos||'bottom');if(['bottom','top','left','right'].includes((pos||'').toLowerCase())){localStorage.taskbarPos=pos.toLowerCase();let t=document.getElementById('taskbar');if(t){t.style.top=pos==='top'?'0':'';t.style.bottom=pos==='bottom'?'0':'';t.style.left=pos==='left'?'0':'';t.style.right=pos==='right'?'0':'';t.style.width=(pos==='left'||pos==='right')?'54px':'';t.style.height=(pos==='top'||pos==='bottom')?'54px':''}showToast('Taskbar moved to '+pos)}}
-function privacyAudit(){showToast('Privacy permissions reviewed');setTimeout(()=>alert('Permissions\n\nLocation: '+(localStorage.setting_location==='on'?'Allowed':'Blocked')+'\nCamera: '+(localStorage.setting_camera==='on'?'Allowed':'Blocked')+'\nMicrophone: '+(localStorage.setting_microphone==='on'?'Allowed':'Blocked')),50)}
-function networkUsage(){let n=(JSON.stringify(localStorage).length/1024).toFixed(1);showToast('Simulated network usage: '+n+' KB')}
-function appManager(){let custom=typeof getCustomApps==='function'?getCustomApps():[];alert('Installed apps: '+(apps.length+custom.length)+'\nBuilt-in: '+apps.length+'\nCustom: '+custom.length);}
-function controllerTest(){alert('Controller test\n\nKeyboard input is active. Press OK to finish the test.');showToast('Controller test complete')}
-function narratorTest(){showToast('Narrator test: Settings is ready');if('speechSynthesis' in window){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance('Windows Web Settings is ready.'))}}
-function languagePicker(){let l=prompt('Choose language: English, Spanish, French',localStorage.language||'English');if(l){localStorage.language=l;showToast('Language set to '+l)}}
-function mouseSettings(){let n=prompt('Pointer size (1-3):',localStorage.pointerSize||'1');if(['1','2','3'].includes(n)){localStorage.pointerSize=n;document.body.style.cursor=n==='3'?'zoom-in':'default';showToast('Pointer size set to '+n)}}
-function accountInfo(){alert('Windows Web Account\n\nType: Local account\nPassword: '+(localStorage.webpw?'Protected':'Not set'));}
-function cycleWallpaper(){let b=['linear-gradient(135deg,#0078d7,#001f4d)','linear-gradient(135deg,#6a11cb,#2575fc)','linear-gradient(135deg,#11998e,#38ef7d)'];let i=(+localStorage.wallpaper||0)+1;i%=b.length;localStorage.wallpaper=i;document.body.style.background=b[i];showToast('Background changed')}
-function storageInfo(){let n=JSON.stringify(localStorage).length;showToast('Local data: '+n+' bytes')}
-function clearTempData(){['setting_temp','browserHistory'].forEach(k=>localStorage.removeItem(k));showToast('Temporary data cleaned')}
-function checkUpdates(){showToast('You are up to date')}
-function applyMotionSetting(){const on=localStorage.getItem('setting_animations')!=='off';document.body.classList.toggle('no-motion',!on)}
-function resetSettings(){if(confirm('Reset Windows Web settings?')){Object.keys(localStorage).filter(k=>k.startsWith('setting_')).forEach(k=>localStorage.removeItem(k));showToast('Settings reset');setPage(document.querySelector('.setnav button.active'),'system')}}
-function changePassword(){let p=prompt('Set a new password:');if(p){localStorage.webpw=p;showToast('Password changed')}}
-function calcAdd(x){calcExpr+=x;$('calcdisplay').textContent=calcExpr}
-function calcClear(){calcExpr='';$('calcdisplay').textContent='0'}
-function calcBack(){calcExpr=calcExpr.slice(0,-1);$('calcdisplay').textContent=calcExpr||'0'}
-function calcEqual(){try{if(!/^[0-9+*/(). -]+$/.test(calcExpr))throw 0;calcExpr=String(Function('return '+calcExpr)());$('calcdisplay').textContent=calcExpr}catch(e){$('calcdisplay').textContent='Error';calcExpr=''}}
-function doSearch(v){v=v.trim();if(!v)return;toggleStart();openApp('browser');$('url').value=v;if(/^https?:\/\//i.test(v))navigate();else demoPage('Search: '+v)}
-$('noteText').addEventListener('input',e=>localStorage.note=e.target.value)
-function login(){let want=localStorage.webpw||'1234';if($('pw').value===want){$('login').style.display='none';sessionStorage.unlocked='1'}else $('loginerr').textContent='Wrong password'}
-function lock(){$('startMenu').style.display='none';$('login').style.display='flex';$('pw').value='';$('loginerr').textContent=''}
-function shutdown(){showToast('Shutting down…');setTimeout(()=>{document.body.innerHTML='<div style="background:#000;color:#fff;position:fixed;inset:0;display:flex;align-items:center;justify-content:center;font-family:Segoe UI;font-size:20px">It is now safe to close this tab.</div>'},800)}
-function tick(){let d=new Date();$('clock').innerHTML=d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})+'<br>'+d.toLocaleDateString();}setInterval(tick,1000);tick()
-if(sessionStorage.unlocked!=='1')$('login').style.display='flex'
-
-function tmPage(btn,key){
-  document.querySelectorAll('.tmnav').forEach(x=>x.style.background='transparent');
-  if(btn)btn.style.background='#e5f1fb';
-  const c=$('tmcontent');
-  if(key==='processes') c.innerHTML='<h3>Processes</h3><div style="border:1px solid #ddd"><p style="padding:10px">🖥️ Windows Web Desktop <b style="float:right">Running</b></p><p style="padding:10px">🌐 Browser <b style="float:right">Active</b></p><p style="padding:10px">📁 File Explorer <b style="float:right">Active</b></p><p style="padding:10px">⚙️ Settings <b style="float:right">Background</b></p></div>';
-  if(key==='performance') c.innerHTML='<h3>Performance</h3><div class="setting-card">CPU <b style="float:right">12%</b></div><div class="setting-card">Memory <b style="float:right">34%</b></div><div class="setting-card">Storage <b style="float:right">18%</b></div>';
-  if(key==='startup') c.innerHTML='<h3>Startup apps</h3><div class="setting-card">Windows Web Shell <b style="float:right">Enabled</b></div><div class="setting-card">Notes <b style="float:right">Disabled</b></div>';
-}
-function runCommand(){
-  let v=$('runinput').value.trim().toLowerCase();
-  const map={explorer:'explorer',settings:'settings',browser:'browser',chrome:'browser',calc:'calc',calculator:'calc',notepad:'notes',notes:'notes','taskmgr':'taskmgr','task manager':'taskmgr',recycle:'recycle',calendar:'calendar',paint:'paint',media:'media','media player':'media',photos:'photos',terminal:'terminal',cmd:'terminal',weather:'weather'};
-  if(map[v]){closeApp('runbox');openApp(map[v]);}
-  else if(/^https?:\/\//.test(v)){closeApp('runbox');openApp('browser');$('url').value=v;navigate();}
-  else if(v){closeApp('runbox');showToast('Windows cannot find "'+v+'"');}
-}
-function emptyTrash(){trash=[];saveTrash();showTrash();showToast('Recycle Bin emptied')}
-function tmOpen(){openApp('taskmgr');tmPage(null,'processes')}
-
-
-
-let taskbarLocked=false,desktopHidden=false;
-const taskAppNames={explorer:'File Explorer',browser:'Browser',settings:'Settings',notes:'Notepad',calc:'Calculator',taskmgr:'Task Manager',runbox:'Run',recycle:'Recycle Bin',calendar:'Calendar',paint:'Paint',media:'Media Player',photos:'Photos',terminal:'Terminal',weather:'Weather',spotify:'Spotify',geforcenow:'GeForce NOW'};
-function hideTaskbarContext(){$('taskbarContext').style.display='none'}
-function toggleTaskbarLock(){taskbarLocked=!taskbarLocked;hideTaskbarContext();showToast(taskbarLocked?'Taskbar locked':'Taskbar unlocked')}
-function taskbarNewWindow(){hideTaskbarContext();openApp('explorer')}
-function showDesktop(){desktopHidden=!desktopHidden;apps.forEach(a=>{let w=$(a);if(desktopHidden){if(w.style.display==='block')w.dataset.wasopen='1';w.style.display='none'}else if(w.dataset.wasopen==='1'){w.style.display='block';w.style.zIndex=++z;delete w.dataset.wasopen}})}
-function openSearchPanel(){$('searchPanel').style.display='block';$('startMenu').style.display='none';setTimeout(()=>$('panelSearch').focus(),0)}
-function closeSearchPanel(){$('searchPanel').style.display='none'}
-function liveSearch(v){
- v=v.trim().toLowerCase();let box=$('searchResults');if(!v){box.innerHTML='<div style="padding:15px;color:#bbb">Start typing to search apps and settings.</div>';return}
- let hits=apps.filter(a=>(taskAppNames[a]||a).toLowerCase().includes(v));
- box.innerHTML=hits.length?hits.map(a=>`<div class="searchResult" onclick="closeSearchPanel();openApp('${a}')">🔹 ${taskAppNames[a]}</div>`).join(''):'<div style="padding:15px;color:#bbb">No results found.</div>';
-}
-function updateTaskStates(){
- apps.forEach(a=>{let b=$('tb-'+a);if(!b)return;let w=$(a);b.classList.toggle('active',w.style.display==='block');b.classList.toggle('minimized',w.style.display!=='block'&&w.dataset.wasopen==='1')})
-}
-function taskbarMenu(e){if(e.target.closest('#taskbar')){e.preventDefault();let m=$('taskbarContext');m.style.display='block';m.style.left=Math.min(e.clientX,innerWidth-220)+'px';m.style.bottom='48px'}}
-function showClock(){let p=$('clockPanel');p.style.display=p.style.display==='block'?'none':'block';$('actionCenter').style.display='none';$('searchPanel').style.display='none';buildMiniCalendar()}
-function hideClock(){$('clockPanel').style.display='none'}
-function buildMiniCalendar(){
- let d=new Date(),y=d.getFullYear(),m=d.getMonth(),first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),today=d.getDate();
- $('miniCal').innerHTML=['S','M','T','W','T','F','S'].map(x=>'<div><b>'+x+'</b></div>').join('');
- for(let i=0;i<first;i++)$('miniCal').innerHTML+='<div></div>';
- for(let i=1;i<=days;i++)$('miniCal').innerHTML+=`<div class="${i===today?'today':''}">${i}</div>`;
-}
-function toggleAction(){let a=$('actionCenter');a.style.display=a.style.display==='block'?'none':'block';$('startMenu').style.display='none'}
-function toggleVirtual(){let v=$('virtualView');v.style.display=v.style.display==='block'?'none':'block'}
-function switchDesk(n){document.querySelectorAll('.deskThumb').forEach((x,i)=>x.classList.toggle('active',i===n-1));showToast('Switched to Desktop '+n);$('virtualView').style.display='none'}
-function addDesktop(){let v=$('virtualView');let count=v.querySelectorAll('.deskThumb').length+1;let d=document.createElement('div');d.className='deskThumb';d.textContent='🖥️ Desktop '+count;d.onclick=()=>switchDesk(count);v.insertBefore(d,v.querySelector('br'));showToast('Desktop '+count+' created')}
-function toggleNight(){document.body.style.filter=document.body.style.filter?'':'sepia(.35) brightness(.8)';showToast('Night light toggled')}
-function showNewDialog(){$('newDialog').style.display='flex';$('newName').focus()}
-function closeDialog(){$('newDialog').style.display='none'}
-function createItem(){let n=$('newName').value.trim()||'New Folder';let d=document.createElement('div');d.className='file';d.innerHTML='<div class="fi">📁</div>'+esc(n);d.ondblclick=()=>showToast(n+' opened');$('files').appendChild(d);closeDialog();showToast(n+' created')}
-function sortFiles(){let box=$('files');[...box.children].sort((a,b)=>a.textContent.localeCompare(b.textContent)).forEach(x=>box.appendChild(x));showToast('Files sorted A–Z')}
-
-function setupCalendar(){
-  const d=new Date(), y=d.getFullYear(), m=d.getMonth();
-  $('calTitle').textContent=d.toLocaleString([], {month:'long',year:'numeric'});
-  const first=new Date(y,m,1).getDay(), days=new Date(y,m+1,0).getDate();
-  let s=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(x=>'<b style="text-align:center">'+x+'</b>').join('');
-  for(let i=0;i<first;i++)s+='<div></div>';
-  for(let i=1;i<=days;i++)s+='<div onclick="showToast(\'Calendar: '+i+' selected\')" style="padding:12px;text-align:center;border:1px solid #eee;cursor:pointer">'+i+'</div>';
-  $('calGrid').innerHTML=s;
-}
-let paintReady=false,painting=false;
-function setupPaint(){
-  const c=$('paintCanvas'); if(paintReady)return; paintReady=true;
-  const resize=()=>{let r=c.getBoundingClientRect();c.width=Math.max(300,r.width);c.height=Math.max(250,r.height)};
-  resize(); window.addEventListener('resize',resize);
-  const pos=e=>{let r=c.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top]};
-  c.addEventListener('pointerdown',e=>{painting=true;c.setPointerCapture(e.pointerId);let [x,y]=pos(e);let q=c.getContext('2d');q.beginPath();q.moveTo(x,y)});
-  c.addEventListener('pointermove',e=>{if(!painting)return;let [x,y]=pos(e),q=c.getContext('2d');q.strokeStyle=$('paintColor').value;q.lineWidth=4;q.lineCap='round';q.lineTo(x,y);q.stroke()});
-  c.addEventListener('pointerup',()=>painting=false);
-}
-function clearPaint(){let c=$('paintCanvas');c.getContext('2d').clearRect(0,0,c.width,c.height)}
-function setupTerminal(){
- $('termInput').onkeydown=e=>{if(e.key!=='Enter')return;let v=e.target.value.trim(),o=$('termOut');o.innerHTML+='<br>C:\\\\Windows&gt; '+esc(v)+'<br>';let cmd=v.toLowerCase();
- if(cmd==='help')o.innerHTML+='help, cls, dir, explorer, settings, calc, notepad, browser, taskmgr, date, time, ver, echo';
- else if(cmd==='cls')o.innerHTML='';
- else if(cmd==='dir')o.innerHTML+='Desktop&nbsp;&nbsp; Documents&nbsp;&nbsp; Downloads&nbsp;&nbsp; Pictures&nbsp;&nbsp; Windows';
- else if(cmd==='explorer'||cmd==='start explorer'){openApp('explorer');o.innerHTML+='Opening File Explorer...'}
- else if(cmd==='settings'){openApp('settings');o.innerHTML+='Opening Settings...'}
- else if(cmd==='calc'){openApp('calc');o.innerHTML+='Opening Calculator...'}
- else if(cmd==='notepad'){openApp('notes');o.innerHTML+='Opening Notepad...'}
- else if(cmd==='browser'){openApp('browser');o.innerHTML+='Opening Browser...'}
- else if(cmd==='taskmgr'){tmOpen();o.innerHTML+='Opening Task Manager...'}
- else if(cmd==='date')o.innerHTML+=new Date().toLocaleDateString();
- else if(cmd==='time')o.innerHTML+=new Date().toLocaleTimeString();
- else if(cmd==='ver')o.innerHTML+='Microsoft Windows Web [Version 10.0-Web]';
- else if(cmd.startsWith('echo '))o.innerHTML+=esc(v.slice(5));
- else if(v)o.innerHTML+="'"+esc(v)+"' is not recognized as a command.";
- e.target.value='';o.scrollTop=o.scrollHeight;
- }
-}
-$('audioFile')?.addEventListener('change',e=>{let f=e.target.files[0];if(f){$('audioPlayer').src=URL.createObjectURL(f);$('trackName').textContent=f.name}})
-$('photoFiles')?.addEventListener('change',e=>{let g=$('photoGrid');g.innerHTML='';[...e.target.files].forEach(f=>{let img=document.createElement('img');img.src=URL.createObjectURL(f);img.style.width='100%';img.style.height='130px';img.style.objectFit='cover';img.style.cursor='pointer';img.onclick=()=>window.open(img.src);g.appendChild(img)})})
-function hideContext(){ $('contextMenu').style.display='none' }
-function refreshDesktop(){hideContext();$('desktopIcons').style.opacity='.35';setTimeout(()=>$('desktopIcons').style.opacity='1',180);showToast('Desktop refreshed')}
-$('desktop').addEventListener('contextmenu',e=>{if(e.target.closest('.window')||e.target.closest('#taskbar')||e.target.closest('#startMenu'))return;e.preventDefault();let m=$('contextMenu');m.style.display='block';m.style.left=Math.min(e.clientX,innerWidth-215)+'px';m.style.top=Math.min(e.clientY,innerHeight-180)+'px'})
-document.addEventListener('click',e=>{if(!e.target.closest('#contextMenu'))hideContext();if(!e.target.closest('#taskbarContext')&&!e.target.closest('#taskbar'))hideTaskbarContext();if(!e.target.closest('#clockPanel')&&!e.target.closest('#clock'))hideClock();if(!e.target.closest('#searchPanel')&&!e.target.closest('.search'))closeSearchPanel()})
-$('taskbar').addEventListener('contextmenu',taskbarMenu)
-document.addEventListener('dblclick',e=>{if(e.target===document.body||e.target.id==='desktop'||e.target.classList.contains('wallpaper-glow'))openApp('explorer')})
-window.addEventListener('keydown',e=>{
- if(e.key==='Escape'){$('startMenu').style.display='none';hideContext();$('actionCenter').style.display='none';$('virtualView').style.display='none'}
- if(e.key==='Enter'&&document.activeElement===$('pw'))login();
- if(e.ctrlKey&&e.shiftKey&&e.key.toLowerCase()==='escape'){e.preventDefault();tmOpen()}
- if(e.altKey&&e.key==='F4'){let visible=apps.filter(a=>$(a).style.display==='block').sort((a,b)=>$(a).style.zIndex-$(b).style.zIndex).pop();if(visible)closeApp(visible)}
- if(e.key==='F2'&&document.activeElement!==$('pw'))showToast('Rename: select an item first')
- if(e.key==='F5'){e.preventDefault();refreshDesktop()}
- if(e.ctrlKey&&e.key.toLowerCase()==='n'&&$('explorer').style.display==='block'){e.preventDefault();showNewDialog()}
- if(e.key==='Meta'&&e.key.toLowerCase()==='s'){e.preventDefault();openSearchPanel()}
- if(e.key==='Meta'&&e.key.toLowerCase()==='d'){e.preventDefault();showDesktop()}
- if(e.key==='Meta'&&e.key.toLowerCase()==='a'){e.preventDefault();toggleAction()}
-})
-
-
-/* ===== ADVANCED TASKBAR / SHELL ===== */
-const PIN_KEY='win10.pins', NOTEY='win10.notifications';
-let pins;
-try{pins=JSON.parse(localStorage.getItem(PIN_KEY)||'["explorer","edge","settings","notepad","calc","taskmgr","calendar","paint","media","terminal"]')}catch(e){pins=["explorer","browser","settings","notes","calc","taskmgr","calendar","paint","media","terminal"]}
-function savePins(){localStorage.setItem(PIN_KEY,JSON.stringify(pins))}
-function pinDomId(id){return appId(id)}
-function pinnedApps(){return pins.map(id=>document.getElementById('tb-'+pinDomId(id))).filter(Boolean)}
-function rebuildPins(){
-  const bar=document.querySelector('.taskbar'); if(!bar)return;
-  const search=bar.querySelector('.search'), start=bar.querySelector('.winlogo')?.parentElement;
-  const virtual=bar.querySelector('[onclick*="toggleVirtual"]'), show=bar.querySelector('[onclick*="showDesktop"]');
-  if(!search||!start)return;
-  [...bar.querySelectorAll('.taskapp[data-pin]')].forEach(x=>x.remove());
-  let ref=bar.querySelector('.taskapps'); if(!ref)return;
-  pins.forEach((id,i)=>{
-    const domId=pinDomId(id); const old=document.getElementById('tb-'+domId);
-    if(!old)return;
-    const b=old.cloneNode(true); b.id='tb-'+domId; b.className='taskapp'; b.dataset.pin=id;
-    b.draggable=true; b.title=(old.title||id)+' — right-click for jump list';
-    b.onclick=()=>openWin(domId);
-    b.oncontextmenu=e=>{e.preventDefault();showJumpList(e,id)};
-    b.ondragstart=e=>{b.classList.add('dragging');e.dataTransfer.setData('text/plain',id)};
-    b.ondragend=()=>b.classList.remove('dragging');
-    b.ondragover=e=>e.preventDefault();
-    b.ondrop=e=>{e.preventDefault();const from=e.dataTransfer.getData('text/plain');if(from==='__desktop__')return;reorderPin(from,id)};
-    ref.parentNode.insertBefore(b,ref);
-  });
-  updateTaskStates();
-}
-function reorderPin(a,b){if(a===b)return;const ia=pins.indexOf(a),ib=pins.indexOf(b);if(ia<0||ib<0)return;pins.splice(ia,1);pins.splice(pins.indexOf(b),0,a);savePins();rebuildPins();toast('Taskbar','Pinned apps reordered.')}
-function showJumpList(e,id){
-  closeJumpList();
-  const names={explorer:'File Explorer',edge:'Microsoft Edge',settings:'Settings',notepad:'Notepad',calc:'Calculator',taskmgr:'Task Manager',calendar:'Calendar',paint:'Paint',media:'Media Player',terminal:'Terminal'};
-  const menu=document.createElement('div');menu.className='jumpmenu';menu.id='jumpmenu';
-  const actions={
-    explorer:[['📁 Open File Explorer',"openWin('explorer')"],['🗂️ This PC',"openWin('explorer');current='This PC';renderFiles()"],['📥 Downloads',"openWin('explorer');current='Downloads';renderFiles()"]],
-    edge:[['🌐 New tab',"openWin('edge');toast('Edge','New tab opened')"],['⭐ Favorites',"openWin('edge');toast('Edge','Favorites opened')"]],
-    settings:[['⚙️ System',"openWin('settings')"],['🎨 Personalization',"openWin('settings');toast('Settings','Personalization')"]],
-    notepad:[['📝 New note',"openWin('notepad');document.getElementById('note').value=''"],['📄 Open notes',"openWin('notepad')"]],
-    calc:[['🧮 Calculator',"openWin('calc')"],['🧹 Clear',"openWin('calc');calc='';document.getElementById('screen').textContent='0'"]],
-    taskmgr:[['📊 Processes',"openWin('taskmgr')"],['⚡ Performance',"openWin('taskmgr');toast('Task Manager','Performance')"]],
-    calendar:[['📅 Today',"openWin('calendar')"]],paint:[['🎨 New canvas',"openWin('paint');clearPaint()"]],
-    media:[['🎵 Media Player',"openWin('media')"]],terminal:[['⌨️ New terminal',"openWin('terminal')"]]
-  };
-  menu.innerHTML='<div class="jmhead">'+(names[id]||id)+'</div>'+((actions[id]||[['Open',`openWin('${id}')`]]).map(a=>`<button onclick="${a[1]};closeJumpList()">${a[0]}</button>`).join(''))+
-    `<button onclick="unpinApp('${id}');closeJumpList()">📌 Unpin from taskbar</button>`;
-  document.body.appendChild(menu);
-  menu.style.left=Math.min(innerWidth-280,Math.max(4,e.clientX-10))+'px';
-  menu.style.top=Math.min(innerHeight-260,Math.max(4,e.clientY-250))+'px';
-}
-function closeJumpList(){document.getElementById('jumpmenu')?.remove()}
-function unpinApp(id){pins=pins.filter(x=>x!==id);savePins();rebuildPins();toast('Taskbar',id+' unpinned')}
-function pinApp(id){if(!pins.includes(id)){pins.push(id);savePins();rebuildPins();toast('Taskbar',id+' pinned')}}
-document.addEventListener('click',e=>{if(!e.target.closest('.jumpmenu'))closeJumpList()});
-
-function showThumbs(id){
-  closeThumbs();
-  const apps=pins.filter(x=>document.getElementById(appId(x))?.style.display==='block');
-  if(!apps.length)return;
-  const panel=document.createElement('div');panel.className='thumbpreview';panel.id='thumbpreview';
-  apps.forEach(a=>{const w=document.getElementById(a),d=document.createElement('div');d.className='thumb';d.innerHTML=`<div class="mini">${w.outerHTML}</div><label>${w.querySelector('.tt')?.textContent||a}</label>`;d.onclick=()=>{openWin(a);closeThumbs()};panel.appendChild(d)});
-  document.body.appendChild(panel);const b=document.getElementById('tb-'+appId(id));const r=b?.getBoundingClientRect();if(r){panel.style.left=Math.min(innerWidth-panel.offsetWidth-5,Math.max(5,r.left))+'px';panel.style.bottom='43px'}
-}
-function closeThumbs(){document.getElementById('thumbpreview')?.remove()}
-function addBadges(){
-  const counts={edge:2,notepad:1,terminal:3};
-  Object.entries(counts).forEach(([id,n])=>{const b=document.getElementById('tb-'+appId(id));if(b&&!b.querySelector('.badge'))b.insertAdjacentHTML('beforeend',`<span class="badge">${n}</span>`)});
-}
-function clearBadges(id){document.querySelector(`#t-${id} .badge`)?.remove()}
-document.addEventListener('mouseover',e=>{const b=e.target.closest('.tb[data-pin]');if(b){clearTimeout(window._thumbTimer);window._thumbTimer=setTimeout(()=>showThumbs(b.dataset.pin),450)}})
-document.addEventListener('mouseout',e=>{if(e.target.closest('.tb[data-pin]')){clearTimeout(window._thumbTimer);setTimeout(()=>{if(!document.querySelector('#thumbpreview:hover'))closeThumbs()},120)}})
-
-function toggleTrayOverflow(e){
-  e?.stopPropagation(); document.getElementById('trayoverflow')?.remove();
-  const d=document.createElement('div');d.id='trayoverflow';d.className='trayoverflow';
-  d.innerHTML='<button onclick="toast(\'Network\',\'Wi‑Fi connected\');this.parentNode.remove()">📶 Wi‑Fi</button><button onclick="toast(\'Bluetooth\',\'Bluetooth is on\');this.parentNode.remove()">ᛒ Bluetooth</button><button onclick="toast(\'Battery\',\'Battery 100%\');this.parentNode.remove()">🔋 Battery</button><button onclick="openWin(\'settings\');this.parentNode.remove()">⚙️ System settings</button>';
-  document.body.appendChild(d);const b=document.getElementById('traymore'),r=b.getBoundingClientRect();d.style.right='8px';d.style.bottom='43px';
-}
-document.addEventListener('click',e=>{if(!e.target.closest('#trayoverflow')&&!e.target.closest('#traymore'))document.getElementById('trayoverflow')?.remove()});
-
-function showSnapZones(){document.querySelectorAll('.snapzone').forEach(x=>x.classList.add('show'))}
-function hideSnapZones(){document.querySelectorAll('.snapzone').forEach(x=>x.classList.remove('show'))}
-function snapWindow(id,side){const w=document.getElementById(id);if(!w)return;w.classList.remove('max');w.style.top='0px';w.style.height='calc(100vh - 40px)';w.style.width='50vw';w.style.left=side==='right'?'50vw':'0px';hideSnapZones();toast('Window','Snapped '+side)}
-function addSnapZones(){if(document.querySelector('.snapzone'))return;['left','right','top'].forEach(s=>{const z=document.createElement('div');z.className='snapzone '+s;z.ondragover=()=>showSnapZones();z.ondrop=()=>{if(drag)snapWindow(drag.id,s==='top'?'left':s)};document.body.appendChild(z)})}
-function startMenuApps(){
-  const box=document.querySelector('.startapps');if(!box)return;
-  box.innerHTML='<div class="starthead">All apps</div><input placeholder="Search apps..." oninput="filterStartApps(this.value)"><div class="applist">'+[
-    ['📁','File Explorer','explorer'],['🌐','Microsoft Edge','edge'],['⚙️','Settings','settings'],['📝','Notepad','notepad'],['🧮','Calculator','calc'],['📊','Task Manager','taskmgr'],['📅','Calendar','calendar'],['🎨','Paint','paint'],['🎵','Media Player','media'],['⌨️','Terminal','terminal'],['🖼️','Photos','photos'],['🌤️','Weather','weather'],['▶️','Run','run'],['🗑️','Recycle Bin','recycle'],['🟢','Spotify','spotify'],['🟩','GeForce NOW','geforcenow']
-  ].map(a=>`<button data-app="${a[1].toLowerCase()}" onclick="openWin('${a[2]}')">${a[0]} ${a[1]}</button>`).join('')+'</div>';
-}
-function filterStartApps(v){document.querySelectorAll('.applist button').forEach(b=>b.style.display=b.dataset.app.includes(v.toLowerCase())?'block':'none')}
-const CUSTOM_KEY='win10.customApps';
-function getCustomApps(){try{return JSON.parse(localStorage.getItem(CUSTOM_KEY)||'[]')}catch(e){return []}}
-function saveCustomApps(a){localStorage.setItem(CUSTOM_KEY,JSON.stringify(a))}
-function normalizeURL(u){u=u.trim();if(!/^https?:\/\//i.test(u))u='https://'+u;return u}
-function openAddApp(){ $('addAppDialog').style.display='flex'; renderCustomAppLibrary(); }
-function closeAddApp(){ $('addAppDialog').style.display='none'; }
-function installCustomApp(){
-  const name=$('appName').value.trim(), url=normalizeURL($('appUrl').value), icon=$('appIcon').value.trim()||'🌐';
-  if(!name||!url||!/^https?:\/\//i.test(url)){showToast('Enter an app name and valid URL');return}
-  const a=getCustomApps(); const id='custom_'+Date.now(); a.push({id,name,url,icon}); saveCustomApps(a);
-  if($('appPin').checked) pinApp(id);
-  buildCustomApps(); renderCustomAppLibrary(); $('appName').value=''; $('appUrl').value='';
-  showToast(name+' added');
-}
-function removeCustomApp(id){let a=getCustomApps().filter(x=>x.id!==id);saveCustomApps(a);pins=pins.filter(x=>x!==id);savePins();buildCustomApps();renderCustomAppLibrary();rebuildPins();showToast('App removed')}
-function launchCustomApp(id){const a=getCustomApps().find(x=>x.id===id);if(!a)return;let w=document.getElementById(a.id);if(!w){w=document.createElement('div');w.className='window';w.id=a.id;w.style.width='760px';w.style.height='520px';w.style.left='120px';w.style.top='70px';w.innerHTML=`<div class="titlebar"><span class="titletext">${esc(a.icon)} ${esc(a.name)}</span><div class="wincontrols"><button onclick="minimize('${a.id}')">—</button><button onclick="maximize('${a.id}')">□</button><button class="close" onclick="closeApp('${a.id}')">✕</button></div></div><div class="content" style="background:#fff"><iframe src="${esc(a.url)}" style="width:100%;height:100%;border:0" title="${esc(a.name)}"></iframe></div>`;document.body.appendChild(w);w.addEventListener('mousedown',()=>w.style.zIndex=++z);const bar=w.querySelector('.titlebar');let dragging=false,ox=0,oy=0;bar.addEventListener('pointerdown',e=>{if(e.target.closest('.wincontrols')||w.classList.contains('maxed'))return;dragging=true;ox=e.clientX-w.offsetLeft;oy=e.clientY-w.offsetTop;bar.setPointerCapture(e.pointerId)});bar.addEventListener('pointermove',e=>{if(dragging){w.style.left=Math.max(0,e.clientX-ox)+'px';w.style.top=Math.max(0,e.clientY-oy)+'px'}});bar.addEventListener('pointerup',()=>dragging=false)}
-  w.style.display='block';w.style.zIndex=++z;showToast(a.name+' opened');updateTaskStates();
-}
-function renderCustomAppLibrary(){const box=$('customAppLibrary');if(!box)return;const a=getCustomApps();box.innerHTML=a.length?'<b style="color:#222">Your apps</b>'+a.map(x=>`<div style="display:flex;align-items:center;gap:6px;padding:6px 0;color:#222"><span>${esc(x.icon)}</span><span style="flex:1">${esc(x.name)}</span><button onclick="launchCustomApp('${x.id}');closeAddApp()">Open</button><button onclick="removeCustomApp('${x.id}')">Remove</button></div>`).join(''):'<span style="color:#666">No custom apps yet.</span>'}
-function buildCustomApps(){const appsBox=document.querySelector('.applist');if(!appsBox)return;document.querySelectorAll('.custom-start-app').forEach(x=>x.remove());getCustomApps().forEach(a=>{const b=document.createElement('button');b.className='custom-start-app';b.dataset.app=a.name.toLowerCase();b.innerHTML=esc(a.icon)+' '+esc(a.name);b.onclick=()=>launchCustomApp(a.id);b.draggable=true;b.ondragstart=e=>e.dataTransfer.setData('text/plain',a.id);appsBox.appendChild(b)})}
-function dropOnRecycle(e){e.preventDefault();const id=e.dataTransfer.getData('text/plain');if(!id)return;if(id.startsWith('custom_'))moveToTrash(id);else{pins=pins.filter(x=>appId(x)!==appId(id));savePins();rebuildPins();showToast((taskAppNames[appId(id)]||id)+' moved to Recycle Bin');}}
-function desktopPositions(){try{return JSON.parse(localStorage.getItem('win10.desktopPositions')||'{}')}catch(e){return {}}}
-function saveDesktopPositions(p){localStorage.setItem('win10.desktopPositions',JSON.stringify(p))}
-function positionDesktopIcons(){const box=$('desktopIcons');if(!box)return;const p=desktopPositions();const icons=[...box.querySelectorAll('.deskicon')];let row=0;icons.forEach((x,i)=>{if(x.id==='desktopRecycle')return;const key=x.id||('desk_'+i);if(!p[key]){const col=Math.floor(i/7),r=i%7;p[key]={left:8+col*92,top:8+r*82}}x.style.left=Math.max(0,p[key].left)+'px';x.style.top=Math.max(0,p[key].top)+'px';x.dataset.desktopId=key});if(!p.desktopRecycle){p.desktopRecycle={left:8,top:8+7*82}}const rb=$('desktopRecycle');if(rb){rb.style.left=p.desktopRecycle.left+'px';rb.style.top=p.desktopRecycle.top+'px';rb.dataset.desktopId='desktopRecycle'}saveDesktopPositions(p)}
-function enableAppDragging(){
- const box=$('desktopIcons');if(!box)return;
- positionDesktopIcons();
- box.ondragover=e=>{e.preventDefault();e.dataTransfer.dropEffect='move'};
- box.ondrop=e=>{e.preventDefault();const id=e.dataTransfer.getData('text/plain');if(!id||id==='__desktop__')return;const target=e.target.closest('.deskicon');if(target&&target.id==='desktopRecycle')return;const r=box.getBoundingClientRect();const src=document.querySelector('.deskicon.dragging');const x=Math.max(0,Math.min(r.width-84,e.clientX-r.left-38));const y=Math.max(0,Math.min(r.height-84,e.clientY-r.top-8));const p=desktopPositions();const key=src?.dataset.desktopId||id;p[key]={left:x,top:y};saveDesktopPositions(p);if(src){src.style.left=x+'px';src.style.top=y+'px';src.classList.remove('dragging')}showToast('Desktop icon moved');};
- box.querySelectorAll('.deskicon').forEach(x=>{if(x.id==='desktopRecycle')return;x.draggable=true;x.ondragstart=e=>{x.classList.add('dragging');let h=x.getAttribute('ondblclick')||'';let m=h.match(/openApp\(['\"]([^'\"]+)/);if(m)e.dataTransfer.setData('text/plain',m[1]);else if(x.dataset.customId)e.dataTransfer.setData('text/plain',x.dataset.customId);e.dataTransfer.effectAllowed='move'};x.ondragend=()=>x.classList.remove('dragging')});
- const rb=$('desktopRecycle');if(rb){rb.ondragover=e=>{e.preventDefault();e.dataTransfer.dropEffect='move';rb.style.background='#ffffff44'};rb.ondragleave=()=>rb.style.background='';rb.ondrop=e=>{e.preventDefault();e.stopPropagation();rb.style.background='';const id=e.dataTransfer.getData('text/plain');if(!id)return;if(id.startsWith('custom_'))moveToTrash(id);else {pins=pins.filter(x=>appId(x)!==appId(id));savePins();rebuildPins();const el=[...box.querySelectorAll('.deskicon')].find(x=>(x.getAttribute('ondblclick')||'').includes("'"+id+"'"));if(el)el.style.display='none';showToast((taskAppNames[appId(id)]||id)+' moved to Recycle Bin')}}}
- document.querySelectorAll('.taskapp[data-pin]').forEach(b=>{b.ondragover=e=>e.preventDefault();b.ondrop=e=>{e.preventDefault();const id=e.dataTransfer.getData('text/plain');if(id==='__desktop__')return;if(id.startsWith('custom_'))moveToTrash(id);else {pins=pins.filter(x=>x!==id);savePins();rebuildPins();showToast((taskAppNames[appId(id)]||id)+' moved to Recycle Bin')}}});
-}
-applyMotionSetting();
-function shellInit(){const custom=getCustomApps().map(x=>x.id);pins=pins.map(appId).filter(id=>apps.includes(id)||custom.includes(id));if(!pins.length)pins=['explorer','browser','settings','notes','calc','taskmgr','calendar','paint','media','terminal','spotify','geforcenow'];savePins();addSnapZones();rebuildPins();addBadges();startMenuApps();buildCustomApps();enableAppDragging()}
-setTimeout(shellInit,300);
-</script>
-
-<style id="ultimate-polish">
-:root{--accent:#0078d4;--ease:cubic-bezier(.2,.8,.2,1)}
-*{box-sizing:border-box}button,input,select,textarea{font:inherit}
-body{overflow:hidden;font-family:"Segoe UI",Arial,sans-serif}
-body:not(.no-motion) .window{animation:winIn .18s var(--ease);transition:transform .16s var(--ease),opacity .16s var(--ease),box-shadow .16s var(--ease)}
-@keyframes winIn{from{opacity:0;transform:scale(.985) translateY(5px)}to{opacity:1;transform:none}}
-body:not(.no-motion) #startMenu{animation:startIn .18s var(--ease)}
-@keyframes startIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
-body:not(.no-motion) .tile,.taskapp,.tbbtn,.deskicon,.quick,.setting-card{transition:transform .14s var(--ease),filter .14s,background .14s,box-shadow .14s}
-.tile:hover{transform:translateY(-2px);filter:brightness(1.1)}.taskapp:hover,.tbbtn:hover{transform:translateY(-2px)}
-.deskicon{user-select:none;touch-action:none}.deskicon.dragging{opacity:.45;transform:scale(1.06);z-index:1000}.deskicon.drop-ok{outline:2px solid #4fc3ff;border-radius:5px}
-#desktopIcons{position:absolute;inset:0;pointer-events:none}.deskicon{pointer-events:auto;position:absolute;width:82px;text-align:center;cursor:default}
-#desktopRecycle{z-index:5}.window{resize:both;min-width:320px;min-height:180px}.titlebar{cursor:default;user-select:none}.titlebar .titletext{cursor:grab}.titlebar .titletext:active{cursor:grabbing}
-.window.focused{box-shadow:0 18px 55px #0009,0 0 0 1px #ffffff22}.window:not(.focused){filter:saturate(.94)}
-#taskbar{backdrop-filter:blur(18px) saturate(1.25);-webkit-backdrop-filter:blur(18px) saturate(1.25);box-shadow:0 -1px 0 #ffffff18,0 -8px 30px #0002}
-#startMenu,#searchPanel,#actionCenter,#clockPanel,#virtualView{backdrop-filter:blur(20px) saturate(1.15);-webkit-backdrop-filter:blur(20px) saturate(1.15)}
-.startlogo{display:inline-block;transition:transform .2s}.tbbtn:first-child:hover .startlogo{transform:rotate(-8deg) scale(1.12)}
-#toast{transition:opacity .18s,transform .18s}.toast-show{opacity:1!important;transform:translateY(0)!important}
-.snap-preview{position:fixed;z-index:24000;background:#1984ff2b;border:2px solid #4eb3ff;border-radius:6px;pointer-events:none;display:none}
-#desktopSelection{position:fixed;border:1px solid #58b6ff;background:#1683ff22;display:none;z-index:3;pointer-events:none}
-@media(max-width:800px){.search{width:140px}.window{max-width:calc(100vw - 8px);max-height:calc(100vh - 60px)}#startMenu{max-width:95vw}.deskicon{width:72px}}
-</style>
-<script>
-/* ===== ULTIMATE POLISH + WINDOWS-LIKE DESKTOP ENGINE ===== */
 (()=>{
- const D=$('desktop'), I=$('desktopIcons'), BIN=$('desktopRecycle');
- const POSKEY='win10.desktopPositions.v2';
- const defaultPos={explorer:[12,18],browser:[12,108],settings:[12,198],notes:[12,288],calc:[12,378],taskmgr:[12,468],runbox:[105,18],recycle:[105,108],calendar:[105,198],paint:[105,288],media:[105,378],photos:[105,468],terminal:[198,18],weather:[198,108],spotify:[198,198],geforcenow:[198,288]};
- function keyFor(el){return el.dataset.app||el.getAttribute('data-app')||''}
- const savePos=()=>{let o={};I.querySelectorAll('.deskicon').forEach(e=>{let k=keyFor(e);if(k)o[k]=[parseInt(e.style.left)||0,parseInt(e.style.top)||0]});localStorage.setItem(POSKEY,JSON.stringify(o))};
- const loadPos=()=>{let o={};try{o=JSON.parse(localStorage.getItem(POSKEY)||'{}')}catch(e){} I.querySelectorAll('.deskicon').forEach((e,n)=>{let k=keyFor(e);let p=o[k]||defaultPos[k]||[12+(n%8)*92,18+Math.floor(n/8)*90];e.style.left=p[0]+'px';e.style.top=p[1]+'px'})};
- const appNames={explorer:'File Explorer',browser:'Browser',settings:'Settings',notes:'Notes',calc:'Calculator',taskmgr:'Task Manager',runbox:'Run',recycle:'Recycle Bin',calendar:'Calendar',paint:'Paint',media:'Media Player',photos:'Photos',terminal:'Terminal',weather:'Weather',spotify:'Spotify',geforcenow:'GeForce NOW'};
- I.querySelectorAll('.deskicon').forEach((e,n)=>{
-   let txt=(e.textContent||'').trim().toLowerCase();let k=Object.keys(appNames).find(x=>txt.includes(appNames[x].toLowerCase()));
-   if(k)e.dataset.app=k;
- });
- loadPos();
- let drag=null;
- I.addEventListener('pointerdown',e=>{let el=e.target.closest('.deskicon');if(!el||e.button!==0)return;let r=el.getBoundingClientRect();drag={el,x:e.clientX,y:e.clientY,ox:e.clientX-r.left,oy:e.clientY-r.top,moved:false};el.setPointerCapture?.(e.pointerId);});
- I.addEventListener('pointermove',e=>{if(!drag)return;let x=Math.max(4,Math.min(innerWidth-88,e.clientX-drag.ox)),y=Math.max(4,Math.min(innerHeight-65,e.clientY-drag.oy));if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>4)drag.moved=true;drag.el.style.left=x+'px';drag.el.style.top=y+'px';if(BIN&&drag.el!==BIN){let a=drag.el.getBoundingClientRect(),b=BIN.getBoundingClientRect(),hit=a.right>b.left&&a.left<b.right&&a.bottom>b.top&&a.top<b.bottom;BIN.classList.toggle('drop-ok',hit)}});
- I.addEventListener('pointerup',e=>{if(!drag)return;let el=drag.el,moved=drag.moved;BIN?.classList.remove('drop-ok');if(moved){let a=el.getBoundingClientRect(),b=BIN?.getBoundingClientRect();if(BIN&&el!==BIN&&b&&a.right>b.left&&a.left<b.right&&a.bottom>b.top&&a.top<b.bottom){let id=keyFor(el);if(id!=='recycle'){if(typeof addToTrash==='function')addToTrash(id,appNames[id]||id,'desktop');el.style.display='none';savePos();showToast((appNames[id]||'App')+' moved to Recycle Bin');}}savePos();}drag=null;});
- // Prevent accidental double-click after a drag.
- let suppress=false;I.addEventListener('pointerup',e=>{});I.addEventListener('dblclick',e=>{let el=e.target.closest('.deskicon');if(!el)return;openApp(keyFor(el))});
- // Make windows draggable from titlebar and focus them naturally.
- document.querySelectorAll('.window').forEach(w=>{
-   w.addEventListener('pointerdown',()=>{document.querySelectorAll('.window').forEach(x=>x.classList.remove('focused'));w.classList.add('focused');w.style.zIndex=++z;updateTaskStates?.()},{capture:true});
-   let bar=w.querySelector('.titlebar');if(!bar)return;
-   let md=null;
-   bar.addEventListener('dblclick',e=>{if(e.target.closest('button'))return;if(typeof maximize==='function')maximize(w.id)});
-   bar.addEventListener('pointerdown',e=>{if(e.target.closest('button')||w.classList.contains('maxed'))return;let r=w.getBoundingClientRect();md={x:e.clientX,y:e.clientY,l:r.left,t:r.top};bar.setPointerCapture?.(e.pointerId);});
-   bar.addEventListener('pointermove',e=>{if(!md)return;w.style.left=Math.max(0,Math.min(innerWidth-w.offsetWidth,e.clientX-md.x+md.l))+'px';w.style.top=Math.max(0,Math.min(innerHeight-48,w.offsetHeight?e.clientY-md.y+md.t:0))+'px'});
-   bar.addEventListener('pointerup',()=>{if(md){md=null;try{localStorage.setItem('winpos:'+w.id,JSON.stringify({left:w.offsetLeft,top:w.offsetTop}))}catch(e){}}});
-   try{let p=JSON.parse(localStorage.getItem('winpos:'+w.id)||'null');if(p&&!w.classList.contains('maxed')){w.style.left=p.left+'px';w.style.top=p.top+'px'}}catch(e){}
- });
- // Start menu gets the two flagship apps.
- let tg=document.querySelector('.tilegrid');if(tg){[['🟢','Spotify','spotify'],['🟩','GeForce NOW','geforcenow']].forEach(([ic,n,id])=>{if(!tg.querySelector('[data-start-app="'+id+'"]')){let b=document.createElement('div');b.className='tile';b.dataset.startApp=id;b.innerHTML=ic+'<br>'+n;b.onclick=()=>{openApp(id);toggleStart()};tg.appendChild(b)}})}
- // Add richer search results.
- const oldLive=window.liveSearch;window.liveSearch=function(v){if(!v){oldLive(v);return}let q=v.toLowerCase(),hits=Object.entries(appNames).filter(([id,n])=>n.toLowerCase().includes(q)||id.includes(q));let box=$('searchResults');box.innerHTML=hits.length?hits.map(([id,n])=>`<div class="searchResult" onclick="closeSearchPanel();openApp('${id}')">▣ ${n}<small style="display:block;opacity:.55;margin-left:20px">App</small></div>`).join(''):'<div style="padding:15px;color:#bbb">No results found.</div>';};
- // Keyboard shortcuts.
- document.addEventListener('keydown',e=>{
-   if(e.key==='Escape'){['startMenu','searchPanel','actionCenter','clockPanel','virtualView','taskbarContext','contextMenu'].forEach(id=>{let x=$(id);if(x)x.style.display='none'})}
-   if(e.ctrlKey&&e.shiftKey&&e.key.toLowerCase()==='escape'){e.preventDefault();openApp('taskmgr')}
-   if(e.metaKey&&e.key.toLowerCase()==='e'){e.preventDefault();openApp('explorer')}
-   if(e.metaKey&&e.key.toLowerCase()==='i'){e.preventDefault();openApp('settings')}
-   if(e.metaKey&&e.key.toLowerCase()==='r'){e.preventDefault();openApp('runbox')}
-   if(e.metaKey&&e.key.toLowerCase()==='d'){e.preventDefault();showDesktop()}
- });
- // Right-click desktop: richer menu and coordinates.
- D.addEventListener('contextmenu',e=>{if(e.target.closest('.window,#taskbar,#startMenu'))return;e.preventDefault();let m=$('contextMenu');if(!m)return;m.style.display='block';m.style.left=Math.min(e.clientX,innerWidth-215)+'px';m.style.top=Math.min(e.clientY,innerHeight-180)+'px'});
- document.addEventListener('click',e=>{if(!e.target.closest('#contextMenu')){let m=$('contextMenu');if(m)m.style.display='none'}});
- // Accent/theme persistence.
- let accent=localStorage.getItem('win10.accent');if(accent)document.documentElement.style.setProperty('--accent',accent);
- window.setAccent=function(c){document.documentElement.style.setProperty('--accent',c);localStorage.setItem('win10.accent',c);showToast('Accent color updated')};
- // Smooth toast state.
- let oldToast=window.showToast;window.showToast=function(msg){let t=$('toast');if(t){t.textContent=msg;t.style.display='block';t.classList.add('toast-show');clearTimeout(window.showToast.t);window.showToast.t=setTimeout(()=>{t.classList.remove('toast-show');setTimeout(()=>t.style.display='none',180)},1800)}else oldToast(msg)};
- // Re-apply after layout changes.
- window.addEventListener('resize',()=>{document.querySelectorAll('.window:not(.maxed)').forEach(w=>{if(w.offsetLeft+w.offsetWidth>innerWidth)w.style.left=Math.max(0,innerWidth-w.offsetWidth-8)+'px';if(w.offsetTop+w.offsetHeight>innerHeight-45)w.style.top=Math.max(0,innerHeight-w.offsetHeight-50)+'px'})});
- // Expose desktop reset for the context menu / settings.
- window.resetDesktopLayout=function(){localStorage.removeItem(POSKEY);loadPos();showToast('Desktop layout reset')};
+const $=s=>document.querySelector(s),E=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ST={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const R=document.documentElement,coarse=matchMedia('(pointer:coarse)'),dark=()=>R.dataset.theme?R.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;
+const WP=['radial-gradient(60% 80% at 25% 65%,#0a4bd8,transparent 62%),radial-gradient(50% 70% at 72% 35%,#8a4af0,transparent 62%),radial-gradient(45% 55% at 55% 95%,#00b7c3,transparent 70%),#0b1230','radial-gradient(70% 80% at 70% 30%,#ff7eb3,transparent 60%),radial-gradient(60% 70% at 20% 80%,#ffb86b,transparent 62%),#3a1c71','radial-gradient(70% 80% at 30% 30%,#43e97b,transparent 60%),radial-gradient(60% 70% at 80% 80%,#38f9d7,transparent 62%),#07302b','linear-gradient(160deg,#232526,#414345)'];
+const ACC=['#0067c0','#8764b8','#e3008c','#c42b1c','#107c10','#00b294','#ca5010','#5d5a58'];
+if(ST.get('w11.theme',''))R.dataset.theme=ST.get('w11.theme','');
+const setTheme=t=>{R.dataset.theme=t;ST.set('w11.theme',t)},setAcc=c=>{R.style.setProperty('--acc',c);ST.set('w11.acc',c)},setWP=i=>{$('#wall').style.setProperty('--wp',WP[i]);$('#lock').style.setProperty('--wp',WP[i]);ST.set('w11.wp',i)};
+setAcc(ST.get('w11.acc',ACC[0]));setWP(+ST.get('w11.wp',0)||0);
+const toast=t=>{const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',1800)};
+/* file system */
+let fs;try{fs=JSON.parse(ST.get('w11.fs','null'))}catch(e){}
+if(!fs||typeof fs!=='object')fs={Desktop:{},Documents:{'Welcome.txt':'Welcome to Windows 11 Web.\n\nTry Snap layouts: hover the maximize button on a window.'},Downloads:{},Pictures:{},Music:{},'Recycle Bin':{}};
+const save=()=>ST.set('w11.fs',JSON.stringify(fs)),node=p=>p.reduce((o,k)=>o&&o[k],fs),isD=v=>v&&typeof v==='object';
+const uniq=(n,k)=>{if(!(k in n))return k;let i=2;const b=k.replace(/(\.\w+)?$/,''),x=(k.match(/\.\w+$/)||[''])[0];while((b+' ('+i+')'+x) in n)i++;return b+' ('+i+')'+x};
+/* window manager */
+const wins={};let zc=10,act=null;const PIN=['files','browser','notepad','paint','calc','term','settings'];
+const vis=w=>w.e.style.display!=='none';
+function focus(w){act=w;w.e.style.zIndex=++zc;Object.values(wins).forEach(o=>o.e.classList.toggle('on',o===w));drawTask()}
+function show(w){w.e.style.display='';focus(w)}
+function minimize(w){w.e.style.display='none';if(act===w)act=null;const t=Object.values(wins).filter(vis).sort((a,b)=>b.e.style.zIndex-a.e.style.zIndex)[0];if(t)focus(t);else drawTask()}
+function close(w){w.e.remove();delete wins[w.id];if(act===w)act=null;drawTask()}
+function maxToggle(w){if(w.max){w.max=false;w.e.classList.remove('max');if(w.prev)Object.assign(w.e.style,w.prev)}else{if(!w.snap)w.prev=pick(w.e);w.max=true;w.snap=false;w.e.classList.add('max')}focus(w)}
+const pick=e=>({left:e.style.left,top:e.style.top,width:e.style.width,height:e.style.height});
+function snapTo(w,z){const D=$('#desk').getBoundingClientRect(),g=4;if(!w.max&&!w.snap)w.prev=pick(w.e);w.max=false;w.snap=true;w.e.classList.remove('max');
+Object.assign(w.e.style,{left:z[0]*D.width+g+'px',top:z[1]*D.height+g+'px',width:z[2]*D.width-2*g+'px',height:z[3]*D.height-2*g+'px'});focus(w)}
+function open(id,arg){let w=wins[id];if(w){show(w);if(arg&&w.onarg)w.onarg(arg);return w}
+const a=APPS[id],e=E('div','win'),D=$('#desk').getBoundingClientRect(),W=Math.min(a.w,innerWidth-16),H=Math.min(a.h,D.height-16),n=Object.keys(wins).length%6*28,small=innerWidth<640;
+e.style.cssText=`width:${W}px;height:${H}px;left:${small?8:Math.max(4,Math.min(80+n,D.width-W-8))}px;top:${small?8:Math.max(4,Math.min(24+n,D.height-H-8))}px`;
+e.innerHTML=`<div class="tb"><span>${a.i}</span><span class="tt">${a.n}</span><span class="tc"><button class="bm">—</button><button class="bx">☐</button><button class="bc">✕</button></span></div><div class="bd"></div><i class="rz"></i>`;
+$('#desk').append(e);w={id,e,bd:e.querySelector('.bd'),tt:e.querySelector('.tt'),max:false,snap:false,prev:null};wins[id]=w;
+const tb=e.querySelector('.tb'),bx=e.querySelector('.bx');
+e.querySelector('.bm').onclick=()=>minimize(w);e.querySelector('.bc').onclick=()=>close(w);bx.onclick=()=>{hideFly();maxToggle(w)};tb.ondblclick=ev=>{if(!ev.target.closest('button'))maxToggle(w)};
+e.addEventListener('pointerdown',()=>{if(act!==w)focus(w)},true);
+bx.onmouseenter=()=>{if(matchMedia('(hover:hover)').matches)showFly(w,bx)};bx.onmouseleave=()=>flyOut();
+tb.onpointerdown=ev=>{if(ev.target.closest('button')||w.max)return;const sx=ev.clientX-e.offsetLeft,sy=ev.clientY-e.offsetTop;tb.setPointerCapture(ev.pointerId);
+tb.onpointermove=m=>{e.style.left=Math.max(-W+90,Math.min(innerWidth-90,m.clientX-sx))+'px';e.style.top=Math.max(0,Math.min(D.height-40,m.clientY-sy))+'px';w.snap=false};
+tb.onpointerup=u=>{tb.onpointermove=tb.onpointerup=null;if(u.clientY<=4)maxToggle(w);else if(u.clientX<=4)snapTo(w,[0,0,.5,1]);else if(u.clientX>=innerWidth-4)snapTo(w,[.5,0,.5,1])}};
+e.querySelector('.rz').onpointerdown=ev=>{ev.stopPropagation();ev.preventDefault();const g=ev.target,r=e.getBoundingClientRect();g.setPointerCapture(ev.pointerId);g.onpointermove=m=>{e.style.width=Math.max(260,r.width+m.clientX-ev.clientX)+'px';e.style.height=Math.max(160,r.height+m.clientY-ev.clientY)+'px'};g.onpointerup=()=>g.onpointermove=g.onpointerup=null};
+a.r(w,arg);focus(w);closePops();return w}
+/* snap layouts */
+const SN=[[[0,0,.5,1],[.5,0,.5,1]],[[0,0,.66,1],[.66,0,.34,1]],[[0,0,.5,.5],[.5,0,.5,.5],[0,.5,1,.5]],[[0,0,.34,1],[.34,0,.32,1],[.66,0,.34,1]]];let fw=null,ft=0;const fly=$('#fly');
+function showFly(w,b){clearTimeout(ft);fw=w;fly.innerHTML=SN.map((l,i)=>`<div class="lay">${l.map((z,j)=>`<b data-l="${i}" data-z="${j}" style="left:${z[0]*100}%;top:${z[1]*100}%;width:${z[2]*100}%;height:${z[3]*100}%"></b>`).join('')}</div>`).join('');const r=b.getBoundingClientRect();fly.classList.add('on');fly.style.left=Math.max(4,Math.min(innerWidth-fly.offsetWidth-4,r.left-90))+'px';fly.style.top=r.bottom+4+'px'}
+const hideFly=()=>fly.classList.remove('on'),flyOut=()=>{clearTimeout(ft);ft=setTimeout(hideFly,250)};
+fly.onmouseenter=()=>clearTimeout(ft);fly.onmouseleave=flyOut;fly.onclick=e=>{const b=e.target.closest('b');if(b&&fw){snapTo(fw,SN[b.dataset.l][b.dataset.z]);hideFly()}};
+/* taskbar */
+const APPLIST=()=>Object.keys(APPS);
+function drawTask(){const p=$('#pins');p.querySelectorAll('[data-id]').forEach(x=>x.remove());const ids=[...PIN,...Object.keys(wins).filter(k=>!PIN.includes(k))];
+ids.forEach(id=>{const b=E('button','tbn'+(wins[id]?' run':'')+(wins[id]&&act===wins[id]&&vis(wins[id])?' on':''),APPS[id].i);b.dataset.id=id;b.title=APPS[id].n;p.append(b)})}
+$('#pins').onclick=e=>{const b=e.target.closest('[data-id]');if(!b)return;const id=b.dataset.id,w=wins[id];if(!w)open(id);else if(!vis(w))show(w);else if(act===w)minimize(w);else focus(w)};
+/* pops */
+const pops=['#start','#qs','#cal','#ctx'];
+function closePops(except){pops.forEach(s=>{if(s!==except)$(s).classList.remove('on')});$('#pw').classList.remove('on')}
+function togglePop(s,fn){const e=$(s),was=e.classList.contains('on');closePops();if(!was){if(fn)fn();e.classList.add('on')}}
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('.pop,#task,#pw'))closePops();if(!e.target.closest('#fly,.bx'))hideFly()});
+$('#sb').onclick=()=>togglePop('#start',()=>{$('#q').value='';drawStart('');if(innerWidth>700)setTimeout(()=>$('#q').focus(),30)});
+$('#sr').onclick=()=>{togglePop('#start',()=>{$('#q').value='';drawStart('')});setTimeout(()=>$('#q').focus(),30)};
+function files(o=fs,p=[],a=[]){Object.keys(o).forEach(k=>{if(k==='Recycle Bin')return;isD(o[k])?files(o[k],[...p,k],a):/^data:image\//.test(o[k])||a.push({n:k,p:[...p,k]})});return a}
+function drawStart(q){const sc=$('#sc');q=q.trim().toLowerCase();
+if(q){const A=APPLIST().filter(k=>APPS[k].n.toLowerCase().includes(q)),F=files().filter(f=>f.n.toLowerCase().includes(q)).slice(0,8);
+sc.innerHTML='<div class="sh">Best match</div>'+(A.map(k=>`<div class="rc" data-a="${k}"><span>${APPS[k].i}</span>${APPS[k].n}</div>`).join('')+F.map(f=>`<div class="rc" data-f="${esc(f.p.join('/'))}"><span>📄</span><div>${esc(f.n)}<small>${esc(f.p.slice(0,-1).join(' › ')||'Home')}</small></div></div>`).join('')||'<div class="rc">No results found.</div>');return}
+sc.innerHTML='<div class="sh">Pinned</div><div class="pg">'+APPLIST().map(k=>`<button class="ap" data-a="${k}"><b>${APPS[k].i}</b>${APPS[k].n}</button>`).join('')+'</div><div class="sh" style="margin-top:18px">Recommended</div>'+(files().slice(0,4).map(f=>`<div class="rc" data-f="${esc(f.p.join('/'))}"><span>📄</span><div>${esc(f.n)}<small>${esc(f.p.slice(0,-1).join(' › '))}</small></div></div>`).join('')||'<div class="rc" style="color:var(--mut)">Files you create will show up here.</div>')}
+$('#q').oninput=e=>drawStart(e.target.value);$('#q').onkeydown=e=>{if(e.key==='Enter'){const f=$('#sc [data-a],#sc [data-f]');if(f)f.click()}};
+$('#sc').onclick=e=>{const a=e.target.closest('[data-a]'),f=e.target.closest('[data-f]');if(a)open(a.dataset.a);else if(f)open('notepad',{path:f.dataset.f.split('/')})};
+$('#pb').onclick=()=>$('#pw').classList.toggle('on');
+$('#pw').onclick=e=>{const b=e.target.closest('button');if(!b)return;closePops();if(b.dataset.p==='lock')lock();else restart()};
+function boot(ms){$('#boot').classList.add('on');setTimeout(()=>$('#boot').classList.remove('on'),ms)}
+function restart(){Object.values(wins).forEach(close);boot(1800)}
+function lock(){tickLock();$('#lock').classList.add('on')}
+$('#lock').onclick=()=>$('#lock').classList.remove('on');document.addEventListener('keydown',e=>{if($('#lock').classList.contains('on'))$('#lock').classList.remove('on')});
+function tickLock(){const d=new Date();$('#lt').textContent=d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});$('#ld').textContent=d.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'})}
+/* quick settings */
+let Q;try{Q=JSON.parse(ST.get('w11.q','null'))}catch(e){}Q=Q||{wifi:1,bt:1,air:0,sav:0,night:0,bri:100,vol:60};
+const saveQ=()=>ST.set('w11.q',JSON.stringify(Q)),applyQ=()=>{document.body.style.filter=`brightness(${Q.bri/100}) sepia(${Q.night?.3:0})`;$('#sys').textContent=(Q.air?'✈️':Q.wifi?'📶':'⚠️')+' '+(Q.vol?'🔊':'🔇')+' '+(Q.sav?'🔋':'🔌')};
+function drawQS(){const T=[['wifi','📶','Wi‑Fi'],['bt','🔵','Bluetooth'],['air','✈️','Airplane'],['sav','🔋','Saver'],['night','🌙','Night light'],['dark','◐','Dark mode']];
+$('#qs').innerHTML='<div class="qg">'+T.map(t=>`<button class="qt${(t[0]==='dark'?dark():Q[t[0]])?' on':''}" data-q="${t[0]}"><b>${t[1]}</b>${t[2]}</button>`).join('')+`</div><div class="sl">☀️<input type="range" min="40" max="100" value="${Q.bri}" data-s="bri"></div><div class="sl">🔊<input type="range" min="0" max="100" value="${Q.vol}" data-s="vol"></div>`}
+$('#qs').onclick=e=>{const b=e.target.closest('[data-q]');if(!b)return;const k=b.dataset.q;if(k==='dark')setTheme(dark()?'light':'dark');else{Q[k]=Q[k]?0:1;if(k==='air'&&Q.air)Q.wifi=Q.bt=0}saveQ();applyQ();drawQS()};
+$('#qs').oninput=e=>{const k=e.target.dataset.s;if(k){Q[k]=+e.target.value;saveQ();applyQ()}};
+$('#sysb').onclick=()=>togglePop('#qs',drawQS);
+/* calendar */
+let cmo=0;function drawCal(){const n=new Date(),b=new Date(n.getFullYear(),n.getMonth()+cmo,1),y=b.getFullYear(),m=b.getMonth();let h=['S','M','T','W','T','F','S'].map(x=>`<div class="h">${x}</div>`).join('')+'<div></div>'.repeat(b.getDay());
+for(let d=1;d<=new Date(y,m+1,0).getDate();d++)h+=`<div class="${cmo===0&&d===n.getDate()?'t':''}">${d}</div>`;
+$('#cal').innerHTML=`<div style="font-size:28px">${n.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}</div><div style="color:var(--mut)">${n.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'})}</div><div class="cn"><button data-c="-1">‹</button><b>${b.toLocaleString([],{month:'long',year:'numeric'})}</b><button data-c="1">›</button></div><div class="cg">${h}</div><div style="color:var(--mut);text-align:center">No new notifications</div>`}
+$('#cal').onclick=e=>{const b=e.target.closest('[data-c]');if(b){cmo+=+b.dataset.c;drawCal()}};
+$('#clk').onclick=()=>togglePop('#cal',()=>{cmo=0;drawCal()});
+const tick=()=>{const d=new Date();$('#clk').innerHTML=d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})+'<br>'+d.toLocaleDateString()};tick();setInterval(tick,15000);
+/* desktop */
+[['files','This PC','💻',10],['recycle','Recycle Bin','🗑️',100]].forEach(([id,n,i,t])=>{const d=E('div','di',`<b>${i}</b>${n}`);d.style.top=t+'px';d.onclick=()=>{document.querySelectorAll('.di').forEach(x=>x.classList.toggle('s',x===d));if(coarse.matches)go()};d.ondblclick=()=>{if(!coarse.matches)go()};const go=()=>open('files',id==='recycle'?{go:['Recycle Bin']}:null);$('#desk').append(d)});
+$('#desk').addEventListener('pointerdown',e=>{if(e.target.id==='desk')document.querySelectorAll('.di').forEach(x=>x.classList.remove('s'))});
+document.addEventListener('contextmenu',e=>{if(e.target.closest('.win,#task,.pop'))return;e.preventDefault();closePops();const c=$('#ctx');c.innerHTML='<div data-x="r">🔄 Refresh</div><div data-x="f">📁 New folder</div><div data-x="p">🎨 Personalize</div><div data-x="s">⚙️ Display settings</div>';c.classList.add('on');c.style.left=Math.min(e.clientX,innerWidth-200)+'px';c.style.top=Math.min(e.clientY,innerHeight-190)+'px'});
+$('#ctx').onclick=e=>{const x=e.target.dataset.x;closePops();if(x==='r')toast('Desktop refreshed');else if(x==='f'){const n=fs.Desktop;n[uniq(n,'New folder')]={};save();toast('Folder created on Desktop')}else if(x)open('settings')};
+/* apps */
+const APPS={
+files:{n:'File Explorer',i:'📁',w:720,h:460,r(w,arg){let p=[],sel=null;const bd=w.bd;bd.innerHTML='<div class="bar"><button data-a="up">↑</button><button data-a="nf">＋ Folder</button><button data-a="nt">＋ Text file</button><button data-a="rn">Rename</button><button data-a="dl">Delete</button></div><div class="fx"><div class="fsb"></div><div class="fm"><div class="bar" id="crumb" style="border:0;color:var(--mut)"></div><div class="fl"></div></div></div>';
+const sb=bd.querySelector('.fsb'),fl=bd.querySelector('.fl'),cr=bd.querySelector('#crumb');sb.innerHTML='<div data-p="">🏠 Home</div>'+['Desktop','Documents','Downloads','Pictures','Music','Recycle Bin'].map(k=>`<div data-p="${k}">${k==='Recycle Bin'?'🗑️':'📁'} ${k}</div>`).join('');
+const draw=()=>{let n=node(p);if(!isD(n)){p=[];n=fs}sel=null;const ks=Object.keys(n).sort((a,b)=>(isD(n[b])-isD(n[a]))||a.localeCompare(b));cr.textContent=['Home',...p].join(' › ');w.tt.textContent=p[p.length-1]||'Home';fl.innerHTML=ks.map(k=>`<div class="fi" data-k="${esc(k)}"><span style="font-size:22px">${isD(n[k])?'📁':/^data:image/.test(n[k])?'🖼️':'📄'}</span>${esc(k)}</div>`).join('')||'<div style="color:var(--mut);padding:12px">This folder is empty.</div>'};
+const openIt=k=>{const n=node(p);if(isD(n[k])){p.push(k);draw()}else if(p[0]==='Pictures'&&/^data:image/.test(n[k]))open('photos',{name:k});else open('notepad',{path:[...p,k]})};
+fl.onclick=e=>{const f=e.target.closest('.fi');if(!f)return;sel=f.dataset.k;fl.querySelectorAll('.fi').forEach(x=>x.classList.toggle('s',x===f));if(coarse.matches)openIt(sel)};
+fl.ondblclick=e=>{const f=e.target.closest('.fi');if(f&&!coarse.matches)openIt(f.dataset.k)};
+sb.onclick=e=>{const d=e.target.closest('[data-p]');if(d){p=d.dataset.p?[d.dataset.p]:[];draw()}};
+bd.querySelector('.bar').onclick=e=>{const a=e.target.dataset.a;if(!a)return;const n=node(p);
+if(a==='up'){p.pop();draw()}
+else if(a==='nf'||a==='nt'){const nm=prompt(a==='nf'?'Folder name:':'File name:',a==='nf'?'New folder':'New file.txt');if(nm){const k=uniq(n,nm.replace(/[\/\\]/g,'-'));n[k]=a==='nf'?{}:'';save();draw()}}
+else if(!sel)toast('Select an item first');
+else if(a==='rn'){const nm=prompt('Rename to:',sel);if(nm&&nm!==sel){const k=uniq(n,nm.replace(/[\/\\]/g,'-'));n[k]=n[sel];delete n[sel];save();draw()}}
+else if(a==='dl'){if(p[0]==='Recycle Bin'){if(confirm('Permanently delete '+sel+'?'))delete n[sel]}else{const b=fs['Recycle Bin'];b[uniq(b,sel)]=n[sel];delete n[sel];toast('Moved to Recycle Bin')}save();draw()}};
+w.onarg=a=>{if(a&&a.go){p=a.go;draw()}};if(arg&&arg.go)p=arg.go;draw()}},
+notepad:{n:'Notepad',i:'📝',w:560,h:380,r(w,arg){let cur=null;const bd=w.bd;bd.innerHTML='<div class="bar"><button data-a="new">New</button><button data-a="save">Save</button></div><textarea class="np" placeholder="Start typing…"></textarea>';const ta=bd.querySelector('textarea');
+const load=p=>{const n=node(p.slice(0,-1)),v=n&&n[p[p.length-1]];if(typeof v==='string'){cur=p;ta.value=v;w.tt.textContent=p[p.length-1]+' — Notepad'}};
+w.onarg=a=>load(a.path);if(arg&&arg.path)load(arg.path);else ta.value=ST.get('w11.note','');
+ta.oninput=()=>{if(!cur)ST.set('w11.note',ta.value)};
+bd.querySelector('.bar').onclick=e=>{const a=e.target.dataset.a;if(a==='new'){cur=null;ta.value='';ST.set('w11.note','');w.tt.textContent='Untitled — Notepad'}
+else if(a==='save'){if(!cur){const nm=prompt('Save as:','Note.txt');if(!nm)return;const d=fs.Documents,k=uniq(d,/\.\w+$/.test(nm)?nm:nm+'.txt');cur=['Documents',k];w.tt.textContent=k+' — Notepad'}const n=node(cur.slice(0,-1));n[cur[cur.length-1]]=ta.value;save();toast('Saved')}}}},
+calc:{n:'Calculator',i:'🧮',w:320,h:460,r(w){let cur='0',acc=null,op=null,fresh=true;const bd=w.bd,K=['%','C','⌫','÷','7','8','9','×','4','5','6','−','1','2','3','+','±','0','.','='];
+bd.innerHTML='<div class="cd"><small></small><div>0</div></div><div class="ck">'+K.map(k=>`<button class="${k==='='?'e':''}">${k}</button>`).join('')+'</div>';
+const fmt=n=>String(+n.toPrecision(12)),show=()=>{bd.querySelector('.cd div').textContent=cur;bd.querySelector('small').textContent=acc!=null&&op?fmt(acc)+' '+op:''};
+const f=(a,o,b)=>o==='+'?a+b:o==='−'?a-b:o==='×'?a*b:o==='÷'?a/b:b;
+const press=k=>{if(cur==='Error'&&k!=='C')return;
+if(/\d/.test(k)){cur=fresh||cur==='0'?k:cur+k;fresh=false}
+else if(k==='.'){if(fresh){cur='0.';fresh=false}else if(!cur.includes('.'))cur+='.'}
+else if(k==='C'){cur='0';acc=op=null;fresh=true}
+else if(k==='⌫'){cur=cur.length>1&&!fresh?cur.slice(0,-1):'0'}
+else if(k==='±'){if(cur!=='0')cur=cur[0]==='-'?cur.slice(1):'-'+cur}
+else if(k==='%')cur=fmt(parseFloat(cur)/100);
+else{const v=parseFloat(cur);if(op&&!fresh){const r=f(acc,op,v);if(!isFinite(r)){cur='Cannot divide by zero';acc=op=null;fresh=true;show();return}acc=r;cur=fmt(r)}else acc=v;
+if(k==='='){op=null;acc=null}else op=k;fresh=true}show()};
+bd.querySelector('.ck').onclick=e=>{if(e.target.tagName==='BUTTON')press(e.target.textContent)};
+w.key=e=>{const m={'*':'×','/':'÷','-':'−','Enter':'=','Backspace':'⌫','Escape':'C'},k=m[e.key]||e.key;if(K.includes(k)){e.preventDefault();press(k)}}}},
+term:{n:'Terminal',i:'⌨️',w:620,h:380,r(w){let cwd=['Documents'],hist=[],hi=0;const bd=w.bd;bd.innerHTML='<div class="tm">Windows Terminal — type <b>help</b></div><input class="ti2" autocomplete="off" spellcheck="false">';const out=bd.querySelector('.tm'),inp=bd.querySelector('input');
+const P=s=>{out.insertAdjacentHTML('beforeend','<div>'+esc(s)+'</div>');out.scrollTop=out.scrollHeight},pr=()=>'PS C:\\Users\\You'+(cwd.length?'\\'+cwd.join('\\'):'')+'>';
+const res=a=>{let p=/^[\\\/]/.test(a)?[]:[...cwd];for(const s of a.split(/[\\\/]/)){if(!s||s==='.')continue;if(s==='..'){p.pop();continue}const n=node(p);p.push((isD(n)&&Object.keys(n).find(k=>k.toLowerCase()===s.toLowerCase()))||s)}return p};
+const par=p=>node(p.slice(0,-1)),lst=p=>p[p.length-1];
+const M={files:'files',explorer:'files',notepad:'notepad',calc:'calc',terminal:'term',settings:'settings',browser:'browser',paint:'paint',photos:'photos',taskmgr:'taskmgr',clock:'clock',mines:'mines'};
+const C={help:()=>P('help ls cd pwd cat mkdir touch rm echo [text] > file clear date whoami neofetch open <app|file>'),
+ls:a=>{const n=node(a[0]?res(a[0]):cwd);P(!isD(n)?'Cannot find path.':Object.keys(n).sort().map(k=>(isD(n[k])?'<DIR>  ':'       ')+k).join('\n')||'(empty)')},
+pwd:()=>P(pr().slice(0,-1)),cd:a=>{const p=res(a[0]||'');if(isD(node(p)))cwd=p;else P('Cannot find path.');inp.placeholder=pr()},
+cat:a=>{const p=res(a[0]||''),v=par(p)&&par(p)[lst(p)];P(typeof v==='string'?(/^data:image/.test(v)?'[image file]':v||'(empty file)'):'File not found.')},
+mkdir:a=>{const p=res(a[0]||''),n=par(p);if(a[0]&&isD(n)&&!(lst(p) in n)){n[lst(p)]={};save()}else P('Cannot create folder.')},
+touch:a=>{const p=res(a[0]||''),n=par(p);if(a[0]&&isD(n)){if(!(lst(p) in n)){n[lst(p)]='';save()}}else P('Cannot create file.')},
+rm:a=>{const p=res(a[0]||''),n=par(p),k=lst(p);if(a[0]&&isD(n)&&k in n){const b=fs['Recycle Bin'];b[uniq(b,k)]=n[k];delete n[k];save();P('Moved to Recycle Bin.')}else P('Not found.')},
+clear:()=>{out.innerHTML=''},date:()=>P(new Date().toLocaleString()),whoami:()=>P('windows11\\you'),
+neofetch:()=>P('  ▄▄▄▄▄ ▄▄▄▄▄   you@windows11\n  █████ █████   OS: Windows 11 Web\n  ▀▀▀▀▀ ▀▀▀▀▀   Apps: '+APPLIST().length+'\n  ▄▄▄▄▄ ▄▄▄▄▄   Theme: '+(dark()?'Dark':'Light')+'\n  █████ █████   Screen: '+innerWidth+'x'+innerHeight+'\n  ▀▀▀▀▀ ▀▀▀▀▀'),
+open:a=>{const k=(a[0]||'').toLowerCase();if(M[k]){open(M[k]);return}const p=res(a[0]||''),v=par(p)&&par(p)[lst(p)];if(typeof v==='string')open('notepad',{path:p});else P('Nothing to open. Try: open notepad')}};C.dir=C.ls;C.cls=C.clear;C.type=C.cat;
+const run=v=>{const m=v.match(/^echo\s+(.*?)\s*>\s*(\S+)$/i);if(m){const p=res(m[2]),n=par(p);if(isD(n)){n[lst(p)]=m[1].replace(/^"|"$/g,'');save()}else P('Cannot write file.');return}
+const t=(v.match(/"[^"]*"|\S+/g)||[]).map(x=>x.replace(/^"|"$/g,'')),c=(t.shift()||'').toLowerCase();if(c==='echo')P(t.join(' '));else if(C[c])C[c](t);else P("'"+c+"' is not recognized. Type help.")};
+inp.placeholder=pr();inp.onkeydown=e=>{if(e.key==='Enter'){const v=inp.value.trim();inp.value='';if(!v)return;P(pr()+' '+v);hist.push(v);hi=hist.length;run(v)}else if(e.key==='ArrowUp'){e.preventDefault();if(hi>0)inp.value=hist[--hi]}else if(e.key==='ArrowDown'){e.preventDefault();inp.value=hi<hist.length-1?hist[++hi]:(hi=hist.length,'')}};setTimeout(()=>inp.focus(),50)}},
+settings:{n:'Settings',i:'⚙️',w:560,h:480,r(w){const bd=w.bd;const draw=()=>{bd.innerHTML=`<div class="st"><h3 style="margin-top:0">Personalization</h3><div class="sw"><button class="bt" data-t="light">☀️ Light</button><button class="bt" data-t="dark">🌙 Dark</button></div><h3>Accent color</h3><div class="sw">${ACC.map(c=>`<i data-c="${c}" style="background:${c}" class="${c===ST.get('w11.acc',ACC[0])?'on':''}"></i>`).join('')}</div><h3>Background</h3><div class="sw">${WP.map((g,i)=>`<i class="w${i===(+ST.get('w11.wp',0)||0)?' on':''}" data-w="${i}" style="background:${g.replace(/"/g,'')}"></i>`).join('')}</div><h3>Taskbar alignment</h3><div class="sw"><button class="bt" data-al="c">Center</button><button class="bt" data-al="l">Left</button></div><h3>System</h3><div style="color:var(--mut)">Windows 11 Web · ${APPLIST().length} apps · files and settings are saved in this browser</div><p><button class="bt" data-r="1">Reset this PC</button></p></div>`};draw();
+bd.onclick=e=>{const d=e.target.dataset;if(d.t){setTheme(d.t);drawQS()}else if(d.c)setAcc(d.c);else if(d.w!=null)setWP(+d.w);else if(d.al){$('#task').classList.toggle('l',d.al==='l');document.body.classList.toggle('l',d.al==='l');ST.set('w11.al',d.al)}else if(d.r&&confirm('Erase all files and settings on this virtual PC?')){try{localStorage.clear()}catch(x){}location.reload()}draw()}}}
+};
+const J=(k,d)=>{try{return JSON.parse(ST.get(k,''))||d}catch(e){return d}};
+Object.assign(APPS,{
+browser:{n:'Browser',i:'🌐',w:760,h:500,r(w){const bd=w.bd;let H=J('w11.bh',[]),B=J('w11.bm',['https://duckduckgo.com','https://en.wikipedia.org','https://news.ycombinator.com']),st=['about:home'],sp=0;
+bd.innerHTML='<div class="bar"><button data-a="b">←</button><button data-a="f">→</button><button data-a="h">⌂</button><input class="bi" style="flex:1;min-width:120px;padding:6px 12px;border:1px solid var(--ln);border-radius:16px;background:var(--card);outline:0" placeholder="Search or enter address"><button data-a="s" title="Bookmark">☆</button><button data-a="p" title="Bookmarks and history">☰</button></div><div class="bw" style="flex:1;overflow:auto;padding:24px;user-select:text"></div>';
+const bi=bd.querySelector('.bi'),bw=bd.querySelector('.bw'),host=u=>{try{return new URL(u).hostname}catch(e){return u}},lk=u=>`<a class="bt" style="display:inline-block;text-decoration:none;margin:4px" href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(host(u))}</a>`;
+const norm=v=>{v=v.trim();if(!v)return'about:home';if(/^about:/.test(v))return v;if(/^https?:\/\//i.test(v))return v;if(/^[\w-]+(\.[\w-]+)+(\/\S*)?$/.test(v))return'https://'+v;return'https://duckduckgo.com/?q='+encodeURIComponent(v)};
+const saveH=()=>{ST.set('w11.bh',JSON.stringify(H.slice(-100)));ST.set('w11.bm',JSON.stringify(B))};
+const draw=()=>{const u=st[sp];bi.value=u==='about:home'?'':u;w.tt.textContent=(u==='about:home'?'New tab':host(u))+' — Browser';
+if(u==='about:home')bw.innerHTML='<h2 style="font-weight:400">Search the web</h2><p style="color:var(--mut)">Type in the address bar. Sites open in a new browser tab.</p><div>'+B.map(lk).join('')+'</div>';
+else if(u==='about:history')bw.innerHTML='<h3>History</h3>'+(H.slice().reverse().map(x=>lk(x)).join('<br>')||'<span style="color:var(--mut)">Nothing here yet.</span>')+'<p><button class="bt" data-a="ch">Clear history</button></p>';
+else if(u==='about:bookmarks')bw.innerHTML='<h3>Bookmarks</h3>'+(B.map((x,i)=>`<div>${lk(x)} <button class="bt" data-d="${i}">Remove</button></div>`).join('')||'<span style="color:var(--mut)">No bookmarks yet. Press ☆ on a page.</span>');
+else bw.innerHTML=`<h2 style="font-weight:400">${esc(host(u))}</h2><p style="color:var(--mut);max-width:520px">Browsers don’t let other websites load inside this page, so this link opens in a new tab.</p><p>${lk(u).replace('>'+esc(host(u))+'<','>Open '+esc(host(u))+' ↗<')}</p><p style="color:var(--mut)">${esc(u)}</p>`;
+bd.querySelector('[data-a=s]').textContent=B.includes(u)?'★':'☆'};
+const go=v=>{const u=norm(v);st=st.slice(0,sp+1);st.push(u);sp++;if(/^https?:/.test(u)&&H[H.length-1]!==u){H.push(u);saveH()}draw()};
+bi.onkeydown=e=>{if(e.key==='Enter')go(bi.value)};
+bd.onclick=e=>{const t=e.target,a=t.dataset.a;if(a==='b'&&sp>0){sp--;draw()}else if(a==='f'&&sp<st.length-1){sp++;draw()}else if(a==='h')go('about:home');else if(a==='p')go(st[sp]==='about:bookmarks'?'about:history':'about:bookmarks');
+else if(a==='s'&&/^https?:/.test(st[sp])){const i=B.indexOf(st[sp]);if(i<0)B.push(st[sp]);else B.splice(i,1);saveH();draw()}else if(a==='ch'){H=[];saveH();draw()}else if(t.dataset.d!=null){B.splice(+t.dataset.d,1);saveH();draw()}};
+draw();setTimeout(()=>bi.focus(),60)}},
+paint:{n:'Paint',i:'🎨',w:620,h:440,r(w){const bd=w.bd;bd.innerHTML='<div class="bar" id="ptb"></div><div id="pwrap" style="flex:1;min-height:0;overflow:auto;background:#fff"><canvas style="display:block;touch-action:none;cursor:crosshair"></canvas></div>';const tb=bd.querySelector('#ptb'),c=bd.querySelector('canvas'),x=c.getContext('2d',{willReadFrequently:true}),wr=bd.querySelector('#pwrap');
+let tool='pen',col='#000000',size=4,d=0,sx=0,sy=0,base,undo=[];
+tb.innerHTML=[['pen','✏️'],['eraser','🧽'],['line','／'],['rect','▭'],['oval','◯'],['fill','🪣']].map(t=>`<button data-t="${t[0]}" title="${t[0]}">${t[1]}</button>`).join('')+'<input type="color" value="#000000" data-k="col"><input type="range" min="1" max="40" value="4" style="width:80px" data-k="sz"><button data-a="un">↶</button><button data-a="cl">Clear</button><button data-a="sv">Save</button>';
+const mark=()=>tb.querySelectorAll('[data-t]').forEach(b=>b.style.outline=b.dataset.t===tool?'2px solid var(--acc)':'');mark();
+const snap=()=>{undo.push(x.getImageData(0,0,c.width,c.height));if(undo.length>25)undo.shift()};
+tb.onclick=e=>{const b=e.target,a=b.dataset.a;if(b.dataset.t){tool=b.dataset.t;mark()}else if(a==='un'){const q=undo.pop();if(q)x.putImageData(q,0,0)}else if(a==='cl'){snap();x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height)}else if(a==='sv'){fs.Pictures=fs.Pictures||{};const k=uniq(fs.Pictures,'Paint '+new Date().toLocaleDateString().replace(/[\/\\]/g,'-')+' '+new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}).replace(/:/g,'.')+'.png');fs.Pictures[k]=c.toDataURL('image/png');save();toast((ST.get('w11.fs','').includes(k)?'Saved to Pictures':'Saved for this session only (storage is full)'))}};
+tb.oninput=e=>{if(e.target.dataset.k==='col')col=e.target.value;else if(e.target.dataset.k==='sz')size=+e.target.value};
+const fit=()=>{const W=Math.max(c.width,wr.clientWidth,300),H=Math.max(c.height,wr.clientHeight,250);if(W===c.width&&H===c.height)return;const o=c.width?x.getImageData(0,0,c.width,c.height):null;c.width=W;c.height=H;x.fillStyle='#fff';x.fillRect(0,0,W,H);if(o)x.putImageData(o,0,0)};
+new ResizeObserver(fit).observe(wr);fit();
+const pos=e=>{const r=c.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]},st=()=>{x.lineCap=x.lineJoin='round';x.lineWidth=size;x.strokeStyle=x.fillStyle=tool==='eraser'?'#fff':col};
+const flood=(px,py)=>{const W=c.width,H=c.height;if(px<0||py<0||px>=W||py>=H)return;const im=x.getImageData(0,0,W,H),u=new Uint32Array(im.data.buffer),t=document.createElement('canvas').getContext('2d');t.fillStyle=col;t.fillRect(0,0,1,1);const q=new Uint32Array(t.getImageData(0,0,1,1).data.buffer)[0],o=u[py*W+px];if(o===q)return;const s=[px+py*W];while(s.length){const i=s.pop(),cx=i%W,cy=(i-cx)/W;if(u[i]!==o)continue;let l=cx,r=cx;while(l>0&&u[cy*W+l-1]===o)l--;while(r<W-1&&u[cy*W+r+1]===o)r++;for(let k=l;k<=r;k++){u[cy*W+k]=q;if(cy>0&&u[(cy-1)*W+k]===o)s.push((cy-1)*W+k);if(cy<H-1&&u[(cy+1)*W+k]===o)s.push((cy+1)*W+k)}}x.putImageData(im,0,0)};
+c.onpointerdown=e=>{e.preventDefault();c.setPointerCapture(e.pointerId);[sx,sy]=pos(e);snap();if(tool==='fill'){flood(Math.round(sx),Math.round(sy));return}d=1;st();base=x.getImageData(0,0,c.width,c.height);x.beginPath();x.moveTo(sx,sy);x.lineTo(sx+.01,sy);x.stroke()};
+c.onpointermove=e=>{if(!d)return;const[px,py]=pos(e);st();if(tool==='pen'||tool==='eraser'){x.lineTo(px,py);x.stroke();return}x.putImageData(base,0,0);x.beginPath();if(tool==='line'){x.moveTo(sx,sy);x.lineTo(px,py)}else if(tool==='rect')x.rect(sx,sy,px-sx,py-sy);else x.ellipse((sx+px)/2,(sy+py)/2,Math.abs(px-sx)/2,Math.abs(py-sy)/2,0,0,7);x.stroke()};
+c.onpointerup=c.onpointercancel=()=>d=0}},
+photos:{n:'Photos',i:'🖼️',w:640,h:440,r(w,arg){const bd=w.bd;let cur=arg&&arg.name||null;const imgs=()=>Object.keys(fs.Pictures||{}).filter(k=>/^data:image\//.test(fs.Pictures[k]));
+const draw=()=>{const I=imgs();if(cur&&!I.includes(cur))cur=null;bd.innerHTML=cur?`<div class="bar"><button data-a="back">← Gallery</button><button data-a="prev">‹</button><button data-a="next">›</button><button data-a="del">Delete</button><span style="color:var(--mut)">${esc(cur)}</span></div><div style="flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;background:#111"><img src="${fs.Pictures[cur]}" style="max-width:100%;max-height:100%;background:#fff"></div>`:`<div class="bar"><span style="color:var(--mut)">${I.length} photo${I.length===1?'':'s'} in Pictures</span></div><div style="flex:1;overflow:auto;padding:10px;display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;align-content:start">`+(I.map(k=>`<img data-k="${esc(k)}" src="${fs.Pictures[k]}" style="width:100%;height:100px;object-fit:cover;border-radius:6px;cursor:pointer;background:#fff">`).join('')||'<div style="color:var(--mut)">No photos yet. Draw something in Paint and press Save.</div>')+'</div>'};
+bd.onclick=e=>{const t=e.target,a=t.dataset.a,I=imgs();if(t.dataset.k){cur=t.dataset.k}else if(a==='back')cur=null;else if(a==='prev')cur=I[(I.indexOf(cur)-1+I.length)%I.length];else if(a==='next')cur=I[(I.indexOf(cur)+1)%I.length];else if(a==='del'){const b=fs['Recycle Bin'];b[uniq(b,cur)]=fs.Pictures[cur];delete fs.Pictures[cur];save();cur=null;toast('Moved to Recycle Bin')}else return;draw()};
+w.onarg=a=>{cur=a.name;draw()};draw()}},
+taskmgr:{n:'Task Manager',i:'📊',w:480,h:400,r(w){const bd=w.bd,hist=Array(40).fill(8),tabs='<div class="bar"><button data-t="p">Processes</button><button data-t="f">Performance</button></div>';let tab='p',n=0;
+const draw=()=>{const ids=Object.keys(wins);if(tab==='p')bd.innerHTML=tabs+'<div style="padding:8px;overflow:auto">'+ids.map(id=>`<div class="rc"><span>${APPS[id].i}</span><div style="flex:1">${APPS[id].n}<small>${(id.length*3+Math.floor(Date.now()/3000))%12+1}% CPU</small></div>${id==='taskmgr'?'':`<button class="bt" data-x="${id}">End task</button>`}</div>`).join('')+'</div>';
+else{const o=ids.length,c=Math.max(2,Math.min(95,Math.round(hist[39]*.7+(6+o*5+Math.random()*12)*.3))),m=Math.min(92,26+o*6);hist.push(c);hist.shift();bd.innerHTML=tabs+`<div style="padding:14px">CPU <b>${c}%</b><svg viewBox="0 0 195 60" style="width:100%;height:80px;background:var(--card);border-radius:6px"><polyline fill="none" stroke="var(--acc)" stroke-width="1.5" points="${hist.map((v,i)=>i*5+','+(60-v*.6)).join(' ')}"/></svg><p>Memory <b>${m}%</b></p><div style="height:8px;background:var(--card);border-radius:4px"><div style="height:8px;width:${m}%;background:var(--acc);border-radius:4px"></div></div><p>Open apps <b>${o}</b></p></div>`}};
+bd.onclick=e=>{const d=e.target.dataset;if(d.t){tab=d.t;draw()}else if(d.x&&wins[d.x]){close(wins[d.x]);draw()}};
+const iv=setInterval(()=>{if(!w.e.isConnected){clearInterval(iv);return}if(tab==='f'||++n%3===0)draw()},1000);draw()}},
+clock:{n:'Clock',i:'⏰',w:380,h:380,r(w){const bd=w.bd;let t0=0,el=0,run=0,laps=[],tl=0,ti=0,mode='s';
+const fmt=ms=>{const s=Math.floor(ms/1000);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')+'.'+String(Math.floor(ms%1000/10)).padStart(2,'0')},cur=()=>el+(run?Date.now()-t0:0);
+const upd=()=>{const d=bd.querySelector('#cd');if(d)d.textContent=mode==='s'?fmt(cur()):fmt(ti?Math.max(0,tl-Date.now()):0)};
+const view=()=>{bd.innerHTML='<div class="bar"><button data-m="s">Stopwatch</button><button data-m="t">Timer</button></div><div style="padding:20px;text-align:center;overflow:auto"><div id="cd" style="font-size:54px;font-weight:300"></div>'+(mode==='s'?`<p><button class="bt" data-a="go">${run?'Stop':'Start'}</button> <button class="bt" data-a="lap">Lap</button> <button class="bt" data-a="rs">Reset</button></p>`+laps.map((l,i)=>`<div>Lap ${i+1} — ${l}</div>`).reverse().join(''):`<p><input id="tmin" type="number" min="1" max="999" value="5" style="width:70px;padding:6px;border:1px solid var(--ln);background:var(--card)"> minutes</p><p><button class="bt" data-a="tgo">${ti?'Cancel':'Start'}</button></p>`)+'</div>';upd()};
+bd.onclick=e=>{const d=e.target.dataset;if(d.m)mode=d.m;else if(d.a==='go'){if(run){el+=Date.now()-t0;run=0}else{t0=Date.now();run=1}}else if(d.a==='lap'){if(cur())laps.push(fmt(cur()))}else if(d.a==='rs'){run=0;el=0;laps=[]}else if(d.a==='tgo'){if(ti)ti=0;else{tl=Date.now()+Math.max(1,+bd.querySelector('#tmin').value||5)*60000;ti=1}}else return;view()};
+const iv=setInterval(()=>{if(!w.e.isConnected){clearInterval(iv);return}upd();if(ti&&Date.now()>=tl){ti=0;toast('⏰ Timer finished');try{const a=new AudioContext(),o=a.createOscillator();o.connect(a.destination);o.start();setTimeout(()=>{o.stop();a.close()},600)}catch(x){}if(mode==='t')view()}},100);view()}},
+mines:{n:'Minesweeper',i:'💣',w:340,h:440,r(w){const bd=w.bd,R=9,MN=10,NC=['','#00f','#080','#f00','#008','#800','#088','#000','#555'];let g,over,first,t0,flag=0;
+const nb=i=>{const r=i/R|0,c=i%R,o=[];for(let a=-1;a<2;a++)for(let b=-1;b<2;b++){const y=r+a,x=c+b;if((a||b)&&y>=0&&y<R&&x>=0&&x<R)o.push(y*R+x)}return o};
+const reveal=i=>{const s=[i];while(s.length){const j=s.pop(),c=g[j];if(c.o||c.f)continue;c.o=1;if(c.m){over=-1;continue}if(!c.n)nb(j).forEach(k=>s.push(k))}};
+const draw=()=>{const left=MN-g.filter(c=>c.f).length;bd.innerHTML=`<div style="padding:12px;overflow:auto"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font:18px Consolas,monospace"><span>💣 ${left}</span><button class="bt" data-a="new" style="font-size:20px">${over===1?'😎':over===-1?'😵':'🙂'}</button><button class="bt" data-a="flag" style="${flag?'background:#ffd37a;color:#222':''}">🚩 ${flag?'On':'Off'}</button><span id="mt">⏱ ${t0&&over===0?Math.floor((Date.now()-t0)/1000):0}</span></div><div style="display:grid;grid-template-columns:repeat(${R},1fr);gap:2px">`+g.map((c,i)=>`<button data-i="${i}" style="aspect-ratio:1;font:bold 16px Consolas,monospace;padding:0;cursor:pointer;color:${NC[c.n]||'#222'};background:${c.o?(c.m?'#f66':'#e6e6e6'):'#a8a8a8'};border:1px solid #777;border-radius:3px">${c.o?(c.m?'💣':c.n||''):c.f?'🚩':over===-1&&c.m?'💣':''}</button>`).join('')+'</div></div>'};
+const ng=()=>{g=Array.from({length:R*R},()=>({m:0,o:0,f:0,n:0}));over=0;first=1;t0=0;draw()};
+bd.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.a==='new')return ng();if(b.dataset.a==='flag'){flag=!flag;return draw()}const i=+b.dataset.i;if(over||g[i].o)return;if(flag){g[i].f=!g[i].f;return draw()}if(g[i].f)return;
+if(first){let k=0;while(k<MN){const j=Math.random()*R*R|0;if(j===i||g[j].m)continue;g[j].m=1;k++}g.forEach((c,q)=>c.n=nb(q).filter(j=>g[j].m).length);first=0;t0=Date.now()}
+reveal(i);if(over!==-1&&g.every(c=>c.m||c.o)){over=1;toast('You win! 🎉')}draw()};
+bd.oncontextmenu=e=>{e.preventDefault();const b=e.target.closest('[data-i]');if(!b||over)return;const c=g[+b.dataset.i];if(!c.o){c.f=!c.f;draw()}};
+const iv=setInterval(()=>{if(!w.e.isConnected){clearInterval(iv);return}const t=bd.querySelector('#mt');if(t&&over===0&&t0)t.textContent='⏱ '+Math.floor((Date.now()-t0)/1000)},500);ng()}}
+});
+document.addEventListener('keydown',e=>{if(act&&act.key&&act.id==='calc'&&!e.target.closest('input,textarea'))act.key(e);if(e.key==='Escape')closePops();if(e.key==='Meta')$('#sb').click()});
+const al=ST.get('w11.al','c');$('#task').classList.toggle('l',al==='l');document.body.classList.toggle('l',al==='l');
+applyQ();drawTask();boot(1100);
 })();
-</script>
-</body>
-</html>
+</script></body></html>
