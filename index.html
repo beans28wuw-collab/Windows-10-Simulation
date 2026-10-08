@@ -75,6 +75,14 @@ textarea.np{flex:1;border:0;outline:0;resize:none;padding:12px;background:var(--
 .cd{padding:14px 16px 6px;text-align:right}.cd small{display:block;height:16px;color:var(--mut)}.cd div{font-size:40px;overflow:hidden}.ck{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:2px}.ck button{border:0;background:var(--card);border-radius:4px;font-size:18px;min-height:40px}.ck button:hover{filter:brightness(.9)}.ck .e{background:var(--acc);color:#fff}
 .st{padding:16px;overflow:auto}.st h3{margin:14px 0 8px;font-weight:600}.sw{display:flex;flex-wrap:wrap;gap:8px}.sw i{width:34px;height:34px;border-radius:50%;border:3px solid transparent;cursor:pointer}.sw i.on{border-color:var(--txt)}.sw .w{border-radius:6px;width:64px}
 .tm{flex:1;background:#0c0c0c;color:#ddd;font:13px Consolas,monospace;padding:10px;overflow:auto;user-select:text}.tm div{white-space:pre-wrap}.ti2{border:0;outline:0;background:#0c0c0c;color:#fff;font:13px Consolas,monospace;padding:8px 10px;border-top:1px solid #333}
+</style><style id="w11-function-pack">
+#w11ctx{position:fixed;display:none;z-index:12000;min-width:210px;background:var(--win);border:1px solid var(--ln);border-radius:10px;box-shadow:var(--sh);padding:6px;backdrop-filter:blur(28px)}
+#w11ctx.on{display:block}.wctxi{padding:9px 11px;border-radius:6px;cursor:pointer;display:flex;gap:10px}.wctxi:hover{background:var(--card)}
+#w11snap{position:fixed;display:none;z-index:11900;pointer-events:none}.w11zone{position:absolute;border-radius:10px;background:color-mix(in srgb,var(--acc) 30%,transparent);border:1px solid color-mix(in srgb,var(--acc) 70%,transparent);opacity:0;transition:.12s}.w11zone.on{opacity:1}
+#w11lock{position:fixed;inset:0;z-index:20000;display:none;align-items:center;justify-content:center;background:linear-gradient(135deg,#0b1530,#182a55 55%,#07111f);color:#fff;text-align:center}.w11lock.on{display:flex}.w11lockbox{width:min(420px,calc(100% - 30px));padding:30px;border-radius:20px;background:rgba(0,0,0,.28);backdrop-filter:blur(25px)}
+#w11lock input{width:100%;padding:13px 16px;border-radius:9px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);outline:0;margin:12px 0;color:#fff}
+#w11power{position:fixed;right:12px;bottom:58px;z-index:12001;display:none;min-width:220px;padding:8px;background:var(--win);border:1px solid var(--ln);border-radius:12px;box-shadow:var(--sh)}#w11power.on{display:block}
+.w11pow{padding:10px 12px;border-radius:7px;cursor:pointer}.w11pow:hover{background:var(--card)}
 </style></head><body>
 <div id="wall"></div><div id="desk"></div>
 <div class="pop" id="start"><input class="si" id="q" placeholder="Search for apps, settings, and documents" autocomplete="off"><div class="sc" id="sc"></div><div class="sf"><span id="un">👤 User</span><button id="pb" title="Power">⏻</button></div><div id="pw"><button data-p="lock">🔒 Lock</button><button data-p="sleep">🌙 Sleep</button><button data-p="restart">🔄 Restart</button><button data-p="off">⏻ Shut down</button></div></div>
@@ -471,5 +479,57 @@ bd.querySelector('.bar').onclick=e=>{const k=e.target.dataset.a;if(k==='cap')cap
 document.addEventListener('keydown',e=>{if(act&&act.key&&!e.target.closest('input,textarea'))act.key(e);if(e.key==='Escape')closePops();hot(e)});
 const al=ST.get('w11.al','c');$('#task').classList.toggle('l',al==='l');document.body.classList.toggle('l',al==='l');
 applyQ();drawTask();boot(1100);
+})();
+</script><script>
+(()=>{
+'use strict';
+const $=s=>document.querySelector(s), E=(t,c)=>{const x=document.createElement(t);if(c)x.className=c;return x};
+const toast2=m=>{try{toast(m)}catch{let t=$('#toast');if(t){t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1800)}}};
+/* Windows-like desktop context menu */
+const ctx=E('div');ctx.id='w11ctx';document.body.append(ctx);
+const items=[['↻','Refresh',()=>location.reload()],['📁','New folder',()=>toast2('Use File Explorer to create a folder')],['⚙️','Display settings',()=>toast2('Open Settings → System → Display')],['🎨','Personalize',()=>toast2('Open Settings → Personalization')],['📋','Paste',()=>toast2('Clipboard paste')]];
+ctx.innerHTML=items.map((x,i)=>`<div class="wctxi" data-c="${i}"><span>${x[0]}</span><span>${x[1]}</span></div>`).join('');
+ctx.onclick=e=>{const d=e.target.closest('[data-c]');if(d){items[+d.dataset.c][2]();ctx.classList.remove('on')}};
+const hideCtx=()=>ctx.classList.remove('on');
+$('#desk')?.addEventListener('contextmenu',e=>{e.preventDefault();ctx.style.left=Math.min(innerWidth-225,e.clientX)+'px';ctx.style.top=Math.min(innerHeight-250,e.clientY)+'px';ctx.classList.add('on')});
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('#w11ctx'))hideCtx()});
+/* Snap layouts */
+const snap=E('div');snap.id='w11snap';snap.innerHTML='<div class="w11zone z1"></div><div class="w11zone z2"></div><div class="w11zone z3"></div><div class="w11zone z4"></div>';document.body.append(snap);
+let drag=null;
+function snapWin(w,kind){if(!w||!w.e)return;const e=w.e;const W=innerWidth,H=innerHeight-48; e.classList.remove('max');let x=0,y=0,ww=W,hh=H;
+ if(kind==='left'){ww=W/2}else if(kind==='right'){x=W/2;ww=W/2}else if(kind==='tl'){ww=W/2;hh=H/2}else if(kind==='tr'){x=W/2;ww=W/2;hh=H/2}else if(kind==='bl'){y=H/2;ww=W/2;hh=H/2}else if(kind==='br'){x=W/2;y=H/2;ww=W/2;hh=H/2}else if(kind==='max'){e.classList.add('max');return}
+ e.style.left=x+'px';e.style.top=y+'px';e.style.width=ww+'px';e.style.height=hh+'px';e.dataset.snap=kind;try{focus(w)}catch{}}
+function zoneKind(x,y){const edge=54, W=innerWidth,H=innerHeight-48;if(y<edge)return x<W*.5?'tl':'tr';if(y>H-edge)return x<W*.5?'bl':'br';if(x<edge)return 'left';if(x>W-edge)return 'right';return null}
+document.addEventListener('pointerdown',e=>{const tb=e.target.closest('.tb');if(!tb)return;const win=tb.closest('.win');if(!win)return;drag={win,startX:e.clientX,startY:e.clientY,ox:parseFloat(win.style.left)||0,oy:parseFloat(win.style.top)||0,active:false};});
+document.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.startX,dy=e.clientY-drag.startY;if(Math.abs(dx)+Math.abs(dy)>5)drag.active=true;if(!drag.active)return;const k=zoneKind(e.clientX,e.clientY);document.querySelectorAll('.w11zone').forEach(z=>z.classList.remove('on'));if(k){const z=snap.querySelector(k==='left'?'.z1':k==='right'?'.z2':k==='tl'?'.z1':k==='tr'?'.z2':k==='bl'?'.z3':'.z4');if(z)z.classList.add('on');snap.style.display='block'}else snap.style.display='none';drag.win.e.style.left=(drag.ox+dx)+'px';drag.win.e.style.top=(drag.oy+dy)+'px';});
+document.addEventListener('pointerup',e=>{if(!drag)return;const k=zoneKind(e.clientX,e.clientY);if(drag.active&&k)snapWin(drag.win,k);snap.style.display='none';document.querySelectorAll('.w11zone').forEach(z=>z.classList.remove('on'));drag=null});
+/* Power menu */
+const power=E('div');power.id='w11power';power.innerHTML='<div class="w11pow" data-p="lock">🔒 Lock</div><div class="w11pow" data-p="sleep">🌙 Sleep</div><div class="w11pow" data-p="restart">↻ Restart</div><div class="w11pow" data-p="shutdown">⏻ Shut down</div>';document.body.append(power);
+power.onclick=e=>{const p=e.target.dataset.p;if(!p)return;if(p==='lock')lock();else if(p==='restart'){toast2('Restarting Windows Web…');setTimeout(()=>location.reload(),800)}else if(p==='shutdown'){document.body.style.filter='brightness(.1)';toast2('Windows Web is shut down — refresh to start again')}else{toast2('Sleep mode');document.body.style.filter='brightness(.35)';setTimeout(()=>document.body.style.filter='',1400)}power.classList.remove('on')};
+/* Lock screen */
+const lockEl=E('div');lockEl.id='w11lock';lockEl.innerHTML='<div class="w11lockbox"><div id="w11lt" style="font-size:58px;font-weight:300"></div><div id="w11ld" style="font-size:18px;opacity:.85"></div><div style="font-size:42px;margin:22px 0 4px">👤</div><div id="w11lu" style="font-size:20px">User</div><input id="w11lp" type="password" placeholder="PIN or password"><button id="w11lb" class="bt" style="padding:10px 25px">Sign in</button><div id="w11le" style="color:#ffb4ab;margin-top:10px"></div></div>';document.body.append(lockEl);
+function lock(){lockEl.classList.add('on');const u=(()=>{try{return ST.get('w11.user','User')}catch{return 'User'}})();$('#w11lu').textContent=u;$('#w11lp').value='';$('#w11lp').focus()}
+function unlock(){const want=(()=>{try{return ST.get('w11.pw','')}catch{return ''}})();const got=$('#w11lp').value;if(!want||got===want){lockEl.classList.remove('on');$('#w11le').textContent=''}else $('#w11le').textContent='Wrong password'}
+$('#w11lb').onclick=unlock;$('#w11lp').onkeydown=e=>{if(e.key==='Enter')unlock()};
+setInterval(()=>{const d=new Date();$('#w11lt').textContent=d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});$('#w11ld').textContent=d.toLocaleDateString([], {weekday:'long',month:'long',day:'numeric'})},500);
+/* Keyboard shortcuts */
+document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea,[contenteditable]'))return;const k=e.key.toLowerCase(), win=e.metaKey||e.ctrlKey&&e.altKey;
+ if(e.key==='Escape')hideCtx();
+ if(e.altKey&&e.key==='F4'){e.preventDefault();if(typeof act!=='undefined'&&act){try{close(act)}catch{}}else{const a=Object.values(wins||{}).filter(w=>w.e?.classList.contains('on'));if(a.length)try{close(a[a.length-1])}catch{}}return}
+ if(e.key==='F11'){e.preventDefault();document.fullscreenElement?document.exitFullscreen?.():document.documentElement.requestFullscreen?.();return}
+ if(e.metaKey||e.key==='Meta')return;
+ if(e.key==='l'&&e.ctrlKey===false&&e.altKey===false&&e.shiftKey===false){/* no-op */}
+ if(e.ctrlKey&&e.shiftKey&&k==='escape'){e.preventDefault();try{open('taskmgr')}catch{toast2('Task Manager')}}
+ if(e.ctrlKey&&e.altKey&&k==='d'){e.preventDefault();try{openTV()}catch{}}
+ if(e.altKey&&e.key==='Tab'){e.preventDefault();const a=Object.values(wins||{}).filter(w=>w.desk===cd&&vis(w));if(a.length){const i=Math.max(0,a.findIndex(w=>w.id===act?.id));try{show(a[(i+1)%a.length])}catch{}}}
+ if(e.ctrlKey&&e.key==='l'){e.preventDefault();lock()}
+ if(e.key==='F2'&&typeof act!=='undefined'&&act?.id==='explorer')toast2('Rename selected item in File Explorer');
+});
+/* Taskbar show-desktop button and tray power button */
+const tray=$('#tray');if(tray){const b=E('button');b.title='Show desktop';b.textContent='▏';b.style.cssText='margin-left:3px;width:14px;border-left:1px solid var(--ln)';b.onclick=()=>{const arr=Object.values(wins||{}).filter(w=>w.desk===cd&&vis(w));if(arr.some(w=>!w.e.classList.contains('min'))){arr.forEach(w=>w.e.classList.add('min'))}else arr.forEach(w=>w.e.classList.remove('min'));drawTask?.()};tray.append(b);const p=E('button');p.title='Power';p.textContent='⏻';p.onclick=()=>power.classList.toggle('on');tray.append(p)}
+/* Right-click taskbar for alignment/power */
+$('#task')?.addEventListener('contextmenu',e=>{e.preventDefault();ctx.innerHTML='<div class="wctxi" data-q="center">▣ Center taskbar</div><div class="wctxi" data-q="left">▤ Left taskbar</div><div class="wctxi" data-q="lock">🔒 Lock</div><div class="wctxi" data-q="power">⏻ Power</div>';ctx.style.left=Math.min(innerWidth-225,e.clientX)+'px';ctx.style.top=Math.max(8,e.clientY-180)+'px';ctx.classList.add('on');ctx.onclick=ev=>{const q=ev.target.closest('[data-q]')?.dataset.q;if(!q)return;if(q==='left'){document.body.classList.add('l');$('#task').classList.add('l');try{ST.set('w11.al','l')}catch{}}if(q==='center'){document.body.classList.remove('l');$('#task').classList.remove('l');try{ST.set('w11.al','c')}catch{}}if(q==='lock')lock();if(q==='power')power.classList.add('on');hideCtx()}});
+/* Window snap keyboard helpers */
+document.addEventListener('keydown',e=>{if(!(e.metaKey||e.ctrlKey)||!e.altKey&&!(e.metaKey))return;const w=typeof act!=='undefined'?act:null;if(!w)return;if(e.key==='ArrowLeft'){e.preventDefault();snapWin(w,'left')}if(e.key==='ArrowRight'){e.preventDefault();snapWin(w,'right')}if(e.key==='ArrowUp'){e.preventDefault();snapWin(w,'max')}if(e.key==='ArrowDown'){e.preventDefault();if(w.e.classList.contains('max')){w.e.classList.remove('max');}else snapWin(w,'bl')}});
 })();
 </script></body></html>
